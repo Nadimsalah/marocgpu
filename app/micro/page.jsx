@@ -1,10 +1,10 @@
 import LoginContent from "./LoginContent";
 
-export const metadata = {
-  title: "Secure Access | MarocGPU",
-  description: "PIN-protected access to MarocGPU Micro.",
-};
-
 export default function MicroPage() {
-  return <LoginContent />;
+  return (
+    <>
+      <title>CURATED BY MAROCGPU - Shop These Must Haves | Secure Access</title>
+      <LoginContent />
+    </>
+  );
 }

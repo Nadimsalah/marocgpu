@@ -6,7 +6,7 @@ const defaults = {
   logo: "/marocgpu-logo-transparent.png",
   siteName: "MarocGPU",
   tagline: "Powerful hardware, expert-built systems, and dependable local support across Morocco.",
-  heroTitle: "A New Era of Performance",
+  heroTitle: "A New Era of Performance Micro",
   heroSubtitle: "Discover powerful hardware, expert builds, and the technology shaping Morocco's digital future.",
   heroCta: "Explore MarocGPU",
   navItems: ["Consumer", "Professional", "Data Center Solutions", "Support"],
@@ -18,6 +18,15 @@ const defaults = {
   footerBottom: "© 2026 MarocGPU. All rights reserved.",
   heroIcons: ["google", "apple", "microsoft", "figma", "github", "slack", "notion", "vercel", "stripe", "discord", "x", "spotify"],
   customIcons: {},
+  featureKicker: "Built for ambitious work",
+  featureTitle: "When performance stops getting in your way.",
+  featureDescription: "MarocGPU helps creators, professionals, and growing teams build reliable systems that keep ideas moving.",
+  featureCta: "Discover our solutions",
+  solutionsKicker: "MAROCGPU BUSINESS",
+  solutionsTitle: "Shift IT from hardware to impact.",
+  solutionsDescription: "Build faster, reduce downtime, and keep every workstation performing with expert configuration and dependable local support.",
+  solutionsCtaPrimary: "Request a quote",
+  solutionsCtaSecondary: "Explore solutions",
 };
 
 const SiteContext = createContext(null);

@@ -1,10 +1,10 @@
 import DataCenterContent from "./DataCenterContent";
 
-export const metadata = {
-  title: "Data Center Solutions | MarocGPU",
-  description: "End-to-end data center equipment, design, deployment, and support in Morocco.",
-};
-
 export default function DataCenterSolutionsPage() {
-  return <DataCenterContent />;
+  return (
+    <>
+      <title>CURATED BY MAROCGPU - Shop These Must Haves | Data Center</title>
+      <DataCenterContent />
+    </>
+  );
 }

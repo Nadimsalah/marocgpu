@@ -611,7 +611,7 @@ function FloatingIconsSection({ title, subtitle, ctaText, ctaHref, icons, custom
       </div>
 
       <div className="floating-content">
-        <p className="hero-kicker">MarocGPU</p>
+        <p className="hero-kicker">CURATED BY MAROCGPU</p>
         <h1>{title}</h1>
         <p>{subtitle}</p>
         <a className="floating-cta" href={ctaHref}>
@@ -773,7 +773,7 @@ export default function Page() {
       <section className="must-haves" id="collections">
         <div className="must-haves-heading">
           <div>
-            <p>Curated by MarocGPU</p>
+            <p>CURATED BY MAROCGPU</p>
             <h2>Shop These Must Haves</h2>
           </div>
           <span>{products.length} essentials for your setup</span>
@@ -837,13 +837,13 @@ export default function Page() {
           transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="feature-story-copy">
-            <p className="feature-story-kicker">Built for ambitious work</p>
-            <h2 id="feature-story-title">When performance stops getting in your way.</h2>
+            <p className="feature-story-kicker">{settings.featureKicker}</p>
+            <h2 id="feature-story-title">{settings.featureTitle}</h2>
             <p className="feature-story-description">
-              MarocGPU helps creators, professionals, and growing teams build reliable systems that keep ideas moving.
+              {settings.featureDescription}
             </p>
             <a className="feature-story-cta" href="#collections">
-              Discover our solutions
+              {settings.featureCta}
               <ArrowRight size={18} />
             </a>
           </div>
@@ -928,14 +928,14 @@ export default function Page() {
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.65, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p>MarocGPU Business</p>
-          <h2 id="solutions-title">Shift IT from hardware to impact.</h2>
+          <p>{settings.solutionsKicker}</p>
+          <h2 id="solutions-title">{settings.solutionsTitle}</h2>
           <span>
-            Build faster, reduce downtime, and keep every workstation performing with expert configuration and dependable local support.
+            {settings.solutionsDescription}
           </span>
           <div className="solutions-actions">
-            <a className="solutions-primary" href="#collections">Request a quote</a>
-            <a className="solutions-secondary" href="#collections">Explore solutions</a>
+            <a className="solutions-primary" href="#collections">{settings.solutionsCtaPrimary}</a>
+            <a className="solutions-secondary" href="#collections">{settings.solutionsCtaSecondary}</a>
           </div>
         </motion.div>
       </section>

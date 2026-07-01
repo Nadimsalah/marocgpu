@@ -1618,19 +1618,26 @@ img {
   position: fixed;
   inset: 0;
   z-index: 40;
-  background: rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
 }
 
 .mobile-drawer {
   width: min(360px, 88vw);
   height: 100%;
   background: #fff;
-  padding: 18px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 18px;
   box-shadow: 28px 0 60px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 400px) {
+  .mobile-drawer {
+    width: 100%;
+    padding: 16px;
+  }
 }
 
 .mobile-drawer-top {
@@ -1656,6 +1663,11 @@ img {
   border-radius: 16px;
   background: #f7f8fa;
   font-weight: 600;
+  transition: background 0.15s;
+}
+
+.mobile-nav a:active {
+  background: #ecedf0;
 }
 
 .mobile-footer-actions {
@@ -1723,6 +1735,24 @@ img {
 
   .business-product-image {
     height: 330px;
+  }
+}
+
+@media (max-width: 950px) {
+  .site-nav,
+  .mega-menu,
+  .menu-backdrop {
+    display: none;
+  }
+
+  .menu-trigger {
+    display: inline-grid;
+  }
+
+  .site-bar {
+    gap: 10px;
+    padding: 0 14px;
+    height: 72px;
   }
 }
 

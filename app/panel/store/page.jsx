@@ -37,6 +37,8 @@ const sections = [
   { id: "header", label: "Header & Navigation", icon: Menu },
   { id: "hero", label: "Hero Section", icon: Layout },
   { id: "heroIcons", label: "Hero Icons", icon: Layout },
+  { id: "feature", label: "Feature Story", icon: Text },
+  { id: "solutions", label: "Business Solutions", icon: Layout },
   { id: "footer", label: "Footer", icon: Text },
 ];
 
@@ -313,6 +315,70 @@ export default function StorePage() {
                 <span style={{ fontSize: "0.76rem", color: "#a0a5ad", marginTop: 8 }}>
                   {settings.heroIcons.length}/12 icons active
                 </span>
+              </div>
+            </div>
+          )}
+
+          {activeSection === "feature" && (
+            <div className="store-form">
+              <div className="store-form-group">
+                <label>
+                  <span><Text size={16} /> Kicker</span>
+                  <input value={settings.featureKicker} onChange={(e) => update("featureKicker", e.target.value)} />
+                </label>
+              </div>
+              <div className="store-form-group">
+                <label>
+                  <span><Text size={16} /> Title</span>
+                  <textarea rows={3} value={settings.featureTitle} onChange={(e) => update("featureTitle", e.target.value)} />
+                </label>
+              </div>
+              <div className="store-form-group">
+                <label>
+                  <span><Text size={16} /> Description</span>
+                  <textarea rows={4} value={settings.featureDescription} onChange={(e) => update("featureDescription", e.target.value)} />
+                </label>
+              </div>
+              <div className="store-form-group">
+                <label>
+                  <span><Text size={16} /> CTA Button Text</span>
+                  <input value={settings.featureCta} onChange={(e) => update("featureCta", e.target.value)} />
+                </label>
+              </div>
+            </div>
+          )}
+
+          {activeSection === "solutions" && (
+            <div className="store-form">
+              <div className="store-form-group">
+                <label>
+                  <span><Text size={16} /> Kicker</span>
+                  <input value={settings.solutionsKicker} onChange={(e) => update("solutionsKicker", e.target.value)} />
+                </label>
+              </div>
+              <div className="store-form-group">
+                <label>
+                  <span><Text size={16} /> Title</span>
+                  <textarea rows={3} value={settings.solutionsTitle} onChange={(e) => update("solutionsTitle", e.target.value)} />
+                </label>
+              </div>
+              <div className="store-form-group">
+                <label>
+                  <span><Text size={16} /> Description</span>
+                  <textarea rows={4} value={settings.solutionsDescription} onChange={(e) => update("solutionsDescription", e.target.value)} />
+                </label>
+              </div>
+              <div className="store-form-group">
+                <label>
+                  <span><Text size={16} /> Primary CTA</span>
+                  <input value={settings.solutionsCtaPrimary} onChange={(e) => update("solutionsCtaPrimary", e.target.value)} />
+                </label>
+              </div>
+              <div className="store-form-group">
+                <label>
+                  <span><Text size={16} /> Secondary CTA</span>
+                  <input value={settings.solutionsCtaSecondary} onChange={(e) => update("solutionsCtaSecondary", e.target.value)} />
+                </label>
               </div>
             </div>
           )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
@@ -10,7 +11,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-const CORRECT_PIN = "07077777";
+const CORRECT_PIN = "2009";
 
 export default function LoginContent() {
   const [pin, setPin] = useState("");
@@ -19,6 +20,7 @@ export default function LoginContent() {
   const [showPin, setShowPin] = useState(false);
   const [ready, setReady] = useState(false);
   const inputRef = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
     const timer = setTimeout(() => setReady(true), 800);
@@ -29,10 +31,24 @@ export default function LoginContent() {
     inputRef.current?.focus();
   }, []);
 
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        router.push("/panel");
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [success, router]);
+
   const handleChange = (value) => {
-    const digits = value.replace(/\D/g, "").slice(0, 8);
+    const digits = value.replace(/\D/g, "").slice(0, 4);
     setPin(digits);
     setError(false);
+
+    if (digits === CORRECT_PIN) {
+      setSuccess(true);
+      setError(false);
+    }
   };
 
   const handleSubmit = () => {
@@ -46,7 +62,7 @@ export default function LoginContent() {
     }
   };
 
-  const allFilled = pin.length === 8;
+  const allFilled = pin.length === 4;
 
   if (!ready) {
     return (
@@ -83,7 +99,7 @@ export default function LoginContent() {
           </motion.div>
           <h2>Access granted</h2>
           <p>Welcome to MarocGPU Micro.</p>
-          <a className="micro-cta" href="/">
+          <a className="micro-cta" href="/panel">
             Enter dashboard <ArrowRight size={18} />
           </a>
         </motion.div>
@@ -112,15 +128,15 @@ export default function LoginContent() {
               ref={inputRef}
               type={showPin ? "text" : "password"}
               inputMode="numeric"
-              maxLength={8}
+              maxLength={4}
               value={pin}
               onChange={(e) => handleChange(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
               className={error ? "shake" : ""}
-              placeholder="Enter 8-digit PIN"
+              placeholder="Enter 4-digit PIN"
               autoComplete="off"
             />
-            <span className="micro-digit-count">{pin.length}/8</span>
+            <span className="micro-digit-count">{pin.length}/4</span>
           </div>
           <label className="micro-toggle-pin">
             <input type="checkbox" checked={showPin} onChange={() => setShowPin(!showPin)} />
