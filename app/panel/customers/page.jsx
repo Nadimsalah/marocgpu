@@ -4,20 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, Mail, MapPin, Phone, Search, ShoppingBag, X } from "lucide-react";
 
-const allCustomers = [
-  { id: 1, name: "Ahmed El Amrani", email: "ahmed@example.com", phone: "+212 6XX-XXXXXX", city: "Casablanca", orders: 12, spent: 89450, joined: "2025-09-12", status: "Active" },
-  { id: 2, name: "Fatima Benali", email: "fatima@example.com", phone: "+212 6XX-XXXXXX", city: "Rabat", orders: 8, spent: 62740, joined: "2025-11-03", status: "Active" },
-  { id: 3, name: "Youssef Khalid", email: "youssef@example.com", phone: "+212 6XX-XXXXXX", city: "Marrakech", orders: 5, spent: 33470, joined: "2026-01-18", status: "Active" },
-  { id: 4, name: "Sara Ouazzani", email: "sara@example.com", phone: "+212 6XX-XXXXXX", city: "Casablanca", orders: 15, spent: 112300, joined: "2025-06-22", status: "VIP" },
-  { id: 5, name: "Omar Idrissi", email: "omar@example.com", phone: "+212 6XX-XXXXXX", city: "Fes", orders: 3, spent: 14280, joined: "2026-03-07", status: "Active" },
-  { id: 6, name: "Hind Mansouri", email: "hind@example.com", phone: "+212 6XX-XXXXXX", city: "Tangier", orders: 7, spent: 56180, joined: "2025-10-15", status: "Active" },
-  { id: 7, name: "Karim Benjelloun", email: "karim@example.com", phone: "+212 6XX-XXXXXX", city: "Agadir", orders: 9, spent: 43120, joined: "2025-08-30", status: "VIP" },
-  { id: 8, name: "Laila Tazi", email: "laila@example.com", phone: "+212 6XX-XXXXXX", city: "Casablanca", orders: 4, spent: 18990, joined: "2026-02-14", status: "Active" },
-  { id: 9, name: "Mohamed El Fassi", email: "mohamed@example.com", phone: "+212 6XX-XXXXXX", city: "Rabat", orders: 6, spent: 41560, joined: "2025-12-01", status: "Inactive" },
-  { id: 10, name: "Nadia Berrada", email: "nadia@example.com", phone: "+212 6XX-XXXXXX", city: "Marrakech", orders: 11, spent: 76490, joined: "2025-07-19", status: "Active" },
-  { id: 11, name: "Rachid Oujdi", email: "rachid@example.com", phone: "+212 6XX-XXXXXX", city: "Casablanca", orders: 2, spent: 9380, joined: "2026-04-25", status: "Active" },
-  { id: 12, name: "Samira El Kettani", email: "samira@example.com", phone: "+212 6XX-XXXXXX", city: "Oujda", orders: 1, spent: 3290, joined: "2026-05-10", status: "Inactive" },
-];
+const allCustomers = [];
 
 const statusColors = {
   VIP: { bg: "#fff7e6", color: "#b8860b" },
@@ -42,24 +29,38 @@ export default function CustomersPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [selected, setSelected] = useState(null);
-  const [customers, setCustomers] = useState(allCustomers);
+  const [customers, setCustomers] = useState([]);
+  const [rawCustomers, setRawCustomers] = useState([]);
+
+  const loadCustomers = async () => {
+    try {
+      const res = await fetch('/api/customers');
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : [];
+      setCustomers(list);
+      setRawCustomers(list);
+    } catch (e) {
+      console.error("Error loading customers:", e);
+    } finally {
+      setReady(true);
+    }
+  };
 
   useEffect(() => {
-    const timer = setTimeout(() => setReady(true), 800);
-    return () => clearTimeout(timer);
+    loadCustomers();
   }, []);
 
   useEffect(() => {
-    let filtered = allCustomers;
+    let filtered = rawCustomers;
     if (search.trim()) {
       const q = search.toLowerCase();
-      filtered = filtered.filter((c) => c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q) || c.city.toLowerCase().includes(q));
+      filtered = filtered.filter((c) => c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q) || (c.city && c.city.toLowerCase().includes(q)));
     }
     if (statusFilter !== "All") {
       filtered = filtered.filter((c) => c.status === statusFilter);
     }
     setCustomers(filtered);
-  }, [search, statusFilter]);
+  }, [search, statusFilter, rawCustomers]);
 
   const filters = ["All", "VIP", "Active", "Inactive"];
 
@@ -70,7 +71,7 @@ export default function CustomersPage() {
       <div className="panel-header">
         <div>
           <h1>Customers</h1>
-          <p>{allCustomers.length} total · {allCustomers.filter((c) => c.status === "VIP").length} VIP · {allCustomers.filter((c) => c.status === "Active").length} active</p>
+          <p>{rawCustomers.length} total · {rawCustomers.filter((c) => c.status === "VIP").length} VIP · {rawCustomers.filter((c) => c.status === "Active").length} active</p>
         </div>
       </div>
 

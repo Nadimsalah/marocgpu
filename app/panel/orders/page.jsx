@@ -12,20 +12,7 @@ import {
   X,
 } from "lucide-react";
 
-const allOrders = [
-  { id: "MG-1042", customer: "Ahmed El Amrani", email: "ahmed@example.com", phone: "+212 6XX-XXXXXX", product: "ProWork X1 Mobile Studio", category: "Consumer", amount: 12990, quantity: 1, status: "Shipped", date: "2026-06-20", address: "123 Rue Mohammed V, Casablanca 20000", shipping: "Free", payment: "Paid" },
-  { id: "MG-1041", customer: "Fatima Benali", email: "fatima@example.com", phone: "+212 6XX-XXXXXX", product: "Creator Tower RTX", category: "Professional", amount: 18490, quantity: 1, status: "Processing", date: "2026-06-19", address: "45 Avenue Hassan II, Rabat 10000", shipping: "Free", payment: "Pending" },
-  { id: "MG-1040", customer: "Youssef Khalid", email: "youssef@example.com", phone: "+212 6XX-XXXXXX", product: "EliteBook Pro 14", category: "Consumer", amount: 10990, quantity: 2, status: "Delivered", date: "2026-06-18", address: "78 Rue de la Liberté, Marrakech 40000", shipping: "Free", payment: "Paid" },
-  { id: "MG-1039", customer: "Sara Ouazzani", email: "sara@example.com", phone: "+212 6XX-XXXXXX", product: "StudioView 27 4K", category: "Displays", amount: 4799, quantity: 1, status: "Delivered", date: "2026-06-17", address: "12 Boulevard Zerktouni, Casablanca 20000", shipping: "Free", payment: "Paid" },
-  { id: "MG-1038", customer: "Omar Idrissi", email: "omar@example.com", phone: "+212 6XX-XXXXXX", product: "GeForce RTX 4070 Super", category: "Graphics", amount: 7490, quantity: 1, status: "Pending", date: "2026-06-16", address: "34 Rue Allal Ben Abdellah, Fes 30000", shipping: "Standard", payment: "Unpaid" },
-  { id: "MG-1037", customer: "Hind Mansouri", email: "hind@example.com", phone: "+212 6XX-XXXXXX", product: "Apex Gaming G7", category: "Professional", amount: 21990, quantity: 1, status: "Processing", date: "2026-06-15", address: "56 Avenue des FAR, Tangier 90000", shipping: "Free", payment: "Paid" },
-  { id: "MG-1036", customer: "Karim Benjelloun", email: "karim@example.com", phone: "+212 6XX-XXXXXX", product: "Forge 75 Keyboard", category: "Accessories", amount: 1090, quantity: 3, status: "Delivered", date: "2026-06-14", address: "89 Rue Oued Zem, Agadir 80000", shipping: "Standard", payment: "Paid" },
-  { id: "MG-1035", customer: "Laila Tazi", email: "laila@example.com", phone: "+212 6XX-XXXXXX", product: "Vector Pro Mouse", category: "Accessories", amount: 690, quantity: 2, status: "Shipped", date: "2026-06-13", address: "23 Rue Moulay Youssef, Casablanca 20000", shipping: "Free", payment: "Paid" },
-  { id: "MG-1034", customer: "Mohamed El Fassi", email: "mohamed@example.com", phone: "+212 6XX-XXXXXX", product: "CreatorBook OLED 16", category: "Consumer", amount: 15490, quantity: 1, status: "Pending", date: "2026-06-12", address: "67 Avenue Mohammed VI, Rabat 10000", shipping: "Free", payment: "Unpaid" },
-  { id: "MG-1033", customer: "Nadia Berrada", email: "nadia@example.com", phone: "+212 6XX-XXXXXX", product: "Compact Studio Mini", category: "Professional", amount: 8490, quantity: 1, status: "Delivered", date: "2026-06-11", address: "15 Rue Ibn Sina, Marrakech 40000", shipping: "Free", payment: "Paid" },
-  { id: "MG-1032", customer: "Rachid Oujdi", email: "rachid@example.com", phone: "+212 6XX-XXXXXX", product: "UltraWide Flow 34", category: "Displays", amount: 6190, quantity: 1, status: "Processing", date: "2026-06-10", address: "90 Boulevard d'Anfa, Casablanca 20000", shipping: "Standard", payment: "Paid" },
-  { id: "MG-1031", customer: "Samira El Kettani", email: "samira@example.com", phone: "+212 6XX-XXXXXX", product: "Laser Pro M400", category: "Printers", amount: 3290, quantity: 1, status: "Shipped", date: "2026-06-09", address: "42 Rue de la Poste, Oujda 60000", shipping: "Free", payment: "Paid" },
-];
+const allOrders = [];
 
 const statusColors = {
   Delivered: { bg: "#f0f4ff", color: "#0a4bd9" },
@@ -51,30 +38,56 @@ export default function OrdersPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [orders, setOrders] = useState(allOrders);
+  const [orders, setOrders] = useState([]);
+  const [rawOrders, setRawOrders] = useState([]);
+
+  const loadOrders = async () => {
+    try {
+      const res = await fetch('/api/orders');
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : [];
+      setOrders(list);
+      setRawOrders(list);
+    } catch (e) {
+      console.error("Error loading orders:", e);
+    } finally {
+      setReady(true);
+    }
+  };
 
   useEffect(() => {
-    const timer = setTimeout(() => setReady(true), 800);
-    return () => clearTimeout(timer);
+    loadOrders();
   }, []);
 
   useEffect(() => {
-    let filtered = allOrders;
+    let filtered = rawOrders;
     if (search.trim()) {
       const q = search.toLowerCase();
       filtered = filtered.filter(
-        (o) => o.id.toLowerCase().includes(q) || o.customer.toLowerCase().includes(q) || o.product.toLowerCase().includes(q)
+        (o) => o.id.toLowerCase().includes(q) || o.customer.toLowerCase().includes(q) || (o.product && o.product.toLowerCase().includes(q))
       );
     }
     if (statusFilter !== "All") {
       filtered = filtered.filter((o) => o.status === statusFilter);
     }
     setOrders(filtered);
-  }, [search, statusFilter]);
+  }, [search, statusFilter, rawOrders]);
 
-  const updateStatus = (orderId, newStatus) => {
-    setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)));
-    setSelectedOrder((prev) => (prev?.id === orderId ? { ...prev, status: newStatus } : prev));
+  const updateStatus = async (orderId, newStatus) => {
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: orderId, status: newStatus })
+      });
+      const updated = await res.json();
+      if (updated && !updated.error) {
+        setRawOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
+        setSelectedOrder((prev) => (prev?.id === orderId ? updated : prev));
+      }
+    } catch (e) {
+      console.error("Error updating order status:", e);
+    }
   };
 
   const statuses = ["All", "Delivered", "Shipped", "Processing", "Pending"];

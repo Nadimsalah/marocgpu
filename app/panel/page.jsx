@@ -11,15 +11,6 @@ import {
   Users,
 } from "lucide-react";
 
-const stats = [
-  { label: "Total Products", value: "0", change: "0 this month", icon: Box, color: "#0a4bd9" },
-  { label: "Active Orders", value: "0", change: "0 today", icon: ShoppingCart, color: "#25D366" },
-  { label: "Revenue", value: "0 MAD", change: "0% vs last month", icon: DollarSign, color: "#f5a623" },
-  { label: "Customers", value: "0", change: "0 new this month", icon: Users, color: "#7c3aed" },
-];
-
-const recentOrders = [];
-
 function PanelSkeleton() {
   return (
     <div className="panel-content">
@@ -41,10 +32,47 @@ function PanelSkeleton() {
 
 export default function PanelPage() {
   const [ready, setReady] = useState(false);
+  const [stats, setStats] = useState([
+    { label: "Total Products", value: "0", change: "0 total", icon: Box, color: "#0a4bd9" },
+    { label: "Active Orders", value: "0", change: "0 pending", icon: ShoppingCart, color: "#25D366" },
+    { label: "Revenue", value: "0 MAD", change: "0 total", icon: DollarSign, color: "#f5a623" },
+    { label: "Customers", value: "0", change: "0 registered", icon: Users, color: "#7c3aed" },
+  ]);
+  const [recentOrders, setRecentOrders] = useState([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setReady(true), 1000);
-    return () => clearTimeout(timer);
+    async function loadData() {
+      try {
+        const [resProducts, resOrders, resCustomers] = await Promise.all([
+          fetch('/api/products').then(r => r.json()),
+          fetch('/api/orders').then(r => r.json()),
+          fetch('/api/customers').then(r => r.json())
+        ]);
+        
+        const productsList = Array.isArray(resProducts) ? resProducts : [];
+        const ordersList = Array.isArray(resOrders) ? resOrders : [];
+        const customersList = Array.isArray(resCustomers) ? resCustomers : [];
+        
+        const totalProducts = productsList.length;
+        const activeOrders = ordersList.filter(o => o.status === "Pending" || o.status === "Processing").length;
+        const revenue = ordersList.reduce((sum, o) => sum + Number(o.amount || 0), 0);
+        const totalCustomers = customersList.length;
+
+        setStats([
+          { label: "Total Products", value: `${totalProducts}`, change: `${productsList.reduce((s, p) => s + (p.stock || 0), 0)} items in stock`, icon: Box, color: "#0a4bd9" },
+          { label: "Active Orders", value: `${activeOrders}`, change: `${ordersList.filter(o => o.status === "Pending").length} pending verification`, icon: ShoppingCart, color: "#25D366" },
+          { label: "Revenue", value: `${revenue.toLocaleString("en-US")} MAD`, change: "Total YTD Sales", icon: DollarSign, color: "#f5a623" },
+          { label: "Customers", value: `${totalCustomers}`, change: `${customersList.filter(c => c.status === "VIP").length} VIP members`, icon: Users, color: "#7c3aed" },
+        ]);
+        
+        setRecentOrders(ordersList.slice(0, 5));
+      } catch (e) {
+        console.error("Failed to load dashboard data:", e);
+      } finally {
+        setReady(true);
+      }
+    }
+    loadData();
   }, []);
 
   if (!ready) return <PanelSkeleton />;

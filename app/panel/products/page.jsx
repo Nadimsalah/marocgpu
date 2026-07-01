@@ -4,22 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Edit3, Image as ImageIcon, Plus, Search, Upload, X } from "lucide-react";
 
-const allProducts = [
-  { id: 1, name: "ProWork X1 Mobile Studio", category: "Consumer", price: 12990, stock: 24, sold: 187, badge: "Best seller", image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=200&q=80" },
-  { id: 2, name: "EliteBook Pro 14", category: "Consumer", price: 10990, stock: 31, sold: 142, badge: "Business ready", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80" },
-  { id: 3, name: "CreatorBook OLED 16", category: "Consumer", price: 15490, stock: 12, sold: 98, badge: "New", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=200&q=80" },
-  { id: 4, name: "Creator Tower RTX", category: "Professional", price: 18490, stock: 8, sold: 64, badge: "Creator pick", image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=200&q=80" },
-  { id: 5, name: "Apex Gaming G7", category: "Professional", price: 21990, stock: 6, sold: 53, badge: "High performance", image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=200&q=80" },
-  { id: 6, name: "Compact Studio Mini", category: "Professional", price: 8490, stock: 18, sold: 76, badge: "Small footprint", image: "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&w=200&q=80" },
-  { id: 7, name: "GeForce RTX 4070 Super", category: "Graphics", price: 7490, stock: 42, sold: 215, badge: "In stock", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=200&q=80" },
-  { id: 8, name: "StudioView 27 4K", category: "Displays", price: 4799, stock: 15, sold: 89, badge: "Color accurate", image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=200&q=80" },
-  { id: 9, name: "UltraWide Flow 34", category: "Displays", price: 6190, stock: 9, sold: 44, badge: "Immersive", image: "https://images.unsplash.com/photo-1546538915-a9e2c8d0a0b2?auto=format&fit=crop&w=200&q=80" },
-  { id: 10, name: "Forge 75 Keyboard", category: "Accessories", price: 1090, stock: 67, sold: 312, badge: "Hot swappable", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=200&q=80" },
-  { id: 11, name: "Vector Pro Mouse", category: "Accessories", price: 690, stock: 83, sold: 428, badge: "Ultra light", image: "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=200&q=80" },
-  { id: 12, name: "Creator Mic S1", category: "Accessories", price: 1490, stock: 22, sold: 117, badge: "Studio audio", image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=200&q=80" },
-  { id: 13, name: "Laser Pro M400", category: "Printers", price: 3290, stock: 11, sold: 38, badge: "Office ready", image: "https://images.unsplash.com/photo-1612810806695-30f7d5e2a7b5?auto=format&fit=crop&w=200&q=80" },
-  { id: 14, name: "SmartTank Studio", category: "Printers", price: 2790, stock: 14, sold: 51, badge: "Low cost printing", image: "https://images.unsplash.com/photo-1562408590-e32931084e23?auto=format&fit=crop&w=200&q=80" },
-];
+const allProducts = [];
 
 const categories = ["All", "Consumer", "Professional", "Graphics", "Displays", "Accessories", "Printers"];
 
@@ -40,40 +25,66 @@ export default function ProductsPage() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [selected, setSelected] = useState(null);
-  const [products, setProducts] = useState(allProducts);
+  const [products, setProducts] = useState([]);
+  const [rawProducts, setRawProducts] = useState([]);
   const [editForm, setEditForm] = useState(null);
   const [adding, setAdding] = useState(false);
   const [addForm, setAddForm] = useState({
     name: "", category: "Consumer", price: "", stock: "", badge: "", sold: "0", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80",
   });
 
+  const loadProducts = async () => {
+    try {
+      const res = await fetch('/api/products');
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : [];
+      setProducts(list);
+      setRawProducts(list);
+    } catch (e) {
+      console.error("Error loading products:", e);
+    } finally {
+      setReady(true);
+    }
+  };
+
   useEffect(() => {
-    const timer = setTimeout(() => setReady(true), 800);
-    return () => clearTimeout(timer);
+    loadProducts();
   }, []);
 
   useEffect(() => {
-    let filtered = allProducts;
+    let filtered = rawProducts;
     if (search.trim()) {
       const q = search.toLowerCase();
-      filtered = filtered.filter((p) => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || p.badge.toLowerCase().includes(q));
+      filtered = filtered.filter((p) => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || (p.badge && p.badge.toLowerCase().includes(q)));
     }
     if (categoryFilter !== "All") {
       filtered = filtered.filter((p) => p.category === categoryFilter);
     }
     setProducts(filtered);
-  }, [search, categoryFilter]);
+  }, [search, categoryFilter, rawProducts]);
 
   const openEdit = (product) => {
     setEditForm({ ...product });
     setSelected(product);
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (!editForm) return;
-    setProducts((prev) => prev.map((p) => (p.id === editForm.id ? editForm : p)));
-    setSelected(editForm);
-    setEditForm(null);
+    try {
+      const res = await fetch('/api/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editForm)
+      });
+      const updated = await res.json();
+      if (updated && !updated.error) {
+        setRawProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+        setSelected(updated);
+        setEditForm(null);
+      }
+    } catch (e) {
+      console.error("Error saving product changes:", e);
+    }
   };
 
   if (!ready) return <Skeleton />;
@@ -309,22 +320,31 @@ export default function ProductsPage() {
                   <div className="products-edit-actions">
                     <button
                       className="store-save-btn"
-                      onClick={() => {
+                      onClick={async () => {
                         if (!addForm.name.trim()) return;
-                        const newId = Math.max(...products.map((p) => p.id)) + 1;
-                        const newProduct = {
-                          id: newId,
-                          name: addForm.name,
-                          category: addForm.category,
-                          price: parseInt(addForm.price) || 0,
-                          stock: parseInt(addForm.stock) || 0,
-                          sold: 0,
-                          badge: addForm.badge || "New",
-                          image: addForm.image,
-                        };
-                        setProducts((prev) => [newProduct, ...prev]);
-                        setAdding(false);
-                        setAddForm({ name: "", category: "Consumer", price: "", stock: "", badge: "", sold: "0", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80" });
+                        try {
+                          const res = await fetch('/api/products', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              name: addForm.name,
+                              category: addForm.category,
+                              price: parseInt(addForm.price) || 0,
+                              stock: parseInt(addForm.stock) || 0,
+                              sold: 0,
+                              badge: addForm.badge || "New",
+                              image: addForm.image || "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80",
+                            })
+                          });
+                          const created = await res.json();
+                          if (created && !created.error) {
+                            setRawProducts((prev) => [created, ...prev]);
+                            setAdding(false);
+                            setAddForm({ name: "", category: "Consumer", price: "", stock: "", badge: "", sold: "0", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80" });
+                          }
+                        } catch (e) {
+                          console.error("Error creating product:", e);
+                        }
                       }}
                     >
                       <Plus size={16} /> Create product

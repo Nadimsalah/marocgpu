@@ -12,44 +12,7 @@ import {
   X,
 } from "lucide-react";
 
-const monthlyData = [
-  { month: "Jan", revenue: 142000, orders: 28, visitors: 1840, conversion: 1.52 },
-  { month: "Feb", revenue: 168000, orders: 34, visitors: 2120, conversion: 1.6 },
-  { month: "Mar", revenue: 195000, orders: 41, visitors: 2540, conversion: 1.61 },
-  { month: "Apr", revenue: 172000, orders: 36, visitors: 2310, conversion: 1.56 },
-  { month: "May", revenue: 224000, orders: 48, visitors: 2980, conversion: 1.61 },
-  { month: "Jun", revenue: 256000, orders: 52, visitors: 3410, conversion: 1.53 },
-  { month: "Jul", revenue: 238000, orders: 47, visitors: 3120, conversion: 1.51 },
-  { month: "Aug", revenue: 215000, orders: 43, visitors: 2850, conversion: 1.51 },
-  { month: "Sep", revenue: 272000, orders: 56, visitors: 3670, conversion: 1.53 },
-  { month: "Oct", revenue: 298000, orders: 61, visitors: 4020, conversion: 1.52 },
-  { month: "Nov", revenue: 345000, orders: 68, visitors: 4560, conversion: 1.49 },
-  { month: "Dec", revenue: 412000, orders: 82, visitors: 5230, conversion: 1.57 },
-];
-
-const categoryBreakdown = [
-  { name: "Consumer", revenue: 892000, orders: 184, percentage: 32 },
-  { name: "Professional", revenue: 764000, orders: 156, percentage: 27 },
-  { name: "Graphics", revenue: 312000, orders: 68, percentage: 11 },
-  { name: "Displays", revenue: 289000, orders: 52, percentage: 10 },
-  { name: "Accessories", revenue: 351000, orders: 142, percentage: 13 },
-  { name: "Printers", revenue: 198000, orders: 38, percentage: 7 },
-];
-
-const topProducts = [
-  { name: "Vector Pro Mouse", sold: 428, revenue: 295320, growth: 18 },
-  { name: "Forge 75 Keyboard", sold: 312, revenue: 340080, growth: 12 },
-  { name: "GeForce RTX 4070 Super", sold: 215, revenue: 1610350, growth: 24 },
-  { name: "ProWork X1 Mobile Studio", sold: 187, revenue: 2429130, growth: 8 },
-  { name: "EliteBook Pro 14", sold: 142, revenue: 1560580, growth: -3 },
-];
-
-const kpiCards = [
-  { label: "Total Revenue", value: "2,806,000 MAD", change: "+18.2%", up: true, icon: DollarSign, detail: "Year-to-date revenue across all products and channels." },
-  { label: "Total Orders", value: "616", change: "+12.4%", up: true, icon: ShoppingCart, detail: "Total orders placed this year across all categories." },
-  { label: "Unique Visitors", value: "38,620", change: "+22.1%", up: true, icon: Users, detail: "Unique website visitors tracked across all pages." },
-  { label: "Conversion Rate", value: "1.54%", change: "-0.08%", up: false, icon: BarChart3, detail: "Overall conversion rate from visitor to purchase." },
-];
+// Dynamic analytics datasets calculated in component
 
 function Skeleton() {
   return (
@@ -69,14 +32,96 @@ function Skeleton() {
 export default function AnalyticsPage() {
   const [ready, setReady] = useState(false);
   const [selectedKpi, setSelectedKpi] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setReady(true), 900);
-    return () => clearTimeout(timer);
+    async function loadData() {
+      try {
+        const [resOrders, resCustomers] = await Promise.all([
+          fetch('/api/orders').then(r => r.json()),
+          fetch('/api/customers').then(r => r.json())
+        ]);
+        setOrders(Array.isArray(resOrders) ? resOrders : []);
+        setCustomers(Array.isArray(resCustomers) ? resCustomers : []);
+      } catch (e) {
+        console.error("Failed to load analytics data:", e);
+      } finally {
+        setReady(true);
+      }
+    }
+    loadData();
   }, []);
 
-  const maxRevenue = Math.max(...monthlyData.map((d) => d.revenue));
-  const maxOrders = Math.max(...monthlyData.map((d) => d.orders));
+  const totalRevenue = orders.reduce((sum, o) => sum + Number(o.amount || 0), 0);
+  const totalOrders = orders.length;
+  const totalCustomers = customers.length;
+  const aov = totalOrders > 0 ? Math.round(totalRevenue / totalOrders) : 0;
+
+  const kpiCards = [
+    { label: "Total Revenue", value: `${totalRevenue.toLocaleString("en-US")} MAD`, change: "Real-time", up: true, icon: DollarSign, detail: "Total revenue across all real completed checkouts." },
+    { label: "Total Orders", value: `${totalOrders}`, change: "Real-time", up: true, icon: ShoppingCart, detail: "Total number of real orders placed." },
+    { label: "Unique Customers", value: `${totalCustomers}`, change: "Real-time", up: true, icon: Users, detail: "Unique customer profiles captured." },
+    { label: "Average Order Value", value: `${aov.toLocaleString("en-US")} MAD`, change: "Real-time", up: true, icon: BarChart3, detail: "Average transaction size across all orders." },
+  ];
+
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthlyData = months.map((m, idx) => {
+    const monthOrders = orders.filter(o => {
+      if (!o.date) return false;
+      const orderMonth = new Date(o.date).getMonth();
+      return orderMonth === idx;
+    });
+    const revenue = monthOrders.reduce((sum, o) => sum + Number(o.amount || 0), 0);
+    return {
+      month: m,
+      revenue,
+      orders: monthOrders.length
+    };
+  });
+
+  const maxRevenue = Math.max(...monthlyData.map((d) => d.revenue)) || 1;
+  const maxOrders = Math.max(...monthlyData.map((d) => d.orders)) || 1;
+
+  const categoriesList = ["Consumer", "Professional", "Graphics", "Displays", "Accessories", "Printers"];
+  const categoryBreakdown = categoriesList.map(cat => {
+    const catOrders = orders.filter(o => o.category === cat);
+    const revenue = catOrders.reduce((sum, o) => sum + Number(o.amount || 0), 0);
+    const totalRevenueSum = totalRevenue || 1;
+    return {
+      name: cat,
+      revenue,
+      orders: catOrders.length,
+      percentage: Math.round((revenue / totalRevenueSum) * 100)
+    };
+  });
+
+  const productSales = {};
+  orders.forEach(o => {
+    if (!o.product) return;
+    const parts = o.product.split(", ");
+    parts.forEach(part => {
+      const match = part.match(/(.+) \(x(\d+)\)/);
+      if (match) {
+        const name = match[1];
+        const qty = parseInt(match[2]) || 0;
+        productSales[name] = (productSales[name] || 0) + qty;
+      } else {
+        productSales[part] = (productSales[part] || 0) + 1;
+      }
+    });
+  });
+
+  const topProducts = Object.keys(productSales).map(name => {
+    const sold = productSales[name];
+    const revenue = sold * 8500;
+    return {
+      name,
+      sold,
+      revenue,
+      growth: 0
+    };
+  }).sort((a, b) => b.sold - a.sold).slice(0, 5);
 
   if (!ready) return <Skeleton />;
 

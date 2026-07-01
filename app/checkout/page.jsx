@@ -137,11 +137,58 @@ export default function CheckoutPage() {
     return Object.keys(errs).length === 0;
   };
 
+  const [orderId, setOrderId] = useState("");
+
   const nextStep = () => {
     if (step === 1 && validateStep1()) setStep(2);
   };
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
+    const orderNum = `MG-${Math.floor(100000 + Math.random() * 900000)}`;
+    setOrderId(orderNum);
+
+    const orderData = {
+      id: orderNum,
+      customer: `${form.firstName} ${form.lastName}`,
+      email: form.email,
+      phone: form.phone,
+      product: items.map(i => `${i.name} (x${i.qty})`).join(", "),
+      category: items[0]?.category || "General",
+      amount: total,
+      quantity: count,
+      status: "Pending",
+      date: new Date().toISOString().split('T')[0],
+      address: `${form.address}, ${form.city} ${form.zip}`,
+      shipping: shipping === 0 ? "Free" : "Standard",
+      payment: "Unpaid"
+    };
+
+    try {
+      // 1. Post order to Supabase API
+      await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      });
+
+      // 2. Post customer profile to Supabase API
+      await fetch('/api/customers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: form.email,
+          name: `${form.firstName} ${form.lastName}`,
+          phone: form.phone,
+          city: form.city,
+          spent: total,
+          orders: 1,
+          joined: new Date().toISOString().split('T')[0]
+        })
+      });
+    } catch (e) {
+      console.error("Error placing order in Supabase:", e);
+    }
+
     setOrderPlaced(true);
     clearCart();
   };
@@ -206,7 +253,7 @@ export default function CheckoutPage() {
             <p>Thank you for your purchase. We'll send a confirmation to <strong>{form.email}</strong> with tracking details.</p>
             <div className="checkout-success-order">
               <span>Order number</span>
-              <strong>#MG-{Math.floor(100000 + Math.random() * 900000)}</strong>
+              <strong>#{orderId}</strong>
             </div>
             <Link className="checkout-success-cta" href="/">Back to home</Link>
           </motion.div>
