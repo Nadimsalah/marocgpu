@@ -124,7 +124,7 @@ export default function PanelPage() {
       >
         <div className="panel-section-header">
           <h2>Recent orders</h2>
-          <a href="/panel/orders">View all</a>
+          <a href="/panel/orders/">View all</a>
         </div>
         <div className="panel-table-wrap">
           {recentOrders.length > 0 ? (
