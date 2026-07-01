@@ -16,13 +16,13 @@ import {
 import Link from "next/link";
 
 const navItems = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/panel" },
-  { label: "Products", icon: Box, href: "/panel/products" },
-  { label: "Orders", icon: ShoppingCart, href: "/panel/orders" },
-  { label: "Customers", icon: Users, href: "/panel/customers" },
-  { label: "Analytics", icon: BarChart3, href: "/panel/analytics" },
-  { label: "Store", icon: Paintbrush, href: "/panel/store" },
-  { label: "Settings", icon: Settings, href: "/panel/settings" },
+  { label: "Dashboard", icon: LayoutDashboard, href: "/panel/" },
+  { label: "Products", icon: Box, href: "/panel/products/" },
+  { label: "Orders", icon: ShoppingCart, href: "/panel/orders/" },
+  { label: "Customers", icon: Users, href: "/panel/customers/" },
+  { label: "Analytics", icon: BarChart3, href: "/panel/analytics/" },
+  { label: "Store", icon: Paintbrush, href: "/panel/store/" },
+  { label: "Settings", icon: Settings, href: "/panel/settings/" },
 ];
 
 export default function PanelLayout({ children }) {
@@ -33,7 +33,7 @@ export default function PanelLayout({ children }) {
       <aside className={`panel-sidebar ${collapsed ? "collapsed" : ""}`}>
         <div className="panel-sidebar-header">
           {!collapsed && (
-            <a href="/panel" className="panel-logo">
+            <a href="/panel/" className="panel-logo">
               <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" style={{ height: 36, width: "auto" }} />
             </a>
           )}
@@ -53,10 +53,6 @@ export default function PanelLayout({ children }) {
               key={label}
               href={href}
               className="panel-nav-link"
-              onClick={(e) => {
-                const pathname = window.location.pathname;
-                if (href !== "/panel" && !href) e.preventDefault();
-              }}
             >
               <Icon size={20} />
               {!collapsed && <span>{label}</span>}

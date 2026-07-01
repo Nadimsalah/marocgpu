@@ -53,8 +53,25 @@ export default function ProductsPage() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("featured");
   const { addToCart, items, setDrawerOpen, hydrated } = useCart();
+  const [liveProducts, setLiveProducts] = useState([]);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    async function loadProducts() {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setLiveProducts(data);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setReady(true);
+      }
+    }
+    loadProducts();
+
     const params = new URLSearchParams(window.location.search);
     const category = normalizeCategory(params.get("category"));
     setActiveCategory(category);
@@ -63,8 +80,18 @@ export default function ProductsPage() {
     }
   }, []);
 
+  const displayProducts = liveProducts.length > 0 ? liveProducts.map((p) => ({
+    id: p.id,
+    name: p.name,
+    category: p.category,
+    price: Number(p.price),
+    badge: p.badge || "New",
+    spec: p.description || "",
+    image: p.image || "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80"
+  })) : catalogProducts;
+
   const visibleProducts = useMemo(() => {
-    const filtered = catalogProducts.filter((product) => {
+    const filtered = displayProducts.filter((product) => {
       const categoryMatch = activeCategory === "All" || product.category === activeCategory;
       const searchMatch = `${product.name} ${product.spec}`.toLowerCase().includes(query.toLowerCase());
       return categoryMatch && searchMatch;
@@ -76,7 +103,7 @@ export default function ProductsPage() {
       if (sort === "name") return a.name.localeCompare(b.name);
       return a.id - b.id;
     });
-  }, [activeCategory, query, sort]);
+  }, [activeCategory, query, sort, displayProducts]);
 
   const chooseCategory = (category) => {
     setActiveCategory(category);

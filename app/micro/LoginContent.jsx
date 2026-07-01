@@ -34,7 +34,7 @@ export default function LoginContent() {
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => {
-        router.push("/panel");
+        router.push("/panel/");
       }, 1500);
       return () => clearTimeout(timer);
     }
@@ -99,7 +99,7 @@ export default function LoginContent() {
           </motion.div>
           <h2>Access granted</h2>
           <p>Welcome to MarocGPU Micro.</p>
-          <a className="micro-cta" href="/panel">
+          <a className="micro-cta" href="/panel/">
             Enter dashboard <ArrowRight size={18} />
           </a>
         </motion.div>
