@@ -633,6 +633,8 @@ export default function Page() {
   const { settings } = useSite();
   const megaMenu = activeMenu ? getMegaMenu(activeMenu) : null;
 
+  const [liveProducts, setLiveProducts] = useState([]);
+
   React.useEffect(() => {
     const closeOnEscape = (event) => {
       if (event.key === "Escape") setActiveMenu(null);
@@ -642,9 +644,42 @@ export default function Page() {
   }, []);
 
   React.useEffect(() => {
-    const timer = setTimeout(() => setReady(true), 1200);
-    return () => clearTimeout(timer);
+    async function loadLiveProducts() {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setLiveProducts(data);
+        }
+      } catch (e) {
+        console.error("Storefront Page live products load error:", e);
+      } finally {
+        setReady(true);
+      }
+    }
+    loadLiveProducts();
   }, []);
+
+  const mappedProducts = liveProducts.map((p) => ({
+    id: String(p.id),
+    catalogId: p.id,
+    name: p.name,
+    category: p.category,
+    price: `${Number(p.price).toLocaleString("en-US")} MAD`,
+    note: p.badge || (p.stock > 0 ? "In stock" : "Out of stock"),
+    image: p.image || "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80",
+    description: p.description
+  }));
+
+  const displayProducts = liveProducts.length > 0 ? mappedProducts : products;
+
+  const displayBusiness = liveProducts.length > 0 
+    ? mappedProducts.filter(p => p.category === "Professional" || p.category === "Workstations").slice(0, 4)
+    : businessProducts;
+  
+  const finalBusiness = (liveProducts.length > 0 && displayBusiness.length === 0) 
+    ? mappedProducts.slice(0, 4) 
+    : displayBusiness;
 
   if (!ready) return <LoadingSkeleton />;
 
@@ -776,11 +811,11 @@ export default function Page() {
             <p>CURATED BY MAROCGPU</p>
             <h2>Shop These Must Haves</h2>
           </div>
-          <span>{products.length} essentials for your setup</span>
+          <span>{displayProducts.length} essentials for your setup</span>
         </div>
 
         <div className="must-haves-grid">
-          {products.slice(0, visibleProducts).map((product, index) => {
+          {displayProducts.slice(0, visibleProducts).map((product, index) => {
             const inCart = hydrated && items.some((i) => i.id === product.catalogId);
             return (
               <motion.article
@@ -816,11 +851,11 @@ export default function Page() {
           })}
         </div>
 
-        {visibleProducts < products.length ? (
+        {visibleProducts < displayProducts.length ? (
           <button
             className="load-more-btn"
             type="button"
-            onClick={() => setVisibleProducts(products.length)}
+            onClick={() => setVisibleProducts(displayProducts.length)}
           >
             Load more products
             <span aria-hidden="true">+</span>
@@ -950,7 +985,7 @@ export default function Page() {
         </div>
 
         <div className="business-products-grid">
-          {businessProducts.map((product, index) => {
+          {finalBusiness.map((product, index) => {
             const isAdded = hydrated && items.some((i) => i.id === product.catalogId);
             return (
               <motion.article

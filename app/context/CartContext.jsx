@@ -33,6 +33,22 @@ export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [dbCatalog, setDbCatalog] = useState([]);
+
+  useEffect(() => {
+    async function loadDbCatalog() {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setDbCatalog(data);
+        }
+      } catch (e) {
+        console.error("CartContext loadDbCatalog error:", e);
+      }
+    }
+    loadDbCatalog();
+  }, []);
 
   useEffect(() => {
     try {
@@ -88,8 +104,24 @@ export function CartProvider({ children }) {
 
   const clearCart = () => setItems([]);
 
+  const getProductDetails = (id) => {
+    const dbProd = dbCatalog.find((p) => p.id === id || String(p.id) === String(id));
+    if (dbProd) {
+      return {
+        id: dbProd.id,
+        name: dbProd.name,
+        category: dbProd.category,
+        price: Number(dbProd.price),
+        badge: dbProd.badge,
+        spec: dbProd.description || "",
+        image: dbProd.image || "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80"
+      };
+    }
+    return CATALOG.find((p) => p.id === id || String(p.id) === String(id));
+  };
+
   const cartItems = items.map((item) => {
-    const product = getProduct(item.id);
+    const product = getProductDetails(item.id);
     return product ? { ...product, qty: item.qty } : null;
   }).filter(Boolean);
 

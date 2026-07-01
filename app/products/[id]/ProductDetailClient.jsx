@@ -153,15 +153,48 @@ export default function ProductDetailPage({ params }) {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("specs");
   const { addToCart, count, setDrawerOpen, hydrated } = useCart();
+  const [product, setProduct] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setReady(true), 1200);
-    return () => clearTimeout(timer);
-  }, []);
+    async function loadProduct() {
+      try {
+        const res = await fetch('/api/products');
+        const list = await res.json();
+        if (Array.isArray(list)) {
+          const found = list.find((p) => String(p.id) === String(params.id));
+          if (found) {
+            setProduct({
+              ...found,
+              price: Number(found.price),
+              spec: found.description || "",
+              specs: found.specs || { processor: "Performance core", memory: "Standard RAM", storage: "High-speed SSD" },
+              features: found.features || ["Premium Quality", "Authentic Product", "Full Warranty"]
+            });
+            setRelatedProducts(list.filter((p) => String(p.id) !== String(found.id) && p.category === found.category).slice(0, 4));
+          } else {
+            const fallback = catalogProducts.find((p) => String(p.id) === String(params.id)) || catalogProducts[0];
+            setProduct(fallback);
+            setRelatedProducts(catalogProducts.filter((p) => p.id !== fallback.id && p.category === fallback.category).slice(0, 4));
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setReady(true);
+      }
+    }
+    loadProduct();
+  }, [params.id]);
 
-  const product = catalogProducts.find((p) => p.id === parseInt(params.id)) || catalogProducts[0];
-  const relatedProducts = getRelatedProducts(product.id, product.category);
-  const images = [product.image, product.image, product.image, product.image];
+  if (!ready || !product) return <ProductDetailSkeleton />;
+
+  const images = [
+    product.image || "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80",
+    product.image,
+    product.image,
+    product.image
+  ].filter(Boolean);
 
   const handleAddToCart = () => {
     addToCart(product.id, quantity);
