@@ -49,14 +49,14 @@ export default function PanelLayout({ children }) {
 
         <nav className="panel-nav">
           {navItems.map(({ label, icon: Icon, href }) => (
-            <Link
+            <a
               key={label}
               href={href}
               className="panel-nav-link"
             >
               <Icon size={20} />
               {!collapsed && <span>{label}</span>}
-            </Link>
+            </a>
           ))}
         </nav>
 
