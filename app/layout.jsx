@@ -1,4 +1,4 @@
-import "./api-interceptor.js";
+import InterceptorLoader from "./api-interceptor.js";
 import "./globals.css";
 import { CartProvider } from "./context/CartContext";
 import { SiteProvider } from "./context/SiteContext";
@@ -12,6 +12,7 @@ export default function RootLayout({ children }) {
         <meta name="description" content="Powerful hardware, expert-built systems, and dependable local support across Morocco." />
       </head>
       <body>
+        <InterceptorLoader />
         <SiteProvider>
           <CartProvider>
             {children}
