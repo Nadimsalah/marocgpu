@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   sold integer DEFAULT 0,
   badge text,
   image text,
+  description text,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

@@ -30,7 +30,7 @@ export default function ProductsPage() {
   const [editForm, setEditForm] = useState(null);
   const [adding, setAdding] = useState(false);
   const [addForm, setAddForm] = useState({
-    name: "", category: "Consumer", price: "", stock: "", badge: "", sold: "0", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80",
+    name: "", category: "Consumer", price: "", stock: "", badge: "", image: "", description: ""
   });
 
   const loadProducts = async () => {
@@ -212,6 +212,26 @@ export default function ProductsPage() {
                         </div>
                       </label>
                     </div>
+                    <div className="products-edit-row" style={{ gridTemplateColumns: "1fr" }}>
+                      <label>
+                        <span>Description</span>
+                        <textarea
+                          value={editForm.description || ""}
+                          onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                          placeholder="Detailed description of the product features, specs, and contents..."
+                          style={{
+                            width: "100%",
+                            minHeight: 100,
+                            borderRadius: 8,
+                            border: "1px solid #dcdde1",
+                            padding: "12px",
+                            fontFamily: "inherit",
+                            fontSize: "0.9rem",
+                            resize: "vertical"
+                          }}
+                        />
+                      </label>
+                    </div>
                     <div className="products-edit-actions">
                       <button className="store-save-btn" onClick={saveEdit}>Save changes</button>
                       <button className="products-cancel-btn" onClick={() => { setEditForm(null); }}>Cancel</button>
@@ -243,6 +263,12 @@ export default function ProductsPage() {
                       <h4>Revenue</h4>
                       <p className="orders-detail-amount">{(selected.price * selected.sold).toLocaleString("en-US")} MAD</p>
                     </div>
+                    {selected.description && (
+                      <div className="orders-detail-card" style={{ gridColumn: "1 / -1" }}>
+                        <h4>Description</h4>
+                        <p style={{ fontSize: "0.88rem", color: "#444", lineHeight: 1.5, margin: "6px 0 0" }}>{selected.description}</p>
+                      </div>
+                    )}
                     <button className="store-save-btn" style={{ gridColumn: "1 / -1", width: "100%", justifyContent: "center" }} onClick={() => openEdit(selected)}>
                       <Edit3 size={16} /> Edit product
                     </button>
@@ -317,6 +343,26 @@ export default function ProductsPage() {
                       </div>
                     </label>
                   </div>
+                  <div className="products-edit-row" style={{ gridTemplateColumns: "1fr" }}>
+                    <label>
+                      <span>Description</span>
+                      <textarea
+                        value={addForm.description}
+                        onChange={(e) => setAddForm({ ...addForm, description: e.target.value })}
+                        placeholder="Detailed description of the product features, specs, and contents..."
+                        style={{
+                          width: "100%",
+                          minHeight: 100,
+                          borderRadius: 8,
+                          border: "1px solid #dcdde1",
+                          padding: "12px",
+                          fontFamily: "inherit",
+                          fontSize: "0.9rem",
+                          resize: "vertical"
+                        }}
+                      />
+                    </label>
+                  </div>
                   <div className="products-edit-actions">
                     <button
                       className="store-save-btn"
@@ -333,14 +379,15 @@ export default function ProductsPage() {
                               stock: parseInt(addForm.stock) || 0,
                               sold: 0,
                               badge: addForm.badge || "New",
-                              image: addForm.image || "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80",
+                              image: addForm.image || "",
+                              description: addForm.description || ""
                             })
                           });
                           const created = await res.json();
                           if (created && !created.error) {
                             setRawProducts((prev) => [created, ...prev]);
                             setAdding(false);
-                            setAddForm({ name: "", category: "Consumer", price: "", stock: "", badge: "", sold: "0", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80" });
+                            setAddForm({ name: "", category: "Consumer", price: "", stock: "", badge: "", image: "", description: "" });
                           }
                         } catch (e) {
                           console.error("Error creating product:", e);
