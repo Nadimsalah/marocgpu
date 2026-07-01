@@ -12,6 +12,11 @@ const statusColors = {
   Inactive: { bg: "#f5f5f5", color: "#888" },
 };
 
+const getStatusColors = (status) => {
+  return statusColors[status] || { bg: "#f5f5f5", color: "#888" };
+};
+
+
 function Skeleton() {
   return (
     <div className="panel-content">
@@ -110,8 +115,8 @@ export default function CustomersPage() {
                   <td style={{ color: "#777", fontSize: "0.84rem" }}>{c.email}</td>
                   <td>{c.city}</td>
                   <td style={{ fontWeight: 650 }}>{c.orders}</td>
-                  <td className="panel-amount">{c.spent.toLocaleString("en-US")} MAD</td>
-                  <td><span className="panel-status" style={{ background: statusColors[c.status].bg, color: statusColors[c.status].color }}>{c.status}</span></td>
+                  <td className="panel-amount">{(Number(c.spent) || 0).toLocaleString("en-US")} MAD</td>
+                  <td><span className="panel-status" style={{ background: getStatusColors(c.status).bg, color: getStatusColors(c.status).color }}>{c.status || "Active"}</span></td>
                   <td><button className="orders-view-btn" onClick={() => setSelected(c)}><Eye size={16} /></button></td>
                 </tr>
               ))}
@@ -146,11 +151,11 @@ export default function CustomersPage() {
                   <div className="orders-detail-card">
                     <h4>Activity</h4>
                     <p><ShoppingBag size={14} style={{ marginRight: 6, verticalAlign: "middle", color: "#0a4bd9" }} />{selected.orders} orders</p>
-                    <p className="orders-detail-amount">{selected.spent.toLocaleString("en-US")} MAD spent</p>
+                    <p className="orders-detail-amount">{(Number(selected.spent) || 0).toLocaleString("en-US")} MAD spent</p>
                   </div>
                   <div className="orders-detail-card">
                     <h4>Status</h4>
-                    <span className="panel-status" style={{ background: statusColors[selected.status].bg, color: statusColors[selected.status].color }}>{selected.status}</span>
+                    <span className="panel-status" style={{ background: getStatusColors(selected.status).bg, color: getStatusColors(selected.status).color }}>{selected.status || "Active"}</span>
                   </div>
                 </div>
               </div>

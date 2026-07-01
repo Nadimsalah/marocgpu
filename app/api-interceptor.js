@@ -13,7 +13,16 @@ export default function InterceptorLoader() {
     if (typeof window !== "undefined" && !window.fetch.__intercepted) {
       const originalFetch = window.fetch;
       window.fetch = async function (input, init) {
-        const url = typeof input === "string" ? input : input.url;
+        let url = "";
+        if (typeof input === "string") {
+          url = input;
+        } else if (input && typeof input === "object" && typeof input.url === "string") {
+          url = input.url;
+        } else if (input && typeof input.href === "string") {
+          url = input.href;
+        } else if (input && typeof input.toString === "function") {
+          url = input.toString();
+        }
 
         if (url.startsWith('/api/products')) {
           try {
