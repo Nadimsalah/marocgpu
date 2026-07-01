@@ -26,6 +26,7 @@ export default function ProductsPage() {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [selected, setSelected] = useState(null);
   const [products, setProducts] = useState([]);
+  const [addError, setAddError] = useState("");
   const [rawProducts, setRawProducts] = useState([]);
   const [editForm, setEditForm] = useState(null);
   const [adding, setAdding] = useState(false);
@@ -96,7 +97,7 @@ export default function ProductsPage() {
           <h1>Products</h1>
           <p>{allProducts.length} products · {allProducts.reduce((s, p) => s + p.stock, 0)} total stock</p>
         </div>
-        <button className="store-save-btn" onClick={() => setAdding(true)} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+        <button className="store-save-btn" onClick={() => { setAdding(true); setAddError(""); }} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
           <Plus size={17} /> Add product
         </button>
       </div>
@@ -363,11 +364,17 @@ export default function ProductsPage() {
                       />
                     </label>
                   </div>
+                  {addError && (
+                    <div style={{ color: "#e53e3e", fontSize: "0.85rem", margin: "12px 0 6px", textAlign: "center", fontWeight: 600 }}>
+                      {addError}
+                    </div>
+                  )}
                   <div className="products-edit-actions">
                     <button
                       className="store-save-btn"
                       onClick={async () => {
                         if (!addForm.name.trim()) return;
+                        setAddError("");
                         try {
                           const res = await fetch('/api/products', {
                             method: 'POST',
@@ -384,13 +391,16 @@ export default function ProductsPage() {
                             })
                           });
                           const created = await res.json();
-                          if (created && !created.error) {
+                          if (res.ok && created && !created.error) {
                             setRawProducts((prev) => [created, ...prev]);
                             setAdding(false);
                             setAddForm({ name: "", category: "Consumer", price: "", stock: "", badge: "", image: "", description: "" });
+                          } else {
+                            setAddError(created?.error || "Failed to create product. Check database columns.");
                           }
                         } catch (e) {
                           console.error("Error creating product:", e);
+                          setAddError("Network error. Please try again.");
                         }
                       }}
                     >
