@@ -877,7 +877,7 @@ export default function Page() {
             <p className="feature-story-description">
               {settings.featureDescription}
             </p>
-            <a className="feature-story-cta" href="#collections">
+            <a className="feature-story-cta" href={settings.featureCtaLink || "#collections"}>
               {settings.featureCta}
               <ArrowRight size={18} />
             </a>
@@ -885,8 +885,8 @@ export default function Page() {
 
           <div className="feature-story-media">
             <img
-              src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1600&q=88"
-              alt="A team collaborating around a laptop in a modern workspace"
+              src={settings.featureImage || "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1600&q=88"}
+              alt="Feature story visual representation"
               loading="lazy"
             />
             <div className="feature-story-stat">
@@ -905,55 +905,65 @@ export default function Page() {
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="solution-stripe stripe-one" />
-          <span className="solution-stripe stripe-two" />
+          {settings.solutionsImage ? (
+            <img 
+              src={settings.solutionsImage} 
+              alt="Solutions visual showcase" 
+              style={{ width: "100%", height: "100%", maxHeight: 420, borderRadius: 20, objectFit: "cover", boxShadow: "0 20px 40px rgba(0,0,0,0.06)" }} 
+            />
+          ) : (
+            <>
+              <span className="solution-stripe stripe-one" />
+              <span className="solution-stripe stripe-two" />
 
-          <div className="dashboard-device">
-            <div className="dashboard-camera" />
-            <div className="dashboard-screen">
-              <div className="dashboard-topbar">
-                <strong>MarocGPU Control</strong>
-                <span>Live overview</span>
-              </div>
-              <div className="dashboard-grid">
-                <div className="dashboard-panel dashboard-score">
-                  <small>Setup score</small>
-                  <strong>94</strong>
-                  <span>Excellent</span>
-                </div>
-                <div className="dashboard-panel dashboard-chart">
-                  <small>System performance</small>
-                  <div className="chart-bars">
-                    {[42, 66, 54, 82, 72, 92, 78].map((height, index) => (
-                      <i key={index} style={{ height: `${height}%` }} />
-                    ))}
+              <div className="dashboard-device">
+                <div className="dashboard-camera" />
+                <div className="dashboard-screen">
+                  <div className="dashboard-topbar">
+                    <strong>MarocGPU Control</strong>
+                    <span>Live overview</span>
+                  </div>
+                  <div className="dashboard-grid">
+                    <div className="dashboard-panel dashboard-score">
+                      <small>Setup score</small>
+                      <strong>94</strong>
+                      <span>Excellent</span>
+                    </div>
+                    <div className="dashboard-panel dashboard-chart">
+                      <small>System performance</small>
+                      <div className="chart-bars">
+                        {[42, 66, 54, 82, 72, 92, 78].map((height, index) => (
+                          <i key={index} style={{ height: `${height}%` }} />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="dashboard-panel dashboard-health">
+                      <small>Component health</small>
+                      <div><span>CPU</span><b style={{ width: "84%" }} /></div>
+                      <div><span>GPU</span><b style={{ width: "92%" }} /></div>
+                      <div><span>Memory</span><b style={{ width: "76%" }} /></div>
+                    </div>
+                    <div className="dashboard-panel dashboard-activity">
+                      <small>Live activity</small>
+                      <span className="activity-line" />
+                      <p>All systems running smoothly</p>
+                    </div>
                   </div>
                 </div>
-                <div className="dashboard-panel dashboard-health">
-                  <small>Component health</small>
-                  <div><span>CPU</span><b style={{ width: "84%" }} /></div>
-                  <div><span>GPU</span><b style={{ width: "92%" }} /></div>
-                  <div><span>Memory</span><b style={{ width: "76%" }} /></div>
-                </div>
-                <div className="dashboard-panel dashboard-activity">
-                  <small>Live activity</small>
-                  <span className="activity-line" />
-                  <p>All systems running smoothly</p>
-                </div>
+                <div className="dashboard-base" />
               </div>
-            </div>
-            <div className="dashboard-base" />
-          </div>
 
-          <div className="metric-chip metric-performance">
-            <span>Performance</span><strong>+18</strong><b>94</b>
-          </div>
-          <div className="metric-chip metric-health">
-            <span>System health</span><strong>+7</strong><b>98%</b>
-          </div>
-          <div className="metric-chip metric-support">
-            <span>Support status</span><strong>Live</strong><b>24/7</b>
-          </div>
+              <div className="metric-chip metric-performance">
+                <span>Performance</span><strong>+18</strong><b>94</b>
+              </div>
+              <div className="metric-chip metric-health">
+                <span>System health</span><strong>+7</strong><b>98%</b>
+              </div>
+              <div className="metric-chip metric-support">
+                <span>Support status</span><strong>Live</strong><b>24/7</b>
+              </div>
+            </>
+          )}
         </motion.div>
 
         <motion.div
@@ -969,8 +979,8 @@ export default function Page() {
             {settings.solutionsDescription}
           </span>
           <div className="solutions-actions">
-            <a className="solutions-primary" href="#collections">{settings.solutionsCtaPrimary}</a>
-            <a className="solutions-secondary" href="#collections">{settings.solutionsCtaSecondary}</a>
+            <a className="solutions-primary" href={settings.solutionsCtaPrimaryLink || "#collections"}>{settings.solutionsCtaPrimary}</a>
+            <a className="solutions-secondary" href={settings.solutionsCtaSecondaryLink || "#collections"}>{settings.solutionsCtaSecondary}</a>
           </div>
         </motion.div>
       </section>

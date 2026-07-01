@@ -22,11 +22,16 @@ const defaults = {
   featureTitle: "When performance stops getting in your way.",
   featureDescription: "MarocGPU helps creators, professionals, and growing teams build reliable systems that keep ideas moving.",
   featureCta: "Discover our solutions",
+  featureImage: "",
+  featureCtaLink: "#collections",
   solutionsKicker: "MAROCGPU BUSINESS",
   solutionsTitle: "Shift IT from hardware to impact.",
   solutionsDescription: "Build faster, reduce downtime, and keep every workstation performing with expert configuration and dependable local support.",
   solutionsCtaPrimary: "Request a quote",
   solutionsCtaSecondary: "Explore solutions",
+  solutionsImage: "",
+  solutionsCtaPrimaryLink: "#collections",
+  solutionsCtaSecondaryLink: "#collections",
 };
 
 const SiteContext = createContext(null);

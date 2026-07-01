@@ -13,6 +13,7 @@ import {
   Type,
   Upload,
   X,
+  Link2,
 } from "lucide-react";
 import { useSite } from "../../context/SiteContext";
 import { brandIcons } from "../../components/BrandIcons";
@@ -345,6 +346,49 @@ export default function StorePage() {
                   <input value={settings.featureCta} onChange={(e) => update("featureCta", e.target.value)} />
                 </label>
               </div>
+              <div className="store-form-group">
+                <label>
+                  <span><Link2 size={16} /> CTA Button Link (Redirect URL)</span>
+                  <input value={settings.featureCtaLink || ""} onChange={(e) => update("featureCtaLink", e.target.value)} placeholder="#collections or /products" />
+                </label>
+              </div>
+              <div className="store-form-group">
+                <label>
+                  <span><Image size={16} /> Section Image</span>
+                  <div
+                    className="products-image-upload"
+                    onPaste={(e) => {
+                      const text = e.clipboardData.getData("text");
+                      if (text.match(/^https?:\/\/\S+/i)) {
+                        update("featureImage", text);
+                      }
+                    }}
+                    style={{ width: "100%", height: 180, position: "relative", borderRadius: 12, border: "2px dashed #dcdde1", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", cursor: "pointer", background: "#f8f9fa", marginTop: 8 }}
+                  >
+                    {settings.featureImage ? (
+                      <img src={settings.featureImage} alt="Feature Story" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, color: "#7f8c8d" }}>
+                        <Upload size={24} />
+                        <span style={{ fontSize: "0.85rem" }}>Upload photo or paste URL</span>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }}
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (ev) => update("featureImage", ev.target.result);
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </div>
+                </label>
+              </div>
             </div>
           )}
 
@@ -378,6 +422,55 @@ export default function StorePage() {
                 <label>
                   <span><Text size={16} /> Secondary CTA</span>
                   <input value={settings.solutionsCtaSecondary} onChange={(e) => update("solutionsCtaSecondary", e.target.value)} />
+                </label>
+              </div>
+              <div className="store-form-group">
+                <label>
+                  <span><Link2 size={16} /> Primary CTA Button Link</span>
+                  <input value={settings.solutionsCtaPrimaryLink || ""} onChange={(e) => update("solutionsCtaPrimaryLink", e.target.value)} placeholder="#collections or /products" />
+                </label>
+              </div>
+              <div className="store-form-group">
+                <label>
+                  <span><Link2 size={16} /> Secondary CTA Button Link</span>
+                  <input value={settings.solutionsCtaSecondaryLink || ""} onChange={(e) => update("solutionsCtaSecondaryLink", e.target.value)} placeholder="#collections or /products" />
+                </label>
+              </div>
+              <div className="store-form-group">
+                <label>
+                  <span><Image size={16} /> Section Image (Replaces dashboard device)</span>
+                  <div
+                    className="products-image-upload"
+                    onPaste={(e) => {
+                      const text = e.clipboardData.getData("text");
+                      if (text.match(/^https?:\/\/\S+/i)) {
+                        update("solutionsImage", text);
+                      }
+                    }}
+                    style={{ width: "100%", height: 180, position: "relative", borderRadius: 12, border: "2px dashed #dcdde1", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", cursor: "pointer", background: "#f8f9fa", marginTop: 8 }}
+                  >
+                    {settings.solutionsImage ? (
+                      <img src={settings.solutionsImage} alt="Solutions showcase" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, color: "#7f8c8d" }}>
+                        <Upload size={24} />
+                        <span style={{ fontSize: "0.85rem" }}>Upload photo or paste URL (or leave blank to use dashboard preview)</span>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }}
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (ev) => update("solutionsImage", ev.target.result);
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </div>
                 </label>
               </div>
             </div>
