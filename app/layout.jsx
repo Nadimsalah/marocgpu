@@ -1,3 +1,4 @@
+import "./api-interceptor.js";
 import "./globals.css";
 import { CartProvider } from "./context/CartContext";
 import { SiteProvider } from "./context/SiteContext";
