@@ -37,26 +37,30 @@ const defaults = {
 const SiteContext = createContext(null);
 
 export function SiteProvider({ children }) {
-  const [settings, setSettings] = useState(null);
+  // Initialize with defaults immediately so children always render.
+  // localStorage overrides are applied after hydration to avoid blocking the entire app.
+  const [settings, setSettings] = useState(defaults);
 
   useEffect(() => {
-    const stored = localStorage.getItem("marocgpu_settings");
-    if (stored) {
-      setSettings({ ...defaults, ...JSON.parse(stored) });
-    } else {
-      setSettings(defaults);
+    try {
+      const stored = localStorage.getItem("marocgpu_settings");
+      if (stored) {
+        setSettings({ ...defaults, ...JSON.parse(stored) });
+      }
+    } catch {
+      // localStorage unavailable — defaults are already set
     }
   }, []);
 
   const updateSettings = (updates) => {
     setSettings((prev) => {
       const next = { ...prev, ...updates };
-      localStorage.setItem("marocgpu_settings", JSON.stringify(next));
+      try {
+        localStorage.setItem("marocgpu_settings", JSON.stringify(next));
+      } catch {}
       return next;
     });
   };
-
-  if (!settings) return null;
 
   return (
     <SiteContext.Provider value={{ settings, updateSettings, defaults }}>
