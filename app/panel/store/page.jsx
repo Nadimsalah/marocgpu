@@ -50,6 +50,11 @@ export default function StorePage() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sec = params.get("section");
+    if (sec && sections.some((s) => s.id === sec)) {
+      setActiveSection(sec);
+    }
     const timer = setTimeout(() => setReady(true), 600);
     return () => clearTimeout(timer);
   }, []);
