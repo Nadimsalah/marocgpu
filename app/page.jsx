@@ -11,12 +11,16 @@ import {
   Tag,
   UserRound,
   X as CloseIcon,
+  ChevronDown,
+  Image as ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "./context/CartContext";
 import { useSite } from "./context/SiteContext";
 import SearchModal from "./components/SearchModal";
 import LoadingSkeleton from "./components/LoadingSkeleton";
+import InquiryModal from "./components/InquiryModal";
 
 function cn(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -117,30 +121,30 @@ const megaMenuCatalog = {
     label: "Consumer PCs",
     links: ["Featured", "AI PCs", "Top Rated Laptops", "Gaming Laptops"],
     cards: [
-      { title: "Laptops for Home", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=85" },
-      { title: "Laptops for Work", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=85" },
-      { title: "Mobile Workstations", image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=900&q=85" },
-      { title: "Laptops for Gaming", image: "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?auto=format&fit=crop&w=900&q=85" },
+      { title: "Laptops for Home", image: "" },
+      { title: "Laptops for Work", image: "" },
+      { title: "Mobile Workstations", image: "" },
+      { title: "Laptops for Gaming", image: "" },
     ],
   },
   Professional: {
     label: "Professional Systems",
     links: ["Featured", "Custom Builds", "Gaming PCs", "Workstations"],
     cards: [
-      { title: "Creator Workstations", image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=900&q=85" },
-      { title: "Gaming Desktops", image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=900&q=85" },
-      { title: "Office PCs", image: "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&w=900&q=85" },
-      { title: "Compact Systems", image: "https://images.unsplash.com/photo-1591405351990-4726e331f141?auto=format&fit=crop&w=900&q=85" },
+      { title: "Creator Workstations", image: "" },
+      { title: "Gaming Desktops", image: "" },
+      { title: "Office PCs", image: "" },
+      { title: "Compact Systems", image: "" },
     ],
   },
   Accessories: {
     label: "Setup Essentials",
     links: ["Featured", "Keyboards", "Gaming Mice", "Streaming Gear"],
     cards: [
-      { title: "Mechanical Keyboards", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&q=85" },
-      { title: "Precision Mice", image: "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=85" },
-      { title: "Studio Audio", image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=900&q=85" },
-      { title: "Gaming Displays", image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=900&q=85" },
+      { title: "Mechanical Keyboards", image: "" },
+      { title: "Precision Mice", image: "" },
+      { title: "Studio Audio", image: "" },
+      { title: "Gaming Displays", image: "" },
     ],
   },
 };
@@ -275,7 +279,14 @@ const businessProducts = [
   },
 ];
 
-function MobileMenu({ open, onClose, onSearch, menuNavItems }) {
+function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
+  const [expandedCat, setExpandedCat] = useState(null);
+  const { language, changeLanguage, t } = useSite();
+
+  const toggleCat = (item) => {
+    setExpandedCat(prev => prev === item ? null : item);
+  };
+
   return (
     <AnimatePresence>
       {open ? (
@@ -296,27 +307,131 @@ function MobileMenu({ open, onClose, onSearch, menuNavItems }) {
               <a href="/" className="brand-mark" aria-label="MarocGPU home" onClick={onClose}>
                 <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
               </a>
-              <button className="icon-btn" type="button" onClick={onClose}>
-                <CloseIcon size={20} />
-              </button>
+              <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                <div style={{ display: "inline-flex", background: "#f1f3f5", borderRadius: 20, padding: 3, gap: 2 }}>
+                  <button
+                    type="button"
+                    onClick={() => changeLanguage("en")}
+                    style={{
+                      padding: "3px 8px",
+                      borderRadius: 16,
+                      fontSize: "0.68rem",
+                      fontWeight: 800,
+                      border: "none",
+                      background: language === "en" ? "#0a4bd9" : "transparent",
+                      color: language === "en" ? "#fff" : "#555",
+                      cursor: "pointer"
+                    }}
+                  >
+                    EN
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => changeLanguage("fr")}
+                    style={{
+                      padding: "3px 8px",
+                      borderRadius: 16,
+                      fontSize: "0.68rem",
+                      fontWeight: 800,
+                      border: "none",
+                      background: language === "fr" ? "#0a4bd9" : "transparent",
+                      color: language === "fr" ? "#fff" : "#555",
+                      cursor: "pointer"
+                    }}
+                  >
+                    FR
+                  </button>
+                </div>
+                <button className="icon-btn" type="button" onClick={onClose}>
+                  <CloseIcon size={20} />
+                </button>
+              </div>
             </div>
             <nav className="mobile-nav">
-              {(menuNavItems || navItems).map((item) => (
-                <a key={item} href={item === "Data Center Solutions" ? "/data-center-solutions" : item === "Support" ? "/support" : `/products?category=${encodeURIComponent(item)}`} onClick={onClose}>{item}</a>
-              ))}
+              {(menuNavItems || navItems).map((item) => {
+                const hasSub = item === "Consumer" || item === "Professional";
+                const isExpanded = expandedCat === item;
+                const menuData = hasSub ? (settings?.megaMenus?.[item] || getMegaMenu(item)) : null;
+
+                if (!hasSub) {
+                  return (
+                    <a
+                      key={item}
+                      href={item === "Data Center Solutions" ? "/data-center-solutions" : "/support"}
+                      onClick={onClose}
+                      className="mobile-nav-item"
+                    >
+                      {t(item)}
+                    </a>
+                  );
+                }
+
+                return (
+                  <div key={item} className="mobile-nav-group">
+                    <button
+                      type="button"
+                      onClick={() => toggleCat(item)}
+                      className="mobile-nav-header"
+                      aria-expanded={isExpanded}
+                    >
+                      {t(item)}
+                      <ChevronDown
+                        size={16}
+                        style={{
+                          transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                          transition: "transform 0.2s ease"
+                        }}
+                      />
+                    </button>
+                    <AnimatePresence>
+                      {isExpanded && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          style={{ overflow: "hidden" }}
+                        >
+                          <div className="mobile-sub-grid">
+                            {menuData.cards.map((card) => (
+                              <a
+                                key={card.title}
+                                href={`/products?category=${encodeURIComponent(item)}`}
+                                onClick={onClose}
+                                className="mobile-sub-card"
+                              >
+                                <div className="mobile-sub-card-image">
+                                  {card.image ? (
+                                    <img src={card.image} alt={card.title} />
+                                  ) : (
+                                    <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg, #1e293b, #0f172a)", display: "grid", placeItems: "center", color: "#64748b" }}>
+                                      <ImageIcon size={20} />
+                                    </div>
+                                  )}
+                                </div>
+                                <span>{t(card.title)}</span>
+                              </a>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
             </nav>
             <div className="mobile-footer-actions">
               <button className="search-pill" type="button" onClick={() => { onClose(); onSearch(); }}>
-                <span>What are you looking for?</span>
+                <span>{t("What are you looking for?")}</span>
                 <Search size={18} />
               </button>
               <div className="mobile-icons">
-                <button className="icon-btn" type="button">
+                <button className="icon-btn" type="button" onClick={() => { onClose(); onCartOpen(); }} aria-label="Cart">
                   <ShoppingCart size={18} />
                 </button>
-                <button className="icon-btn" type="button">
+                <a className="icon-btn" href="/panel/" onClick={onClose} aria-label="Admin Panel" style={{ display: "inline-grid", placeItems: "center", textDecoration: "none" }}>
                   <UserRound size={18} />
-                </button>
+                </a>
               </div>
             </div>
           </motion.aside>
@@ -630,8 +745,10 @@ export default function Page() {
   const [showThanks, setShowThanks] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { count, setDrawerOpen, addToCart, items, hydrated } = useCart();
-  const { settings } = useSite();
-  const megaMenu = activeMenu ? getMegaMenu(activeMenu) : null;
+  const { settings, t, language, changeLanguage } = useSite();
+  const router = useRouter();
+  const [inquiryProduct, setInquiryProduct] = useState(null);
+  const megaMenu = activeMenu ? (settings?.megaMenus?.[activeMenu] || getMegaMenu(activeMenu)) : null;
 
   const [liveProducts, setLiveProducts] = useState([]);
 
@@ -668,7 +785,8 @@ export default function Page() {
     price: `${Number(p.price).toLocaleString("en-US")} MAD`,
     note: p.badge || (p.stock > 0 ? "In stock" : "Out of stock"),
     image: p.image || "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80",
-    description: p.description
+    description: p.description,
+    inquiry_only: p.inquiry_only
   }));
 
   const displayProducts = liveProducts.length > 0 ? mappedProducts : products;
@@ -690,7 +808,16 @@ export default function Page() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} onSearch={() => setSearchOpen(true)} menuNavItems={settings.navItems} />
+      <MobileMenu 
+        open={menuOpen} 
+        onClose={() => setMenuOpen(false)} 
+        onSearch={() => setSearchOpen(true)} 
+        onCartOpen={() => {
+          setMenuOpen(false);
+          setDrawerOpen(true);
+        }}
+        menuNavItems={settings.navItems} 
+      />
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
 
       <header className="top-shell" onMouseLeave={() => setActiveMenu(null)}>
@@ -704,9 +831,9 @@ export default function Page() {
           <nav className="site-nav" aria-label="Primary">
             {settings.navItems.map((item) =>
               item === "Data Center Solutions" ? (
-                <Link className="nav-link" href="/data-center-solutions" key={item} onClick={() => setActiveMenu(null)}>{item}</Link>
+                <Link className="nav-link" href="/data-center-solutions" key={item} onClick={() => setActiveMenu(null)}>{t(item)}</Link>
               ) : item === "Support" ? (
-                <Link className="nav-link" href="/support" key={item} onClick={() => setActiveMenu(null)}>{item}</Link>
+                <Link className="nav-link" href="/support" key={item} onClick={() => setActiveMenu(null)}>{t(item)}</Link>
               ) : (
                 <button
                   className={activeMenu === item ? "nav-link active" : "nav-link"}
@@ -717,7 +844,7 @@ export default function Page() {
                   onClick={() => setActiveMenu(activeMenu === item ? null : item)}
                   aria-expanded={activeMenu === item}
                 >
-                  {item}
+                  {t(item)}
                 </button>
               )
             )}
@@ -725,9 +852,48 @@ export default function Page() {
 
           <div className="site-actions">
             <button className="search-pill" type="button" onClick={() => setSearchOpen(true)}>
-              <span>What are you looking for?</span>
+              <span>{t("What are you looking for?")}</span>
               <Search size={19} />
             </button>
+            
+            {/* Modern Language Switcher */}
+            <div className="lang-switcher" style={{ display: "inline-flex", background: "#f1f3f5", borderRadius: 20, padding: 3, gap: 2, marginRight: 8, height: 32, alignItems: "center" }}>
+              <button
+                type="button"
+                onClick={() => changeLanguage("en")}
+                style={{
+                  padding: "4px 8px",
+                  borderRadius: 16,
+                  fontSize: "0.72rem",
+                  fontWeight: 800,
+                  border: "none",
+                  background: language === "en" ? "#0a4bd9" : "transparent",
+                  color: language === "en" ? "#fff" : "#555",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLanguage("fr")}
+                style={{
+                  padding: "4px 8px",
+                  borderRadius: 16,
+                  fontSize: "0.72rem",
+                  fontWeight: 800,
+                  border: "none",
+                  background: language === "fr" ? "#0a4bd9" : "transparent",
+                  color: language === "fr" ? "#fff" : "#555",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                FR
+              </button>
+            </div>
+
             <button className="icon-btn cart-icon-btn" type="button" aria-label="Cart" onClick={() => setDrawerOpen(true)}>
               <ShoppingCart size={19} />
               {hydrated && count > 0 && <span className="cart-badge">{count}</span>}
@@ -770,8 +936,16 @@ export default function Page() {
                 <div className="mega-menu-grid">
                   {megaMenu.cards.map((card) => (
                     <a className="mega-menu-card" href={`/products?category=${encodeURIComponent(activeMenu)}`} key={card.title}>
-                      <div><img src={card.image} alt="" /></div>
-                      <span>{card.title}</span>
+                      <div>
+                        {card.image ? (
+                          <img src={card.image} alt="" />
+                        ) : (
+                          <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg, #1e293b, #0f172a)", display: "grid", placeItems: "center", color: "#64748b" }}>
+                            <ImageIcon size={24} />
+                          </div>
+                        )}
+                      </div>
+                      <span>{t(card.title)}</span>
                     </a>
                   ))}
                 </div>
@@ -797,9 +971,9 @@ export default function Page() {
       </AnimatePresence>
 
       <FloatingIconsSection
-        title={settings.heroTitle}
-        subtitle={settings.heroSubtitle}
-        ctaText={settings.heroCta}
+        title={t(settings.heroTitle)}
+        subtitle={t(settings.heroSubtitle)}
+        ctaText={t(settings.heroCta)}
         ctaHref="#collections"
         icons={(settings.heroIcons || allIconNames).map((name) => floatingIconsMap[name]).filter(Boolean)}
         customIcons={settings.customIcons}
@@ -808,10 +982,10 @@ export default function Page() {
       <section className="must-haves" id="collections">
         <div className="must-haves-heading">
           <div>
-            <p>CURATED BY MAROCGPU</p>
-            <h2>Shop These Must Haves</h2>
+            <p>{t("CURATED BY MAROCGPU")}</p>
+            <h2>{t("Shop These Must Haves")}</h2>
           </div>
-          <span>{displayProducts.length} essentials for your setup</span>
+          <span>{displayProducts.length} {t("essentials for your setup")}</span>
         </div>
 
         <div className="must-haves-grid">
@@ -825,27 +999,51 @@ export default function Page() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.45, delay: (index % 4) * 0.06 }}
+                style={{ cursor: "pointer" }}
+                onClick={() => router.push(`/products/${product.catalogId}`)}
               >
-                <a className="business-product-image" href={`/products/${product.catalogId}`} aria-label={product.name}>
+                <div className="business-product-image">
                   <img src={product.image} alt={product.name} loading="lazy" />
-                  <span>In stock</span>
-                </a>
-                <a className="business-product-info" href={`/products/${product.catalogId}`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
-                  <p>{product.category}</p>
+                  <span>{t("In stock")}</span>
+                </div>
+                <div className="business-product-info">
+                  <p>{t(product.category)}</p>
                   <h3>{product.name}</h3>
-                  <span>{product.note}</span>
+                  <span>{t(product.note)}</span>
                   <div className="business-product-buy" onClick={(e) => e.stopPropagation()}>
                     <strong>{product.price}</strong>
-                    <button
-                      className={inCart ? "added" : ""}
-                      type="button"
-                      onClick={() => addToCart(product.catalogId)}
-                    >
-                      <ShoppingCart size={17} />
-                      {inCart ? "In cart" : "Add to cart"}
-                    </button>
+                    {product.inquiry_only ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setInquiryProduct(product);
+                        }}
+                        style={{
+                          backgroundColor: "#0a4bd9",
+                          color: "#fff",
+                          borderColor: "#0a4bd9",
+                          fontWeight: "700"
+                        }}
+                      >
+                        {t("Inquire")}
+                      </button>
+                    ) : (
+                      <button
+                        className={inCart ? "added" : ""}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(product.catalogId);
+                          setDrawerOpen(true);
+                        }}
+                      >
+                        <ShoppingCart size={17} />
+                        {inCart ? t("In cart") : t("Add to cart")}
+                      </button>
+                    )}
                   </div>
-                </a>
+                </div>
               </motion.article>
             );
           })}
@@ -872,13 +1070,13 @@ export default function Page() {
           transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="feature-story-copy">
-            <p className="feature-story-kicker">{settings.featureKicker}</p>
-            <h2 id="feature-story-title">{settings.featureTitle}</h2>
+            <p className="feature-story-kicker">{t(settings.featureKicker)}</p>
+            <h2 id="feature-story-title">{t(settings.featureTitle)}</h2>
             <p className="feature-story-description">
-              {settings.featureDescription}
+              {t(settings.featureDescription)}
             </p>
             <a className="feature-story-cta" href={settings.featureCtaLink || "#collections"}>
-              {settings.featureCta}
+              {t(settings.featureCta)}
               <ArrowRight size={18} />
             </a>
           </div>
@@ -890,8 +1088,8 @@ export default function Page() {
               loading="lazy"
             />
             <div className="feature-story-stat">
-              <strong>Built smarter</strong>
-              <span>Expert guidance from first part to final setup.</span>
+              <strong>{t("Built smarter")}</strong>
+              <span>{t("Expert guidance from first part to final setup.")}</span>
             </div>
           </div>
         </motion.div>
@@ -973,14 +1171,14 @@ export default function Page() {
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.65, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p>{settings.solutionsKicker}</p>
-          <h2 id="solutions-title">{settings.solutionsTitle}</h2>
+          <p>{t(settings.solutionsKicker)}</p>
+          <h2 id="solutions-title">{t(settings.solutionsTitle)}</h2>
           <span>
-            {settings.solutionsDescription}
+            {t(settings.solutionsDescription)}
           </span>
           <div className="solutions-actions">
-            <a className="solutions-primary" href={settings.solutionsCtaPrimaryLink || "#collections"}>{settings.solutionsCtaPrimary}</a>
-            <a className="solutions-secondary" href={settings.solutionsCtaSecondaryLink || "#collections"}>{settings.solutionsCtaSecondary}</a>
+            <a className="solutions-primary" href={settings.solutionsCtaPrimaryLink || "#collections"}>{t(settings.solutionsCtaPrimary)}</a>
+            <a className="solutions-secondary" href={settings.solutionsCtaSecondaryLink || "#collections"}>{t(settings.solutionsCtaSecondary)}</a>
           </div>
         </motion.div>
       </section>
@@ -1005,27 +1203,51 @@ export default function Page() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.45, delay: index * 0.06 }}
+                style={{ cursor: "pointer" }}
+                onClick={() => router.push(`/products/${product.catalogId}`)}
               >
-                <a className="business-product-image" href={`/products/${product.catalogId}`} aria-label={product.name}>
+                <div className="business-product-image">
                   <img src={product.image} alt={product.name} loading="lazy" />
                   <span>In stock</span>
-                </a>
-                <a className="business-product-info" href={`/products/${product.catalogId}`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
+                </div>
+                <div className="business-product-info">
                   <p>{product.category}</p>
                   <h3>{product.name}</h3>
                   <span>{product.note}</span>
                   <div className="business-product-buy" onClick={(e) => e.stopPropagation()}>
                     <strong>{product.price}</strong>
-                    <button
-                      className={isAdded ? "added" : ""}
-                      type="button"
-                      onClick={() => addToCart(product.catalogId)}
-                    >
-                      <ShoppingCart size={17} />
-                      {isAdded ? "In cart" : "Add to cart"}
-                    </button>
+                    {product.inquiry_only ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setInquiryProduct(product);
+                        }}
+                        style={{
+                          backgroundColor: "#0a4bd9",
+                          color: "#fff",
+                          borderColor: "#0a4bd9",
+                          fontWeight: "700"
+                        }}
+                      >
+                        Inquire
+                      </button>
+                    ) : (
+                      <button
+                        className={isAdded ? "added" : ""}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(product.catalogId);
+                          setDrawerOpen(true);
+                        }}
+                      >
+                        <ShoppingCart size={17} />
+                        {isAdded ? "In cart" : "Add to cart"}
+                      </button>
+                    )}
                   </div>
-                </a>
+                </div>
               </motion.article>
             );
           })}
@@ -1066,6 +1288,11 @@ export default function Page() {
           </motion.div>
         )}
       </AnimatePresence>
+      <InquiryModal
+        open={!!inquiryProduct}
+        onClose={() => setInquiryProduct(null)}
+        product={inquiryProduct}
+      />
     </motion.main>
   );
 }

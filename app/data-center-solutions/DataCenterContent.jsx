@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Snowflake,
 } from "lucide-react";
+import { useSite } from "../context/SiteContext";
 
 const equipment = [
   { icon: Server, number: "01", title: "Compute & storage", text: "Enterprise servers, GPU compute, SAN, NAS, backup systems, and scalable storage platforms." },
@@ -138,6 +139,7 @@ function DCSkeleton() {
 
 export default function DataCenterContent() {
   const [ready, setReady] = useState(false);
+  const { t, language, changeLanguage } = useSite();
 
   useEffect(() => {
     const timer = setTimeout(() => setReady(true), 1200);
@@ -156,58 +158,101 @@ export default function DataCenterContent() {
       <header className="dc-header">
         <a href="/" aria-label="MarocGPU home"><img src="/marocgpu-logo-transparent.png" alt="MarocGPU" /></a>
         <nav aria-label="Data center navigation">
-          <a href="#equipment">Equipment</a>
-          <a href="#delivery">Delivery</a>
-          <a href="#contact">Contact</a>
+          <a href="#equipment">{t("AI & Compute")}</a>
+          <a href="#delivery">{t("Methodology")}</a>
+          <a href="#contact">{t("Contact")}</a>
         </nav>
-        <a className="dc-header-cta" href="#contact">Plan your data center <ArrowRight size={17} /></a>
+        
+        <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "end" }}>
+          {/* Modern Language Switcher */}
+          <div className="lang-switcher" style={{ display: "inline-flex", background: "#f1f3f5", borderRadius: 20, padding: 3, gap: 2, height: 32, alignItems: "center" }}>
+            <button
+              type="button"
+              onClick={() => changeLanguage("en")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: 16,
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                border: "none",
+                background: language === "en" ? "#0a4bd9" : "transparent",
+                color: language === "en" ? "#fff" : "#555",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              onClick={() => changeLanguage("fr")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: 16,
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                border: "none",
+                background: language === "fr" ? "#0a4bd9" : "transparent",
+                color: language === "fr" ? "#fff" : "#555",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              FR
+            </button>
+          </div>
+
+          <a className="dc-header-cta" href="#contact" style={{ margin: 0 }}>
+            {t("Plan your AI Data Center")} <ArrowRight size={17} />
+          </a>
+        </div>
       </header>
 
       <section className="dc-hero">
         <img src="/datacenter-hero.png" alt="Modern data center with rows of enterprise server racks" />
         <div className="dc-hero-shade" />
         <div className="dc-hero-copy">
-          <p>MarocGPU infrastructure</p>
-          <h1>Everything your data center needs.</h1>
-          <span>From the first rack to full-scale critical infrastructure, we engineer, supply, deploy, and support complete data center environments.</span>
+          <p>{t("MarocGPU & MicroIntégral in partnership with NVIDIA")}</p>
+          <h1>{t("Next-Generation AI & Data Center Infrastructure.")}</h1>
+          <span>{t("We engineer, supply, deploy, and support complete enterprise data center environments, GPU computing clusters, and high-performance AI networks backed by MicroIntégral's leading expertise.")}</span>
           <div className="dc-hero-actions">
-            <a href="#contact">Start your project <ArrowRight size={18} /></a>
-            <a href="#equipment">Explore equipment</a>
+            <a href="#contact">{t("Start your AI project")} <ArrowRight size={18} /></a>
+            <a href="#equipment">{t("Explore solutions")}</a>
           </div>
         </div>
         <div className="dc-hero-stats">
-          <div><strong>End-to-end</strong><span>One accountable partner</span></div>
-          <div><strong>24/7</strong><span>Critical support options</span></div>
-          <div><strong>N+1 / 2N</strong><span>Resilience architecture</span></div>
+          <div><strong>{t("NVIDIA Partner")}</strong><span>{t("Advanced GPU computing")}</span></div>
+          <div><strong>{t("MicroIntégral")}</strong><span>{t("Leading local support")}</span></div>
+          <div><strong>{t("End-to-End")}</strong><span>{t("Design, deploy & operate")}</span></div>
         </div>
       </section>
 
       <section className="dc-intro">
-        <p>Built for critical operations</p>
-        <h2>Infrastructure that arrives ready for reality.</h2>
+        <p>{t("Built for AI & Enterprise Workloads")}</p>
+        <h2>{t("Infrastructure that arrives ready for deep learning.")}</h2>
         <div>
-          <span>We provide every major equipment layer required to build or modernize a secure, efficient data center, coordinated under one engineering and delivery plan.</span>
+          <span>{t("We provide every major equipment layer required to build or modernize a secure, efficient data center optimized for high-density NVIDIA GPUs and heavy compute operations.")}</span>
           <ul>
-            <li><CheckCircle2 size={18} /> Vendor-neutral equipment selection</li>
-            <li><CheckCircle2 size={18} /> Complete installation and commissioning</li>
-            <li><CheckCircle2 size={18} /> Documentation, training, and ongoing support</li>
+            <li><CheckCircle2 size={18} /> {t("Official NVIDIA GPU & server systems")}</li>
+            <li><CheckCircle2 size={18} /> {t("Complete installation and thermal optimization")}</li>
+            <li><CheckCircle2 size={18} /> {t("Full maintenance, warranty, and MicroIntégral support")}</li>
           </ul>
         </div>
       </section>
 
       <section className="dc-equipment" id="equipment">
         <div className="dc-section-heading">
-          <p>Complete equipment portfolio</p>
-          <h2>Every layer. Engineered together.</h2>
-          <span>One technical architecture across IT, network, power, cooling, security, and operations.</span>
+          <p>{t("Complete computing portfolio")}</p>
+          <h2>{t("AI, Compute & Power. Engineered together.")}</h2>
+          <span>{t("One cohesive architecture across IT servers, GPU nodes, high-speed InfiniBand switches, and backup cooling systems.")}</span>
         </div>
         <div className="dc-equipment-grid">
           {equipment.map(({ icon: Icon, number, title, text }) => (
             <article key={title}>
               <div><Icon size={25} /><span>{number}</span></div>
-              <h3>{title}</h3>
-              <p>{text}</p>
-              <a href="#contact">Discuss requirements <ArrowRight size={16} /></a>
+              <h3>{t(title)}</h3>
+              <p>{t(text)}</p>
+              <a href="#contact">{t("Discuss requirements")} <ArrowRight size={16} /></a>
             </article>
           ))}
         </div>
@@ -217,31 +262,31 @@ export default function DataCenterContent() {
         <div className="dc-control-visual">
           <div className="dc-control-orbit orbit-one" />
           <div className="dc-control-orbit orbit-two" />
-          <div className="dc-control-core"><Gauge size={40} /><strong>99.99%</strong><span>Designed availability</span></div>
-          <div className="dc-node node-power"><BatteryCharging size={21} /><span>Power</span></div>
-          <div className="dc-node node-cooling"><Snowflake size={21} /><span>Cooling</span></div>
-          <div className="dc-node node-network"><Network size={21} /><span>Network</span></div>
-          <div className="dc-node node-compute"><Cpu size={21} /><span>Compute</span></div>
+          <div className="dc-control-core"><Gauge size={40} /><strong>99.999%</strong><span>{t("Designed uptime")}</span></div>
+          <div className="dc-node node-power"><BatteryCharging size={21} /><span>{t("Power continuity")}</span></div>
+          <div className="dc-node node-cooling"><Snowflake size={21} /><span>{t("Precision cooling")}</span></div>
+          <div className="dc-node node-network"><Network size={21} /><span>{t("Network fabric")}</span></div>
+          <div className="dc-node node-compute"><Cpu size={21} /><span>{t("Compute & storage")}</span></div>
         </div>
         <div className="dc-control-copy">
-          <p>Unified operations</p>
-          <h2>See the whole facility, not isolated equipment.</h2>
-          <span>We integrate infrastructure monitoring across energy, environment, capacity, assets, alarms, and performance, giving your team one operational picture.</span>
-          <a href="#contact">Design the monitoring layer <ArrowRight size={18} /></a>
+          <p>{t("MicroIntégral AI Orchestration")}</p>
+          <h2>{t("Optimized for NVIDIA AI & HPC Workloads.")}</h2>
+          <span>{t("We integrate advanced cooling infrastructure with GPU cluster monitoring, ensuring your AI training models and high-performance server clusters operate at peak efficiency.")}</span>
+          <a href="#contact">{t("Design the compute layer")} <ArrowRight size={18} /></a>
         </div>
       </section>
 
       <section className="dc-delivery" id="delivery">
         <div className="dc-section-heading">
-          <p>Delivery methodology</p>
-          <h2>From requirements to reliable operations.</h2>
+          <p>{t("Deployment methodology")}</p>
+          <h2>{t("From requirements to reliable operations.")}</h2>
         </div>
         <div className="dc-stages">
           {stages.map((stage) => (
             <article key={stage.step}>
               <span>{stage.step}</span>
-              <h3>{stage.title}</h3>
-              <p>{stage.text}</p>
+              <h3>{t(stage.title)}</h3>
+              <p>{t(stage.text)}</p>
             </article>
           ))}
         </div>
@@ -249,17 +294,17 @@ export default function DataCenterContent() {
 
       <section className="dc-contact" id="contact">
         <div>
-          <p>Build with confidence</p>
-          <h2>Let&rsquo;s engineer your data center.</h2>
-          <span>Tell us your capacity, availability, location, and timeline. Our infrastructure team will shape the equipment and delivery plan.</span>
+          <p>{t("Build with confidence")}</p>
+          <h2>{t("Let’s design your NVIDIA AI Data Center.")}</h2>
+          <span>{t("Tell us your computing capacity, location, and timeline. Our infrastructure engineering team will shape the equipment and delivery plan.")}</span>
         </div>
-        <a href="mailto:contact@marocgpu.ma">Contact infrastructure team <ArrowRight size={20} /></a>
+        <a href="mailto:contact@marocgpu.ma">{t("Contact infrastructure team")} <ArrowRight size={20} /></a>
       </section>
 
       <footer className="dc-footer">
         <a href="/"><img src="/marocgpu-logo-transparent.png" alt="MarocGPU" /></a>
-        <p>Data center infrastructure, supplied and supported in Morocco.</p>
-        <span>&copy; 2026 MarocGPU</span>
+        <p>{t("High-performance computing and data center infrastructure, engineered in partnership with NVIDIA by MicroIntégral in Morocco.")}</p>
+        <span>&copy; 2026 MarocGPU | {t("All rights reserved.")}</span>
       </footer>
     </motion.main>
   );

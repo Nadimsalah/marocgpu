@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Edit3, Image as ImageIcon, Plus, Search, Upload, X, Trash2, Settings } from "lucide-react";
+import { Edit3, Image as ImageIcon, Plus, Search, Upload, X, Trash2, Settings, Check } from "lucide-react";
+import { useSite } from "../../context/SiteContext";
 
 const defaultCategories = ["Consumer", "Professional", "Graphics", "Displays", "Accessories", "Printers"];
 
@@ -18,40 +19,67 @@ function Skeleton() {
   );
 }
 
+function compressImage(file, callback) {
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = new window.Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const maxDim = 800; // Resize to a max dimension of 800px to keep it small (under 100kb)
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > maxDim) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        }
+      } else {
+        if (height > maxDim) {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // Compress to JPEG with 0.7 quality
+      const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+      callback(compressedBase64);
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 export default function ProductsPage() {
+  const { settings } = useSite();
+  const categories = settings?.navItems || defaultCategories;
+
   const [ready, setReady] = useState(false);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
-  const [categories, setCategories] = useState(defaultCategories);
-  const [showCategoryManager, setShowCategoryManager] = useState(false);
-  const [newCat, setNewCat] = useState("");
   const [selected, setSelected] = useState(null);
   const [products, setProducts] = useState([]);
   const [addError, setAddError] = useState("");
   const [rawProducts, setRawProducts] = useState([]);
   const [editForm, setEditForm] = useState(null);
   const [adding, setAdding] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [addForm, setAddForm] = useState({
-    name: "", category: "Consumer", price: "", stock: "", badge: "", image: "", description: ""
+    name: "", category: categories[0] || "Consumer", price: "", stock: "", badge: "", image: "", description: "", pdf: "", inquiry_only: false
   });
 
-  useEffect(() => {
-    const saved = localStorage.getItem("product_categories");
-    if (saved) setCategories(JSON.parse(saved));
-  }, []);
-
-  const saveCategories = (cats) => {
-    setCategories(cats);
-    localStorage.setItem("product_categories", JSON.stringify(cats));
-  };
-
-  const loadProducts = async () => {
+  const loadData = async () => {
     try {
-      const res = await fetch('/api/products');
-      const data = await res.json();
-      const list = Array.isArray(data) ? data : [];
-      setProducts(list);
-      setRawProducts(list);
+      const resProducts = await fetch('/api/products');
+      const productsData = await resProducts.json();
+      const productsList = Array.isArray(productsData) ? productsData : [];
+      setProducts(productsList);
+      setRawProducts(productsList);
     } catch (e) {
       console.error("Error loading products:", e);
     } finally {
@@ -60,7 +88,7 @@ export default function ProductsPage() {
   };
 
   useEffect(() => {
-    loadProducts();
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -82,11 +110,16 @@ export default function ProductsPage() {
 
   const saveEdit = async () => {
     if (!editForm) return;
+    setIsSaving(true);
     try {
+      const payload = { ...editForm };
+      if (!payload.pdf) {
+        delete payload.pdf;
+      }
       const res = await fetch('/api/products', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editForm)
+        body: JSON.stringify(payload)
       });
       const updated = await res.json();
       if (updated && !updated.error) {
@@ -96,6 +129,8 @@ export default function ProductsPage() {
       }
     } catch (e) {
       console.error("Error saving product changes:", e);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -109,8 +144,7 @@ export default function ProductsPage() {
           <p>{rawProducts.length} products · {rawProducts.reduce((s, p) => s + (p.stock || 0), 0)} total stock</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          <button className="store-save-btn" onClick={() => setShowCategoryManager(true)} style={{ background: "#f0f1f3", color: "#333" }}><Settings size={17} /></button>
-          <button className="store-save-btn" onClick={() => { setAdding(true); setAddError(""); }} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+          <button className="store-save-btn" onClick={() => { setAdding(true); setAddError(""); setAddForm(prev => ({ ...prev, category: categories[0] || "Consumer" })); }} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
             <Plus size={17} /> Add product
           </button>
         </div>
@@ -163,34 +197,6 @@ export default function ProductsPage() {
       </div>
 
       <AnimatePresence>
-        {showCategoryManager && (
-          <motion.div className="orders-detail-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowCategoryManager(false)}>
-            <motion.div className="orders-detail-modal" onClick={(e) => e.stopPropagation()}>
-              <div className="orders-detail-header">
-                <h2>Manage Categories</h2>
-                <button className="orders-close-btn" onClick={() => setShowCategoryManager(false)}><X size={18} /></button>
-              </div>
-              <div style={{ padding: 20 }}>
-                <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-                  <input value={newCat} onChange={(e) => setNewCat(e.target.value)} placeholder="New category name" style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: "1px solid #dcdde1" }} />
-                  <button className="store-save-btn" onClick={() => { if (newCat && !categories.includes(newCat)) saveCategories([...categories, newCat]); setNewCat(""); }}>Add</button>
-                </div>
-                {categories.map((c) => (
-                  <div key={c} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px", borderBottom: "1px solid #eee" }}>
-                    {c}
-                    <button onClick={() => {
-                      if (rawProducts.some(p => p.category === c)) {
-                        alert("Cannot delete category currently in use by products.");
-                        return;
-                      }
-                      saveCategories(categories.filter(cat => cat !== c));
-                    }} style={{ color: "#e53e3e" }}><Trash2 size={16} /></button>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
         {selected && (
           <motion.div className="orders-detail-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => { setSelected(null); setEditForm(null); }}>
             <motion.div className="orders-detail-modal" initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ duration: 0.2 }} onClick={(e) => e.stopPropagation()}>
@@ -221,6 +227,18 @@ export default function ProductsPage() {
                       <label><span>Badge</span><input value={editForm.badge} onChange={(e) => setEditForm({ ...editForm, badge: e.target.value })} /></label>
                       <label><span>Sold</span><input type="number" value={editForm.sold} onChange={(e) => setEditForm({ ...editForm, sold: parseInt(e.target.value) || 0 })} /></label>
                     </div>
+                    <div className="products-edit-row" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 0" }}>
+                      <input 
+                        type="checkbox" 
+                        id="edit-inquiry-only" 
+                        checked={editForm.inquiry_only || false} 
+                        onChange={(e) => setEditForm({ ...editForm, inquiry_only: e.target.checked })} 
+                        style={{ width: "18px", height: "18px", cursor: "pointer" }} 
+                      />
+                      <label htmlFor="edit-inquiry-only" style={{ cursor: "pointer", fontSize: "0.9rem", fontWeight: "600", color: "#111", display: "inline-flex", alignItems: "center" }}>
+                        Inquiry Only (Disable direct purchase / checkout)
+                      </label>
+                    </div>
                     <div className="products-edit-row">
                       <label><span>Image</span>
                         <div
@@ -240,12 +258,34 @@ export default function ProductsPage() {
                             <input type="file" accept="image/*" onChange={(e) => {
                               const file = e.target.files[0];
                               if (file) {
-                                const reader = new FileReader();
-                                reader.onload = (ev) => setEditForm({ ...editForm, image: ev.target.result });
-                                reader.readAsDataURL(file);
+                                compressImage(file, (base64) => setEditForm({ ...editForm, image: base64 }));
                               }
                             }} />
                           </label>
+                        </div>
+                      </label>
+                    </div>
+                    <div className="products-edit-row">
+                      <label>
+                        <span>Product PDF (Datasheet/Manual)</span>
+                        <div className="products-pdf-upload" style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 4 }}>
+                          <input
+                            type="file"
+                            accept="application/pdf"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                const reader = new FileReader();
+                                reader.onload = (ev) => setEditForm({ ...editForm, pdf: ev.target.result });
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                          />
+                          {editForm.pdf && (
+                            <span style={{ color: "#16845a", fontSize: "0.85rem", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                              <Check size={16} /> PDF Uploaded
+                            </span>
+                          )}
                         </div>
                       </label>
                     </div>
@@ -256,7 +296,9 @@ export default function ProductsPage() {
                       </label>
                     </div>
                     <div className="products-edit-actions">
-                      <button className="store-save-btn" onClick={saveEdit}>Save changes</button>
+                      <button className="store-save-btn" onClick={saveEdit} disabled={isSaving}>
+                        {isSaving ? "Saving..." : "Save changes"}
+                      </button>
                       <button className="products-cancel-btn" onClick={() => { setEditForm(null); }}>Cancel</button>
                     </div>
                   </div>
@@ -289,6 +331,18 @@ export default function ProductsPage() {
                       <div className="orders-detail-card" style={{ gridColumn: "1 / -1" }}>
                         <h4>Description</h4>
                         <p style={{ fontSize: "0.88rem", color: "#444", lineHeight: 1.5, margin: "6px 0 0" }}>{selected.description}</p>
+                      </div>
+                    )}
+                    {selected.pdf && (
+                      <div className="orders-detail-card" style={{ gridColumn: "1 / -1" }}>
+                        <h4>Datasheet (PDF)</h4>
+                        <a 
+                          href={selected.pdf} 
+                          download={`${selected.name.replace(/\s+/g, "_")}_datasheet.pdf`}
+                          style={{ color: "#0a4bd9", textDecoration: "underline", fontSize: "0.88rem", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: 6, marginTop: 4 }}
+                        >
+                          Download Datasheet PDF
+                        </a>
                       </div>
                     )}
                     <button className="store-save-btn" style={{ gridColumn: "1 / -1", width: "100%", justifyContent: "center" }} onClick={() => openEdit(selected)}>
@@ -332,8 +386,44 @@ export default function ProductsPage() {
                         {!addForm.image && <div className="products-image-placeholder" style={{ display: "flex" }}><ImageIcon size={24} /></div>}
                         <label className="products-image-overlay">
                           <Upload size={16} />
-                          <input type="file" accept="image/*" onChange={(e) => { const file = e.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = (ev) => setAddForm({ ...addForm, image: ev.target.result }); reader.readAsDataURL(file); } }} />
+                          <input type="file" accept="image/*" onChange={(e) => { const file = e.target.files[0]; if (file) { compressImage(file, (base64) => setAddForm({ ...addForm, image: base64 })); } }} />
                         </label>
+                      </div>
+                    </label>
+                  </div>
+                  <div className="products-edit-row" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 0" }}>
+                    <input 
+                      type="checkbox" 
+                      id="add-inquiry-only" 
+                      checked={addForm.inquiry_only || false} 
+                      onChange={(e) => setAddForm({ ...addForm, inquiry_only: e.target.checked })} 
+                      style={{ width: "18px", height: "18px", cursor: "pointer" }} 
+                    />
+                    <label htmlFor="add-inquiry-only" style={{ cursor: "pointer", fontSize: "0.9rem", fontWeight: "600", color: "#111", display: "inline-flex", alignItems: "center" }}>
+                      Inquiry Only (Disable direct purchase / checkout)
+                    </label>
+                  </div>
+                  <div className="products-edit-row">
+                    <label>
+                      <span>Product PDF (Datasheet/Manual)</span>
+                      <div className="products-pdf-upload" style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 4 }}>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (ev) => setAddForm({ ...addForm, pdf: ev.target.result });
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                        {addForm.pdf && (
+                          <span style={{ color: "#16845a", fontSize: "0.85rem", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                            <Check size={16} /> PDF Uploaded
+                          </span>
+                        )}
                       </div>
                     </label>
                   </div>
@@ -345,15 +435,22 @@ export default function ProductsPage() {
                   </div>
                   {addError && <div style={{ color: "#e53e3e", textAlign: "center", fontWeight: 600 }}>{addError}</div>}
                   <div className="products-edit-actions">
-                    <button className="store-save-btn" onClick={async () => {
+                    <button className="store-save-btn" disabled={isSaving} onClick={async () => {
                       if (!addForm.name.trim()) return;
+                      setIsSaving(true);
+                      setAddError("");
                       try {
-                        const res = await fetch('/api/products', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...addForm, price: parseInt(addForm.price) || 0, stock: parseInt(addForm.stock) || 0, sold: 0, badge: addForm.badge || "New" }) });
+                        const payload = { ...addForm, price: parseInt(addForm.price) || 0, stock: parseInt(addForm.stock) || 0, sold: 0, badge: addForm.badge || "New" };
+                        if (!payload.pdf) {
+                          delete payload.pdf;
+                        }
+                        const res = await fetch('/api/products', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                         const created = await res.json();
-                        if (res.ok) { setRawProducts((prev) => [created, ...prev]); setAdding(false); setAddForm({ name: "", category: categories[0] || "", price: "", stock: "", badge: "", image: "", description: "" }); }
+                        if (res.ok) { setRawProducts((prev) => [created, ...prev]); setAdding(false); setAddForm({ name: "", category: categories[0] || "", price: "", stock: "", badge: "", image: "", description: "", pdf: "", inquiry_only: false }); }
                         else setAddError(created?.error || "Error");
                       } catch (e) { setAddError("Network error."); }
-                    }}>Create product</button>
+                      finally { setIsSaving(false); }
+                    }}>{isSaving ? "Creating..." : "Create product"}</button>
                     <button className="products-cancel-btn" onClick={() => setAdding(false)}>Cancel</button>
                   </div>
                 </div>

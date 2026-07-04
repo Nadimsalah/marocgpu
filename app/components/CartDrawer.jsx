@@ -4,9 +4,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "../context/CartContext";
+import { useSite } from "../context/SiteContext";
 
 export default function CartDrawer() {
   const { items, updateQty, removeFromCart, subtotal, shipping, total, count, drawerOpen, setDrawerOpen } = useCart();
+  const { t } = useSite();
 
   return (
     <AnimatePresence>
@@ -29,8 +31,8 @@ export default function CartDrawer() {
           >
             <div className="drawer-header">
               <div>
-                <h2>Your Cart</h2>
-                <span>{count} {count === 1 ? "item" : "items"}</span>
+                <h2>{t("Your Cart")}</h2>
+                <span>{count} {count === 1 ? t("item") : t("items")}</span>
               </div>
               <button className="drawer-close" onClick={() => setDrawerOpen(false)} aria-label="Close cart">
                 <X size={20} />
@@ -40,7 +42,7 @@ export default function CartDrawer() {
             {items.length === 0 ? (
               <div className="drawer-empty">
                 <ShoppingBag size={40} />
-                <p>Your cart is empty</p>
+                <p>{t("Your cart is empty")}</p>
               </div>
             ) : (
               <>
@@ -76,23 +78,23 @@ export default function CartDrawer() {
 
                 <div className="drawer-footer">
                   <div className="drawer-row">
-                    <span>Subtotal</span>
+                    <span>{t("Subtotal")}</span>
                     <strong>{subtotal.toLocaleString("en-US")} MAD</strong>
                   </div>
                   <div className="drawer-row">
-                    <span>Shipping</span>
-                    <strong>{shipping === 0 ? "Free" : `${shipping.toLocaleString("en-US")} MAD`}</strong>
+                    <span>{t("Shipping")}</span>
+                    <strong>{shipping === 0 ? t("Free") : `${shipping.toLocaleString("en-US")} MAD`}</strong>
                   </div>
                   <div className="drawer-divider" />
                   <div className="drawer-row drawer-total">
-                    <span>Total</span>
+                    <span>{t("Total")}</span>
                     <strong>{total.toLocaleString("en-US")} MAD</strong>
                   </div>
                   <Link className="drawer-checkout-btn" href="/checkout" onClick={() => setDrawerOpen(false)}>
-                    Go to checkout <ArrowRight size={17} />
+                    {t("Go to checkout")} <ArrowRight size={17} />
                   </Link>
                   <Link className="drawer-view-cart" href="/cart" onClick={() => setDrawerOpen(false)}>
-                    View full cart
+                    {t("View full cart")}
                   </Link>
                 </div>
               </>

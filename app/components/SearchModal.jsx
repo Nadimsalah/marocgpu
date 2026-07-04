@@ -9,6 +9,7 @@ import {
   X as CloseIcon,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useSite } from "../context/SiteContext";
 
 const searchProducts = [
   { id: 1, name: "ProWork X1 Mobile Studio", category: "Consumer", price: "12,990 MAD", badge: "Best seller", image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=1100&q=88" },
@@ -37,6 +38,7 @@ export default function SearchModal({ open, onClose }) {
   const [query, setQuery] = useState("");
   const inputRef = useRef(null);
   const { addToCart, items, hydrated } = useCart();
+  const { t } = useSite();
 
   useEffect(() => {
     if (open) {
@@ -99,7 +101,7 @@ export default function SearchModal({ open, onClose }) {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search products, categories, brands..."
+                placeholder={t("Search products, categories, brands...")}
                 autoComplete="off"
               />
               <button className="search-modal-close" type="button" onClick={onClose}>
@@ -110,19 +112,19 @@ export default function SearchModal({ open, onClose }) {
             {!query.trim() ? (
               <div className="search-modal-empty">
                 <Search size={40} />
-                <p>Start typing to search our catalog</p>
+                <p>{t("Start typing to search our catalog")}</p>
               </div>
             ) : results.length === 0 ? (
               <div className="search-modal-empty">
-                <p>No results for "{query}"</p>
-                <span>Try a different search term or browse categories</span>
+                <p>{t("No results for")} "{query}"</p>
+                <span>{t("Try a different search term or browse categories")}</span>
               </div>
             ) : (
               <div className="search-modal-results">
-                <div className="search-modal-count">{results.length} result{results.length !== 1 ? "s" : ""}</div>
+                <div className="search-modal-count">{results.length} {results.length === 1 ? t("result") : t("results")}</div>
                 {Object.entries(grouped).map(([category, products]) => (
                   <div key={category}>
-                    <div className="search-modal-group">{category}</div>
+                    <div className="search-modal-group">{t(category)}</div>
                     <div className="search-modal-grid">
                       {products.map((product) => {
                         const inCart = hydrated && items.some((i) => i.id === product.id);
@@ -130,7 +132,7 @@ export default function SearchModal({ open, onClose }) {
                           <div className="search-result-card" key={product.id}>
                             <div className="search-result-image">
                               <img src={product.image} alt={product.name} loading="lazy" />
-                              <span>{product.badge}</span>
+                              {product.badge && <span>{t(product.badge)}</span>}
                             </div>
                             <div className="search-result-info">
                               <h3>{product.name}</h3>
@@ -141,7 +143,7 @@ export default function SearchModal({ open, onClose }) {
                                 onClick={() => addToCart(product.id)}
                               >
                                 <ShoppingCart size={15} />
-                                {inCart ? "In cart" : "Add to cart"}
+                                {inCart ? t("In cart") : t("Add to cart")}
                               </button>
                             </div>
                           </div>
@@ -151,7 +153,7 @@ export default function SearchModal({ open, onClose }) {
                   </div>
                 ))}
                 <a className="search-modal-view-all" href="/products" onClick={onClose}>
-                  View all products <ArrowRight size={16} />
+                  {t("View all products")} <ArrowRight size={16} />
                 </a>
               </div>
             )}

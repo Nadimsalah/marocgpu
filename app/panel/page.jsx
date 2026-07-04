@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 
 function PanelSkeleton() {
   return (
@@ -124,7 +125,7 @@ export default function PanelPage() {
       >
         <div className="panel-section-header">
           <h2>Recent orders</h2>
-          <a href="/panel/orders/">View all</a>
+          <Link href="/panel/orders/">View all</Link>
         </div>
         <div className="panel-table-wrap">
           {recentOrders.length > 0 ? (

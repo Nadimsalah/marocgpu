@@ -20,8 +20,11 @@ import {
   MemoryStick,
   Fan,
   Box,
+  FileText,
 } from "lucide-react";
 import { useCart } from "../../context/CartContext";
+import { useSite } from "../../context/SiteContext";
+import InquiryModal from "../../components/InquiryModal";
 
 const catalogProducts = [
   { id: 1, name: "ProWork X1 Mobile Studio", category: "Consumer", price: 12990, badge: "Best seller", spec: "Core Ultra 7 · RTX 4060 · 32GB · 1TB", image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=1100&q=88", description: "A mobile powerhouse designed for professionals who need desktop-class performance on the go. The ProWork X1 combines the latest Intel Core Ultra 7 processor with NVIDIA RTX 4060 graphics, delivering exceptional performance for 3D rendering, video editing, and AI workloads.", specs: { processor: "Intel Core Ultra 7 155H", graphics: "NVIDIA RTX 4060 8GB", memory: "32GB DDR5", storage: "1TB NVMe SSD", display: '16" 2.5K IPS 165Hz', battery: "90Wh · Up to 8 hours" }, features: ["Thunderbolt 4", "Wi-Fi 7", "Backlit Keyboard", "Fingerprint Reader", "Dolby Atmos"] },
@@ -42,6 +45,74 @@ const catalogProducts = [
 
 function getRelatedProducts(productId, category) {
   return catalogProducts.filter((p) => p.id !== productId && p.category === category).slice(0, 4);
+}
+
+function parseInlineBold(text) {
+  const parts = text.split(/\*\*([^*]+)\*\*/g);
+  return parts.map((part, i) => {
+    if (i % 2 === 1) {
+      return <strong key={i} style={{ fontWeight: "700", color: "#171719" }}>{part}</strong>;
+    }
+    return part;
+  });
+}
+
+function formatDescription(text) {
+  if (!text) return null;
+  const paragraphs = text.split(/\r?\n/);
+  return paragraphs.map((para, index) => {
+    const trimmed = para.trim();
+    if (!trimmed) return null;
+
+    // 1. Markdown Headings (#, ##, ###)
+    if (trimmed.startsWith("###") || trimmed.startsWith("##") || trimmed.startsWith("#")) {
+      const titleText = trimmed.replace(/^#+\s+/, "");
+      return (
+        <h3 key={index} style={{ fontSize: "1.15rem", fontWeight: "700", margin: "24px 0 12px", color: "#171719" }}>
+          {titleText}
+        </h3>
+      );
+    }
+
+    // 2. Explicitly short section headers ending in colon (e.g. "Key Capabilities:")
+    if (trimmed.endsWith(":") && trimmed.length < 35) {
+      const titleText = trimmed.slice(0, -1);
+      return (
+        <h4 key={index} style={{ fontSize: "1.05rem", fontWeight: "700", margin: "20px 0 10px", color: "#171719" }}>
+          {titleText}
+        </h4>
+      );
+    }
+
+    // 3. Inline bold styling (e.g. **bold text**)
+    if (trimmed.includes("**")) {
+      return (
+        <p key={index} className="pd-description" style={{ margin: "0 0 14px" }}>
+          {parseInlineBold(trimmed)}
+        </p>
+      );
+    }
+
+    // 4. Line with colon separators (e.g. "Title: Description")
+    const colonIndex = trimmed.indexOf(":");
+    if (colonIndex > 0 && colonIndex < 40 && !trimmed.slice(0, colonIndex).includes("http")) {
+      const titleText = trimmed.slice(0, colonIndex);
+      const restText = trimmed.slice(colonIndex);
+      return (
+        <p key={index} className="pd-description" style={{ margin: "0 0 14px" }}>
+          <strong style={{ fontWeight: "700", color: "#171719" }}>{titleText}</strong>
+          {restText}
+        </p>
+      );
+    }
+
+    // Default: regular paragraph
+    return (
+      <p key={index} className="pd-description" style={{ margin: "0 0 14px" }}>
+        {trimmed}
+      </p>
+    );
+  }).filter(Boolean);
 }
 
 function ProductDetailSkeleton() {
@@ -99,27 +170,6 @@ function ProductDetailSkeleton() {
         </div>
       </section>
 
-      <section className="pd-tabs">
-        <div className="pd-tab-headers">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="shimmer" style={{ width: 110, height: 40, borderRadius: 6, marginRight: 4 }} />
-          ))}
-        </div>
-        <div className="pd-tab-content">
-          <div className="pd-specs-grid">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} style={{ display: "flex", gap: 14, padding: 16 }}>
-                <div className="shimmer" style={{ width: 40, height: 40, borderRadius: 10, flexShrink: 0 }} />
-                <div style={{ flex: 1 }}>
-                  <div className="shimmer" style={{ width: "60%", height: 12, borderRadius: 6, marginBottom: 6 }} />
-                  <div className="shimmer" style={{ width: "80%", height: 16, borderRadius: 6 }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="pd-related">
         <div className="shimmer" style={{ width: 180, height: 24, borderRadius: 8, marginBottom: 24 }} />
         <div className="pd-related-grid">
@@ -148,13 +198,14 @@ function ProductDetailSkeleton() {
 }
 
 export default function ProductDetailPage({ params }) {
+  const { t, language, changeLanguage } = useSite();
   const [ready, setReady] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState("specs");
   const { addToCart, count, setDrawerOpen, hydrated } = useCart();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [inquiryProduct, setInquiryProduct] = useState(null);
 
   useEffect(() => {
     async function loadProduct() {
@@ -225,27 +276,65 @@ export default function ProductDetailPage({ params }) {
           <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
         </Link>
         <nav className="pd-nav">
-          <Link href="/">Home</Link>
-          <Link href="/products">Products</Link>
-          <span className="active">{product.category}</span>
+          <Link href="/">{t("Home")}</Link>
+          <Link href="/products">{t("Products")}</Link>
+          <span className="active">{t(product.category)}</span>
         </nav>
-        <div className="pd-header-actions">
+        <div className="pd-header-actions" style={{ gap: 12 }}>
+          {/* Modern Language Switcher */}
+          <div className="lang-switcher" style={{ display: "inline-flex", background: "#f1f3f5", borderRadius: 20, padding: 3, gap: 2, marginRight: 4, height: 32, alignItems: "center" }}>
+            <button
+              type="button"
+              onClick={() => changeLanguage("en")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: 16,
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                border: "none",
+                background: language === "en" ? "#0a4bd9" : "transparent",
+                color: language === "en" ? "#fff" : "#555",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              onClick={() => changeLanguage("fr")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: 16,
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                border: "none",
+                background: language === "fr" ? "#0a4bd9" : "transparent",
+                color: language === "fr" ? "#fff" : "#555",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              FR
+            </button>
+          </div>
+
           <button className="pd-cart-btn" type="button" aria-label="Cart" onClick={() => setDrawerOpen(true)}>
             <ShoppingCart size={19} />
             {hydrated && count > 0 && <span className="pd-cart-badge">{count}</span>}
           </button>
           <Link className="pd-back" href="/products">
-            <ArrowLeft size={17} /> All products
+            <ArrowLeft size={17} /> {t("All products")}
           </Link>
         </div>
       </header>
 
       <div className="pd-breadcrumb">
-        <Link href="/">Home</Link>
+        <Link href="/">{t("Home")}</Link>
         <ChevronRight size={14} />
-        <Link href="/products">Products</Link>
+        <Link href="/products">{t("Products")}</Link>
         <ChevronRight size={14} />
-        <Link href={`/products?category=${encodeURIComponent(product.category)}`}>{product.category}</Link>
+        <Link href={`/products?category=${encodeURIComponent(product.category)}`}>{t(product.category)}</Link>
         <ChevronRight size={14} />
         <span>{product.name}</span>
       </div>
@@ -277,7 +366,7 @@ export default function ProductDetailPage({ params }) {
         </div>
 
         <div className="pd-info">
-          <p className="pd-category">{product.category}</p>
+          <p className="pd-category">{t(product.category)}</p>
           <h1>{product.name}</h1>
           <div className="pd-rating">
             <div className="pd-stars">
@@ -288,97 +377,60 @@ export default function ProductDetailPage({ params }) {
             <span>4.0 (24 reviews)</span>
           </div>
           <p className="pd-price">{product.price.toLocaleString("en-US")} <small>MAD</small></p>
-          <p className="pd-description">{product.description}</p>
+          <div style={{ marginBottom: "28px" }}>{formatDescription(product.description)}</div>
 
-          <div className="pd-quantity">
-            <span>Quantity</span>
-            <div className="pd-qty-controls">
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
-              <span>{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)}>+</button>
+          {!product.inquiry_only && (
+            <div className="pd-quantity">
+              <span>{t("Quantity")}</span>
+              <div className="pd-qty-controls">
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
+                <span>{quantity}</span>
+                <button onClick={() => setQuantity(quantity + 1)}>+</button>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="pd-actions">
-            <button className="pd-add" onClick={handleAddToCart}>
-              <ShoppingCart size={18} /> Add to cart
-            </button>
+          <div className="pd-actions" style={{ display: "flex", gap: "12px" }}>
+            {product.inquiry_only ? (
+              <button 
+                className="pd-add" 
+                onClick={() => setInquiryProduct(product)} 
+                style={{ flex: 1, backgroundColor: "#0a4bd9", border: "1px solid #0a4bd9", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+              >
+                {t("Inquire Availability")}
+              </button>
+            ) : (
+              <button className="pd-add" onClick={handleAddToCart} style={{ flex: 1 }}>
+                <ShoppingCart size={18} /> {t("Add to cart")}
+              </button>
+            )}
+            {product.pdf && (
+              <a
+                className="pd-add"
+                href={product.pdf}
+                download={`${product.name.replace(/\s+/g, "_")}_datasheet.pdf`}
+                style={{
+                  flex: 1,
+                  textDecoration: "none",
+                  backgroundColor: "#202124"
+                }}
+              >
+                <FileText size={18} /> {t("Datasheet PDF")}
+              </a>
+            )}
           </div>
 
           <div className="pd-perks">
-            <div><Truck size={18} /><span>Free delivery across Morocco</span></div>
-            <div><Shield size={18} /><span>2-year official warranty</span></div>
-            <div><RotateCcw size={18} /><span>30-day returns</span></div>
+            <div><Truck size={18} /><span>{t("Free delivery across Morocco")}</span></div>
+            <div><Shield size={18} /><span>{t("2-year official warranty")}</span></div>
+            <div><RotateCcw size={18} /><span>{t("30-day returns")}</span></div>
           </div>
         </div>
-      </section>
-
-      <section className="pd-tabs">
-        <div className="pd-tab-headers">
-          <button className={activeTab === "specs" ? "active" : ""} onClick={() => setActiveTab("specs")}>Specifications</button>
-          <button className={activeTab === "features" ? "active" : ""} onClick={() => setActiveTab("features")}>Features</button>
-          <button className={activeTab === "description" ? "active" : ""} onClick={() => setActiveTab("description")}>Description</button>
-        </div>
-        <AnimatePresence mode="wait">
-          {activeTab === "specs" && (
-            <motion.div
-              key="specs"
-              className="pd-tab-content"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="pd-specs-grid">
-                {Object.entries(product.specs).map(([key, value]) => {
-                  const Icon = specIcons[key] || Box;
-                  return (
-                    <div key={key} className="pd-spec-item">
-                      <div className="pd-spec-icon"><Icon size={18} /></div>
-                      <div>
-                        <span>{key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase())}</span>
-                        <strong>{value}</strong>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          )}
-          {activeTab === "features" && (
-            <motion.div
-              key="features"
-              className="pd-tab-content"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-            >
-              <ul className="pd-features-list">
-                {product.features.map((f) => (
-                  <li key={f}><Check size={16} /> {f}</li>
-                ))}
-              </ul>
-            </motion.div>
-          )}
-          {activeTab === "description" && (
-            <motion.div
-              key="description"
-              className="pd-tab-content"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-            >
-              <p>{product.description}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </section>
 
       {relatedProducts.length > 0 && (
         <section className="pd-related">
-          <h2>Related products</h2>
+          <h2>{t("Related products")}</h2>
           <div className="pd-related-grid">
             {relatedProducts.map((rp) => (
               <motion.a
@@ -392,10 +444,10 @@ export default function ProductDetailPage({ params }) {
               >
                 <div className="pd-related-image">
                   <img src={rp.image} alt={rp.name} />
-                  <span>{rp.badge}</span>
+                  {rp.badge && <span>{t(rp.badge)}</span>}
                 </div>
                 <div className="pd-related-info">
-                  <p>{rp.category}</p>
+                  <p>{t(rp.category)}</p>
                   <h3>{rp.name}</h3>
                   <strong>{rp.price.toLocaleString("en-US")} MAD</strong>
                 </div>
@@ -408,10 +460,15 @@ export default function ProductDetailPage({ params }) {
       <footer className="pd-footer">
         <div className="pd-footer-inner">
           <Link href="/" className="pd-footer-logo"><img src="/marocgpu-logo-transparent.png" alt="MarocGPU" /></Link>
-          <span>Casablanca, Morocco</span>
-          <span>{"\u00A9"} 2026 MarocGPU. All rights reserved.</span>
+          <span>{t("Casablanca, Morocco")}</span>
+          <span>{"\u00A9"} 2026 MarocGPU. {t("All rights reserved.")}</span>
         </div>
       </footer>
+      <InquiryModal
+        open={!!inquiryProduct}
+        onClose={() => setInquiryProduct(null)}
+        product={inquiryProduct}
+      />
     </motion.main>
   );
 }

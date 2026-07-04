@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
@@ -13,8 +14,10 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useSite } from "../context/SiteContext";
+import InquiryModal from "../components/InquiryModal";
 
-const categories = ["All", "Consumer", "Professional", "Graphics", "Displays", "Printers", "Accessories"];
+const defaultCategories = ["All", "Consumer", "Professional", "Graphics", "Displays", "Printers", "Accessories"];
 
 const catalogProducts = [
   { id: 1, name: "ProWork X1 Mobile Studio", category: "Consumer", price: 12990, badge: "Best seller", spec: "Core Ultra 7 · RTX 4060 · 32GB · 1TB", image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=1100&q=88" },
@@ -33,7 +36,7 @@ const catalogProducts = [
   { id: 14, name: "SmartTank Studio", category: "Printers", price: 2790, badge: "Low cost printing", spec: "Color · Wireless · High capacity", image: "https://images.unsplash.com/photo-1562408590-e32931084e23?auto=format&fit=crop&w=1100&q=88" },
 ];
 
-function normalizeCategory(value) {
+function normalizeCategory(value, categoriesList = defaultCategories) {
   if (!value) return "All";
   const normalized = value.toLowerCase();
   if (normalized.includes("consumer") || normalized.includes("laptop")) return "Consumer";
@@ -44,10 +47,17 @@ function normalizeCategory(value) {
   if (normalized.includes("gaming") || normalized.includes("workstation")) return "Professional";
   if (normalized.includes("stream")) return "Accessories";
   if (normalized.includes("accessor")) return "Accessories";
-  return categories.find((category) => category.toLowerCase() === normalized) || "All";
+  return categoriesList.find((category) => category.toLowerCase() === normalized) || "All";
 }
 
 export default function ProductsPage() {
+  const { settings, t, language, changeLanguage } = useSite();
+  const categories = useMemo(() => {
+    const navs = settings?.navItems || ["Consumer", "Professional", "Data Center Solutions", "Support"];
+    const filtered = navs.filter(n => n !== "Support" && n !== "Support center");
+    return ["All", ...filtered];
+  }, [settings?.navItems]);
+
   const [activeCategory, setActiveCategory] = useState("All");
   const [view, setView] = useState("grid");
   const [query, setQuery] = useState("");
@@ -55,14 +65,24 @@ export default function ProductsPage() {
   const { addToCart, items, setDrawerOpen, hydrated } = useCart();
   const [liveProducts, setLiveProducts] = useState([]);
   const [ready, setReady] = useState(false);
+  const router = useRouter();
+  const [inquiryProduct, setInquiryProduct] = useState(null);
 
   useEffect(() => {
-    async function loadProducts() {
+    async function loadData() {
       try {
-        const res = await fetch('/api/products');
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setLiveProducts(data);
+        const resProducts = await fetch('/api/products');
+        const productsData = await resProducts.json();
+        
+        if (Array.isArray(productsData)) {
+          setLiveProducts(productsData);
+        }
+        
+        const params = new URLSearchParams(window.location.search);
+        const category = normalizeCategory(params.get("category"), categories);
+        setActiveCategory(category);
+        if (params.get("category") && params.get("category") !== category) {
+          window.history.replaceState({}, "", `/products?category=${encodeURIComponent(category)}`);
         }
       } catch (e) {
         console.error(e);
@@ -70,15 +90,8 @@ export default function ProductsPage() {
         setReady(true);
       }
     }
-    loadProducts();
-
-    const params = new URLSearchParams(window.location.search);
-    const category = normalizeCategory(params.get("category"));
-    setActiveCategory(category);
-    if (params.get("category") && params.get("category") !== category) {
-      window.history.replaceState({}, "", `/products?category=${encodeURIComponent(category)}`);
-    }
-  }, []);
+    loadData();
+  }, [categories]);
 
   const displayProducts = liveProducts.length > 0 ? liveProducts.map((p) => ({
     id: p.id,
@@ -86,14 +99,16 @@ export default function ProductsPage() {
     category: p.category,
     price: Number(p.price),
     badge: p.badge || "New",
-    spec: p.description || "",
+    spec: p.description ? (p.description.length > 90 ? p.description.slice(0, 90).trim() + "..." : p.description) : "",
+    fullDescription: p.description || "",
+    inquiry_only: p.inquiry_only,
     image: p.image || "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=80"
   })) : catalogProducts;
 
   const visibleProducts = useMemo(() => {
     const filtered = displayProducts.filter((product) => {
       const categoryMatch = activeCategory === "All" || product.category === activeCategory;
-      const searchMatch = `${product.name} ${product.spec}`.toLowerCase().includes(query.toLowerCase());
+      const searchMatch = `${product.name} ${product.fullDescription || product.spec}`.toLowerCase().includes(query.toLowerCase());
       return categoryMatch && searchMatch;
     });
 
@@ -111,22 +126,124 @@ export default function ProductsPage() {
     window.history.replaceState({}, "", url);
   };
 
+  if (!ready) {
+    return (
+      <main className="catalog-page">
+        <header className="catalog-header">
+          <Link className="catalog-logo" href="/" aria-label="MarocGPU home">
+            <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
+          </Link>
+          <Link className="catalog-home-link" href="/"><ArrowLeft size={17} /> Back to home</Link>
+          <button className="catalog-cart" type="button" aria-label="Loading...">
+            <ShoppingCart size={19} />
+          </button>
+        </header>
+
+        <section className="catalog-hero">
+          <p>MarocGPU catalog</p>
+          <h1>Find your next machine.</h1>
+          <span>Purpose-built hardware for work, play, and everything you are creating next.</span>
+        </section>
+
+        <section className="catalog-shell">
+          <div className="catalog-categories" aria-label="Product categories" style={{ display: "flex", gap: "10px", marginBottom: "24px", overflowX: "auto" }}>
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <div
+                key={i}
+                className="shimmer"
+                style={{
+                  width: i === 1 ? "50px" : i === 2 ? "90px" : i === 3 ? "110px" : i === 4 ? "80px" : i === 5 ? "100px" : i === 6 ? "75px" : "95px",
+                  height: "38px",
+                  borderRadius: "999px",
+                  flexShrink: 0
+                }}
+              />
+            ))}
+          </div>
+
+          <div className="catalog-toolbar" style={{ pointerEvents: "none" }}>
+            <div className="shimmer" style={{ width: "300px", height: "48px", borderRadius: "999px" }} />
+            <div className="shimmer" style={{ width: "100px", height: "20px", borderRadius: "6px" }} />
+            <div className="shimmer" style={{ width: "160px", height: "20px", borderRadius: "6px" }} />
+            <div className="shimmer" style={{ width: "80px", height: "36px", borderRadius: "8px" }} />
+          </div>
+
+          <div className={`catalog-products ${view}`}>
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <article className="catalog-card" key={i} style={{ pointerEvents: "none" }}>
+                <div className="shimmer" style={{ width: "100%", height: "260px", borderRadius: "22px" }} />
+                <div className="catalog-card-body" style={{ padding: "24px 2px 0" }}>
+                  <div className="shimmer" style={{ width: "30%", height: "12px", borderRadius: "4px", marginBottom: "12px" }} />
+                  <div className="shimmer" style={{ width: "80%", height: "20px", borderRadius: "6px", marginBottom: "12px" }} />
+                  <div className="shimmer" style={{ width: "95%", height: "14px", borderRadius: "4px", marginBottom: "20px" }} />
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div className="shimmer" style={{ width: "40%", height: "22px", borderRadius: "6px" }} />
+                    <div className="shimmer" style={{ width: "110px", height: "36px", borderRadius: "999px" }} />
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="catalog-page">
-      <header className="catalog-header">
+      <header className="catalog-header" style={{ gap: 12 }}>
         <Link className="catalog-logo" href="/" aria-label="MarocGPU home">
           <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
         </Link>
-        <Link className="catalog-home-link" href="/"><ArrowLeft size={17} /> Back to home</Link>
+        <Link className="catalog-home-link" href="/"><ArrowLeft size={17} /> {t("Back to home")}</Link>
+        
+        {/* Modern Language Switcher */}
+        <div className="lang-switcher" style={{ display: "inline-flex", background: "#f1f3f5", borderRadius: 20, padding: 3, gap: 2, marginRight: 8, height: 32, alignItems: "center", marginLeft: "auto" }}>
+          <button
+            type="button"
+            onClick={() => changeLanguage("en")}
+            style={{
+              padding: "4px 8px",
+              borderRadius: 16,
+              fontSize: "0.72rem",
+              fontWeight: 800,
+              border: "none",
+              background: language === "en" ? "#0a4bd9" : "transparent",
+              color: language === "en" ? "#fff" : "#555",
+              cursor: "pointer",
+              transition: "all 0.2s ease"
+            }}
+          >
+            EN
+          </button>
+          <button
+            type="button"
+            onClick={() => changeLanguage("fr")}
+            style={{
+              padding: "4px 8px",
+              borderRadius: 16,
+              fontSize: "0.72rem",
+              fontWeight: 800,
+              border: "none",
+              background: language === "fr" ? "#0a4bd9" : "transparent",
+              color: language === "fr" ? "#fff" : "#555",
+              cursor: "pointer",
+              transition: "all 0.2s ease"
+            }}
+          >
+            FR
+          </button>
+        </div>
+
         <button className="catalog-cart" type="button" aria-label={`${hydrated ? items.length : 0} products in cart`} onClick={() => setDrawerOpen(true)}>
           <ShoppingCart size={19} />{hydrated && <span>{items.length}</span>}
         </button>
       </header>
 
       <section className="catalog-hero">
-        <p>MarocGPU catalog</p>
-        <h1>Find your next machine.</h1>
-        <span>Purpose-built hardware for work, play, and everything you are creating next.</span>
+        <p>{t("MarocGPU catalog")}</p>
+        <h1>{t("Find your next machine.")}</h1>
+        <span>{t("Purpose-built hardware for work, play, and everything you are creating next.")}</span>
       </section>
 
       <section className="catalog-shell">
@@ -138,7 +255,7 @@ export default function ProductsPage() {
               key={category}
               onClick={() => chooseCategory(category)}
             >
-              {activeCategory === category ? <Check size={15} /> : null}{category}
+              {activeCategory === category ? <Check size={15} /> : null}{t(category)}
             </button>
           ))}
         </div>
@@ -146,16 +263,16 @@ export default function ProductsPage() {
         <div className="catalog-toolbar">
           <label className="catalog-search">
             <Search size={18} />
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" />
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Search products")} />
           </label>
-          <div className="catalog-count"><SlidersHorizontal size={16} /> {visibleProducts.length} products</div>
+          <div className="catalog-count"><SlidersHorizontal size={16} /> {visibleProducts.length} {t("products")}</div>
           <label className="catalog-sort">
-            <span>Sort</span>
+            <span>{t("Sort")}</span>
             <select value={sort} onChange={(event) => setSort(event.target.value)}>
-              <option value="featured">Featured</option>
-              <option value="price-low">Price: low to high</option>
-              <option value="price-high">Price: high to low</option>
-              <option value="name">Name</option>
+              <option value="featured">{t("Featured")}</option>
+              <option value="price-low">{t("Price: low to high")}</option>
+              <option value="price-high">{t("Price: high to low")}</option>
+              <option value="name">{t("Name")}</option>
             </select>
           </label>
           <div className="view-switch" aria-label="Product view">
@@ -169,24 +286,51 @@ export default function ProductsPage() {
             {visibleProducts.map((product) => {
               const isAdded = hydrated && items.some((i) => i.id === product.id);
               return (
-                <article className="catalog-card" key={product.id}>
-                  <Link className="catalog-card-image" href={`/products/${product.id}`}>
+                 <article 
+                  className="catalog-card" 
+                  key={product.id}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => router.push(`/products/${product.id}`)}
+                >
+                  <div className="catalog-card-image">
                     <img src={product.image} alt={product.name} />
-                    <span>{product.badge}</span>
-                  </Link>
+                    {product.badge && <span>{t(product.badge)}</span>}
+                  </div>
                   <div className="catalog-card-body">
-                    <p>{product.category}</p>
+                    <p>{t(product.category)}</p>
                     <h2>{product.name}</h2>
                     <span>{product.spec}</span>
-                    <div className="catalog-card-buy">
+                    <div className="catalog-card-buy" onClick={(e) => e.stopPropagation()}>
                       <strong>{product.price.toLocaleString("en-US")} MAD</strong>
-                      <button
-                        className={isAdded ? "added" : ""}
-                        type="button"
-                        onClick={() => addToCart(product.id)}
-                      >
-                        {isAdded ? <Check size={17} /> : <ShoppingCart size={17} />}{isAdded ? "In cart" : "Add to cart"}
-                      </button>
+                      {product.inquiry_only ? (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setInquiryProduct(product);
+                          }}
+                          style={{
+                            backgroundColor: "#0a4bd9",
+                            color: "#fff",
+                            borderColor: "#0a4bd9",
+                            fontWeight: "700"
+                          }}
+                        >
+                          {t("Inquire")}
+                        </button>
+                      ) : (
+                        <button
+                          className={isAdded ? "added" : ""}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addToCart(product.id);
+                            setDrawerOpen(true);
+                          }}
+                        >
+                          {isAdded ? <Check size={17} /> : <ShoppingCart size={17} />}{isAdded ? t("In cart") : t("Add to cart")}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </article>
@@ -195,12 +339,17 @@ export default function ProductsPage() {
           </div>
         ) : (
           <div className="catalog-empty">
-            <h2>No products found</h2>
-            <p>Try another category or a shorter search.</p>
-            <button type="button" onClick={() => { setQuery(""); chooseCategory("All"); }}>Clear filters <ArrowRight size={17} /></button>
+            <h2>{t("No products found")}</h2>
+            <p>{t("Try another category or a shorter search.")}</p>
+            <button type="button" onClick={() => { setQuery(""); chooseCategory("All"); }}>{t("Clear filters")} <ArrowRight size={17} /></button>
           </div>
         )}
       </section>
+      <InquiryModal
+        open={!!inquiryProduct}
+        onClose={() => setInquiryProduct(null)}
+        product={inquiryProduct}
+      />
     </main>
   );
 }

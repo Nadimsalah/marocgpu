@@ -20,7 +20,7 @@ body {
   margin: 0;
   color: var(--text);
   background: #fff;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 a {
@@ -1658,16 +1658,82 @@ img {
   gap: 8px;
 }
 
-.mobile-nav a {
+.mobile-nav-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 16px;
   border-radius: 16px;
   background: #f7f8fa;
   font-weight: 600;
-  transition: background 0.15s;
+  color: #17191d;
+  text-decoration: none;
+  border: none;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
 }
 
-.mobile-nav a:active {
+.mobile-nav-item:active {
   background: #ecedf0;
+}
+
+.mobile-nav-item.expanded {
+  background: #ecedf0;
+  color: #0a4bd9;
+}
+
+.mobile-sub-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 8px 4px 16px;
+}
+
+.mobile-sub-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fbfbfc;
+  border-radius: 12px;
+  padding: 10px;
+  text-decoration: none;
+  border: 1px solid #eceef1;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.mobile-sub-card:active {
+  transform: scale(0.98);
+  border-color: #0a4bd9;
+}
+
+.mobile-sub-card-image {
+  height: 80px;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #eaecef;
+}
+
+.mobile-sub-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+
+.mobile-sub-card:active img {
+  transform: scale(1.04);
+}
+
+.mobile-sub-card span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #22252a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mobile-footer-actions {
@@ -1809,9 +1875,21 @@ img {
     height: 72px;
   }
 
+  .site-brand {
+    grid-column: 1;
+  }
+
+  .site-actions {
+    grid-column: 3;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
   .site-nav,
   .site-actions .search-pill,
-  .site-actions .icon-btn:not(.menu-trigger) {
+  .site-actions .icon-btn:not(.menu-trigger):not(.cart-icon-btn) {
     display: none;
   }
 

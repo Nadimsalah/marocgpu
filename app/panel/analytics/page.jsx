@@ -34,16 +34,23 @@ export default function AnalyticsPage() {
   const [selectedKpi, setSelectedKpi] = useState(null);
   const [orders, setOrders] = useState([]);
   const [customers, setCustomers] = useState([]);
+  const [categories, setCategories] = useState(["Consumer", "Professional", "Graphics", "Displays", "Accessories", "Printers"]);
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [resOrders, resCustomers] = await Promise.all([
+        const [resOrders, resCustomers, resCategories] = await Promise.all([
           fetch('/api/orders').then(r => r.json()),
-          fetch('/api/customers').then(r => r.json())
+          fetch('/api/customers').then(r => r.json()),
+          fetch('/api/categories').then(r => r.json())
         ]);
         setOrders(Array.isArray(resOrders) ? resOrders : []);
         setCustomers(Array.isArray(resCustomers) ? resCustomers : []);
+        
+        const categoriesList = Array.isArray(resCategories) ? resCategories.map(c => c.name) : [];
+        if (categoriesList.length > 0) {
+          setCategories(categoriesList);
+        }
       } catch (e) {
         console.error("Failed to load analytics data:", e);
       } finally {
@@ -83,8 +90,7 @@ export default function AnalyticsPage() {
   const maxRevenue = Math.max(...monthlyData.map((d) => d.revenue)) || 1;
   const maxOrders = Math.max(...monthlyData.map((d) => d.orders)) || 1;
 
-  const categoriesList = ["Consumer", "Professional", "Graphics", "Displays", "Accessories", "Printers"];
-  const categoryBreakdown = categoriesList.map(cat => {
+  const categoryBreakdown = categories.map(cat => {
     const catOrders = orders.filter(o => o.category === cat);
     const revenue = catOrders.reduce((sum, o) => sum + Number(o.amount || 0), 0);
     const totalRevenueSum = totalRevenue || 1;

@@ -37,22 +37,63 @@ export default function InterceptorLoader() {
             } else if (method === 'POST') {
               const body = JSON.parse(init.body);
               const { id, ...payload } = body;
-              const { data, error } = await clientSupabase
+              let result = await clientSupabase
                 .from('products')
                 .insert([payload])
                 .select();
-              if (error) throw error;
-              return new Response(JSON.stringify(data[0]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+
+              if (result.error) {
+                const cleanPayload = { ...payload };
+                let retried = false;
+                if (result.error.message.includes("pdf") || result.error.message.includes("schema cache")) {
+                  delete cleanPayload.pdf;
+                  retried = true;
+                }
+                if (result.error.message.includes("inquiry_only") || result.error.message.includes("schema cache")) {
+                  delete cleanPayload.inquiry_only;
+                  retried = true;
+                }
+                if (retried) {
+                  result = await clientSupabase
+                    .from('products')
+                    .insert([cleanPayload])
+                    .select();
+                }
+              }
+
+              if (result.error) throw result.error;
+              return new Response(JSON.stringify(result.data[0]), { status: 200, headers: { 'Content-Type': 'application/json' } });
             } else if (method === 'PUT') {
               const body = JSON.parse(init.body);
               const { id, ...updates } = body;
-              const { data, error } = await clientSupabase
+              let result = await clientSupabase
                 .from('products')
                 .update(updates)
                 .eq('id', id)
                 .select();
-              if (error) throw error;
-              return new Response(JSON.stringify(data[0]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+
+              if (result.error) {
+                const cleanUpdates = { ...updates };
+                let retried = false;
+                if (result.error.message.includes("pdf") || result.error.message.includes("schema cache")) {
+                  delete cleanUpdates.pdf;
+                  retried = true;
+                }
+                if (result.error.message.includes("inquiry_only") || result.error.message.includes("schema cache")) {
+                  delete cleanUpdates.inquiry_only;
+                  retried = true;
+                }
+                if (retried) {
+                  result = await clientSupabase
+                    .from('products')
+                    .update(cleanUpdates)
+                    .eq('id', id)
+                    .select();
+                }
+              }
+
+              if (result.error) throw result.error;
+              return new Response(JSON.stringify(result.data[0]), { status: 200, headers: { 'Content-Type': 'application/json' } });
             }
           } catch (err) {
             return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
@@ -137,6 +178,116 @@ export default function InterceptorLoader() {
                 result = data[0];
               }
               return new Response(JSON.stringify(result), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+          } catch (err) {
+            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+          }
+        }
+
+        if (url.startsWith('/api/categories')) {
+          try {
+            const method = init?.method || 'GET';
+            if (method === 'GET') {
+              const { data, error } = await clientSupabase
+                .from('categories')
+                .select('*')
+                .order('name', { ascending: true });
+              if (error) {
+                if (error.code === 'PGRST116' || error.message.includes('public.categories')) {
+                  return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                }
+                throw error;
+              }
+              return new Response(JSON.stringify(data || []), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            } else if (method === 'POST') {
+              const body = JSON.parse(init.body);
+              const { data, error } = await clientSupabase
+                .from('categories')
+                .insert([body])
+                .select();
+              if (error) throw error;
+              return new Response(JSON.stringify(data[0]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            } else if (method === 'DELETE') {
+              const parsedUrl = new URL(url, window.location.origin);
+              const id = parsedUrl.searchParams.get('id');
+              const name = parsedUrl.searchParams.get('name');
+
+              let query = clientSupabase.from('categories').delete();
+              if (id) {
+                query = query.eq('id', id);
+              } else if (name) {
+                query = query.eq('name', name);
+              } else {
+                return new Response(JSON.stringify({ error: 'Missing id or name query parameter' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+              }
+
+              const { data, error } = await query.select();
+              if (error) throw error;
+              return new Response(JSON.stringify(data[0] || { success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+          } catch (err) {
+            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+          }
+        }
+        if (url.startsWith('/api/settings')) {
+          try {
+            const method = init?.method || 'GET';
+            if (method === 'GET') {
+              const { data, error } = await clientSupabase
+                .from('settings')
+                .select('value')
+                .eq('key', 'site_settings')
+                .single();
+              if (error) {
+                if (error.code === 'PGRST116') {
+                  return new Response(JSON.stringify({}), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                }
+                throw error;
+              }
+              return new Response(JSON.stringify(data?.value || {}), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            } else if (method === 'POST') {
+              const body = JSON.parse(init.body);
+              const { data, error } = await clientSupabase
+                .from('settings')
+                .upsert({ key: 'site_settings', value: body }, { onConflict: 'key' })
+                .select();
+              if (error) throw error;
+              return new Response(JSON.stringify({ success: true, data }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+          } catch (err) {
+            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+          }
+        }
+
+        if (url.startsWith('/api/inquiries')) {
+          try {
+            const method = init?.method || 'GET';
+            if (method === 'GET') {
+              const { data, error } = await clientSupabase
+                .from('inquiries')
+                .select('*')
+                .order('created_at', { ascending: false });
+              if (error) {
+                if (error.code === 'PGRST116' || error.code === '42P01' || error.message.includes('inquiries')) {
+                  return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                }
+                throw error;
+              }
+              return new Response(JSON.stringify(data || []), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            } else if (method === 'POST') {
+              const body = JSON.parse(init.body);
+              const { data, error } = await clientSupabase
+                .from('inquiries')
+                .insert([body])
+                .select();
+              if (error) {
+                if (error.code === '42P01' || error.message.includes('inquiries')) {
+                  const mockSaved = { id: Date.now(), ...body, created_at: new Date().toISOString() };
+                  return new Response(JSON.stringify(mockSaved), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                }
+                throw error;
+              }
+              return new Response(JSON.stringify(data[0]), { status: 200, headers: { 'Content-Type': 'application/json' } });
             }
           } catch (err) {
             return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });

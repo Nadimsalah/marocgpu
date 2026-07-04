@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Wrench,
 } from "lucide-react";
+import { useSite } from "../context/SiteContext";
 
 const supportCards = [
   {
@@ -193,6 +194,7 @@ export default function SupportContent() {
   const [openFaq, setOpenFaq] = useState(0);
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [sent, setSent] = useState(false);
+  const { t, language, changeLanguage } = useSite();
 
   useEffect(() => {
     const timer = setTimeout(() => setReady(true), 1200);
@@ -218,47 +220,88 @@ export default function SupportContent() {
           <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
         </a>
         <nav aria-label="Support navigation">
-          <a href="#help">Help topics</a>
-          <a href="#faqs">FAQs</a>
-          <a href="#contact">Contact</a>
+          <a href="#help">{t("Help topics")}</a>
+          <a href="#faqs">{t("FAQs")}</a>
+          <a href="#contact">{t("Contact")}</a>
         </nav>
-        <a className="support-header-cta" href="#contact">
-          Get help <ArrowRight size={17} />
-        </a>
+        
+        <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "end" }}>
+          {/* Modern Language Switcher */}
+          <div className="lang-switcher" style={{ display: "inline-flex", background: "#f1f3f5", borderRadius: 20, padding: 3, gap: 2, height: 32, alignItems: "center" }}>
+            <button
+              type="button"
+              onClick={() => changeLanguage("en")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: 16,
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                border: "none",
+                background: language === "en" ? "#0a4bd9" : "transparent",
+                color: language === "en" ? "#fff" : "#555",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              onClick={() => changeLanguage("fr")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: 16,
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                border: "none",
+                background: language === "fr" ? "#0a4bd9" : "transparent",
+                color: language === "fr" ? "#fff" : "#555",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              FR
+            </button>
+          </div>
+
+          <a className="support-header-cta" href="#contact" style={{ margin: 0 }}>
+            {t("Get help")} <ArrowRight size={17} />
+          </a>
+        </div>
       </header>
 
       <section className="support-hero">
         <div className="support-hero-copy">
-          <p>MarocGPU support</p>
-          <h1>We're here to help.</h1>
+          <p>{t("MarocGPU support")}</p>
+          <h1>{t("We're here to help.")}</h1>
           <span>
-            Find answers, manage your order, or reach out to our local support team across Morocco.
+            {t("Find answers, manage your order, or reach out to our local support team across Morocco.")}
           </span>
           <div className="support-hero-actions">
-            <a href="#contact">Contact support <ArrowRight size={18} /></a>
-            <a href="#faqs">Browse FAQs</a>
+            <a href="#contact">{t("Contact support")} <ArrowRight size={18} /></a>
+            <a href="#faqs">{t("Browse FAQs")}</a>
           </div>
         </div>
         <div className="support-hero-visual" aria-hidden="true">
           <div className="support-orb" />
           <div className="support-hero-card">
             <Headphones size={32} />
-            <strong>24/7</strong>
-            <span>Self-service help center</span>
+            <strong>{t("24/7")}</strong>
+            <span>{t("Self-service help center")}</span>
           </div>
           <div className="support-hero-card card-secondary">
             <MessageCircle size={24} />
-            <strong>WhatsApp</strong>
-            <span>Fast response</span>
+            <strong>{t("WhatsApp")}</strong>
+            <span>{t("Fast response")}</span>
           </div>
         </div>
       </section>
 
       <section className="support-topics" id="help">
         <div className="support-section-heading">
-          <p>Help topics</p>
-          <h2>Get support your way.</h2>
-          <span>Choose the fastest path to the answer or service you need.</span>
+          <p>{t("Help topics")}</p>
+          <h2>{t("Get support your way.")}</h2>
+          <span>{t("Choose the fastest path to the answer or service you need.")}</span>
         </div>
         <div className="support-cards-grid">
           {supportCards.map(({ icon: Icon, title, text, href }) => (
@@ -266,10 +309,10 @@ export default function SupportContent() {
               <div>
                 <Icon size={25} />
               </div>
-              <h3>{title}</h3>
-              <p>{text}</p>
+              <h3>{t(title)}</h3>
+              <p>{t(text)}</p>
               <span>
-                Learn more <ArrowRight size={15} />
+                {t("Learn more")} <ArrowRight size={15} />
               </span>
             </a>
           ))}
@@ -278,8 +321,8 @@ export default function SupportContent() {
 
       <section className="support-faqs" id="faqs">
         <div className="support-section-heading">
-          <p>Common questions</p>
-          <h2>Frequently asked questions.</h2>
+          <p>{t("Common questions")}</p>
+          <h2>{t("Frequently asked questions.")}</h2>
         </div>
         <div className="support-faq-list">
           {faqs.map((faq, index) => {
@@ -291,10 +334,10 @@ export default function SupportContent() {
                   onClick={() => setOpenFaq(isOpen ? -1 : index)}
                   aria-expanded={isOpen}
                 >
-                  <span>{faq.question}</span>
+                  <span>{t(faq.question)}</span>
                   <ChevronDown size={20} />
                 </button>
-                {isOpen && <p>{faq.answer}</p>}
+                {isOpen && <p>{t(faq.answer)}</p>}
               </div>
             );
           })}
@@ -304,10 +347,10 @@ export default function SupportContent() {
       <section className="support-contact" id="contact">
         <div className="support-contact-layout">
           <div className="support-contact-copy">
-            <p>Contact us</p>
-            <h2>Talk to a real person.</h2>
+            <p>{t("Contact us")}</p>
+            <h2>{t("Talk to a real person.")}</h2>
             <span>
-              Whether you need pre-sales advice, order help, or technical support, our team is ready to assist.
+              {t("Whether you need pre-sales advice, order help, or technical support, our team is ready to assist.")}
             </span>
             <div className="support-contact-methods">
               {contactMethods.map(({ icon: Icon, title, detail, note }) => (
@@ -316,9 +359,9 @@ export default function SupportContent() {
                     <Icon size={22} />
                   </div>
                   <div>
-                    <strong>{title}</strong>
-                    <span>{detail}</span>
-                    <small>{note}</small>
+                    <strong>{t(title)}</strong>
+                    <span>{t(detail)}</span>
+                    <small>{t(note)}</small>
                   </div>
                 </div>
               ))}
@@ -331,27 +374,27 @@ export default function SupportContent() {
                 <div className="support-success-icon">
                   <ShieldCheck size={32} />
                 </div>
-                <h3>Message sent</h3>
-                <p>Thanks for reaching out. Our support team will get back to you shortly.</p>
+                <h3>{t("Message sent")}</h3>
+                <p>{t("Thanks for reaching out. Our support team will get back to you shortly.")}</p>
                 <button type="button" onClick={() => { setSent(false); setForm({ name: "", email: "", subject: "", message: "" }); }}>
-                  Send another message
+                  {t("Send another message")}
                 </button>
               </div>
             ) : (
               <form className="support-form" onSubmit={handleSubmit}>
                 <div className="support-form-row">
                   <label>
-                    <span>Name</span>
+                    <span>{t("Name")}</span>
                     <input
                       type="text"
                       required
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      placeholder="Your name"
+                      placeholder={t("Your name")}
                     />
                   </label>
                   <label>
-                    <span>Email</span>
+                    <span>{t("Email")}</span>
                     <input
                       type="email"
                       required
@@ -362,32 +405,32 @@ export default function SupportContent() {
                   </label>
                 </div>
                 <label>
-                  <span>Subject</span>
+                  <span>{t("Subject")}</span>
                   <select
                     required
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
                   >
-                    <option value="">Select a topic</option>
-                    <option value="order">Order & delivery</option>
-                    <option value="warranty">Warranty & repairs</option>
-                    <option value="returns">Returns & exchanges</option>
-                    <option value="technical">Technical support</option>
-                    <option value="business">Business quote</option>
-                    <option value="other">Other</option>
+                    <option value="">{t("Select a topic")}</option>
+                    <option value="order">{t("Order & delivery")}</option>
+                    <option value="warranty">{t("Warranty & repairs")}</option>
+                    <option value="returns">{t("Returns & exchanges")}</option>
+                    <option value="technical">{t("Technical support")}</option>
+                    <option value="business">{t("Business quote")}</option>
+                    <option value="other">{t("Other")}</option>
                   </select>
                 </label>
                 <label>
-                  <span>Message</span>
+                  <span>{t("Message")}</span>
                   <textarea
                     required
                     rows={5}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    placeholder="Tell us how we can help..."
+                    placeholder={t("Tell us how we can help...")}
                   />
                 </label>
-                <button type="submit">Send message</button>
+                <button type="submit">{t("Send message")}</button>
               </form>
             )}
           </div>
@@ -396,12 +439,12 @@ export default function SupportContent() {
 
       <section className="support-whatsapp">
         <div>
-          <h2>Prefer WhatsApp?</h2>
-          <p>Message us for quick replies on orders, stock, and support.</p>
+          <h2>{t("Prefer WhatsApp?")}</h2>
+          <p>{t("Message us for quick replies on orders, stock, and support.")}</p>
         </div>
         <a href="https://wa.me/212600000000" target="_blank" rel="noreferrer">
           <MessageCircle size={20} />
-          Chat on WhatsApp
+          {t("Chat on WhatsApp")}
         </a>
       </section>
 
@@ -409,8 +452,8 @@ export default function SupportContent() {
         <a href="/">
           <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
         </a>
-        <p>Powerful hardware, expert-built systems, and dependable local support across Morocco.</p>
-        <span>&#169; 2026 MarocGPU</span>
+        <p>{t("High-performance computing and data center infrastructure, engineered in partnership with NVIDIA by MicroIntégral in Morocco.")}</p>
+        <span>&copy; 2026 MarocGPU | {t("All rights reserved.")}</span>
       </footer>
     </motion.main>
   );

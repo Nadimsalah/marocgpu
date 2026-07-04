@@ -33,9 +33,9 @@ export default function PanelLayout({ children }) {
       <aside className={`panel-sidebar ${collapsed ? "collapsed" : ""}`}>
         <div className="panel-sidebar-header">
           {!collapsed && (
-            <a href="/panel/" className="panel-logo">
+            <Link href="/panel/" className="panel-logo">
               <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" style={{ height: 36, width: "auto" }} />
-            </a>
+            </Link>
           )}
           <button
             className="panel-collapse-btn"
@@ -49,22 +49,22 @@ export default function PanelLayout({ children }) {
 
         <nav className="panel-nav">
           {navItems.map(({ label, icon: Icon, href }) => (
-            <a
+            <Link
               key={label}
               href={href}
               className="panel-nav-link"
             >
               <Icon size={20} />
               {!collapsed && <span>{label}</span>}
-            </a>
+            </Link>
           ))}
         </nav>
 
         <div className="panel-sidebar-footer">
-          <a href="/" className="panel-nav-link">
+          <Link href="/" className="panel-nav-link">
             <LogOut size={20} />
             {!collapsed && <span>Back to site</span>}
-          </a>
+          </Link>
         </div>
       </aside>
 

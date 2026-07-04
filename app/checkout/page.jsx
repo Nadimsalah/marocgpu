@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "../context/CartContext";
+import { useSite } from "../context/SiteContext";
 
 const moroccanCities = [
   "Casablanca", "Rabat", "Marrakech", "Fes", "Tangier", "Agadir", "Meknes",
@@ -101,6 +102,7 @@ function CheckoutSkeleton() {
 }
 
 export default function CheckoutPage() {
+  const { t, language, changeLanguage } = useSite();
   const [ready, setReady] = useState(false);
   const { items, subtotal, shipping, total, count, clearCart, hydrated } = useCart();
   const [step, setStep] = useState(1);
@@ -110,6 +112,7 @@ export default function CheckoutPage() {
     address: "", city: "Casablanca", zip: "",
   });
   const [errors, setErrors] = useState({});
+  const [orderId, setOrderId] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => setReady(true), 1200);
@@ -136,8 +139,6 @@ export default function CheckoutPage() {
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
-
-  const [orderId, setOrderId] = useState("");
 
   const nextStep = () => {
     if (step === 1 && validateStep1()) setStep(2);
@@ -193,7 +194,7 @@ export default function CheckoutPage() {
     clearCart();
   };
 
-  if (!hydrated) {
+  if (!ready) {
     return (
       <main className="checkout-page">
         <header className="checkout-header">
@@ -205,7 +206,7 @@ export default function CheckoutPage() {
           <div className="checkout-empty-icon">
             <ShoppingCart size={48} />
           </div>
-          <h2>Loading cart...</h2>
+          <h2>{t("Loading cart...")}</h2>
         </section>
       </main>
     );
@@ -223,9 +224,9 @@ export default function CheckoutPage() {
           <div className="checkout-empty-icon">
             <ShoppingCart size={48} />
           </div>
-          <h2>Your cart is empty</h2>
-          <p>Add some products before checking out.</p>
-          <Link className="checkout-empty-cta" href="/products">Browse products</Link>
+          <h2>{t("Your cart is empty")}</h2>
+          <p>{t("Add some products before checking out.")}</p>
+          <Link className="checkout-empty-cta" href="/products">{t("Browse products")}</Link>
         </section>
       </main>
     );
@@ -249,13 +250,17 @@ export default function CheckoutPage() {
             <div className="checkout-success-icon">
               <Check size={40} strokeWidth={3} />
             </div>
-            <h2>Order confirmed!</h2>
-            <p>Thank you for your purchase. We'll send a confirmation to <strong>{form.email}</strong> with tracking details.</p>
+            <h2>{t("Order confirmed!")}</h2>
+            <p>
+              {language === "fr"
+                ? `Merci pour votre achat. Nous enverrons une confirmation à ${form.email} avec les détails de suivi.`
+                : `Thank you for your purchase. We'll send a confirmation to ${form.email} with tracking details.`}
+            </p>
             <div className="checkout-success-order">
-              <span>Order number</span>
+              <span>{t("Order number")}</span>
               <strong>#{orderId}</strong>
             </div>
-            <Link className="checkout-success-cta" href="/">Back to home</Link>
+            <Link className="checkout-success-cta" href="/">{t("Back to home")}</Link>
           </motion.div>
         </section>
       </main>
@@ -273,20 +278,62 @@ export default function CheckoutPage() {
         <Link className="checkout-logo" href="/" aria-label="MarocGPU home">
           <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
         </Link>
-        <Link className="checkout-back" href="/cart"><ArrowLeft size={17} /> Back to cart</Link>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "end" }}>
+          {/* Modern Language Switcher */}
+          <div className="lang-switcher" style={{ display: "inline-flex", background: "#f1f3f5", borderRadius: 20, padding: 3, gap: 2, height: 32, alignItems: "center" }}>
+            <button
+              type="button"
+              onClick={() => changeLanguage("en")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: 16,
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                border: "none",
+                background: language === "en" ? "#0a4bd9" : "transparent",
+                color: language === "en" ? "#fff" : "#555",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              onClick={() => changeLanguage("fr")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: 16,
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                border: "none",
+                background: language === "fr" ? "#0a4bd9" : "transparent",
+                color: language === "fr" ? "#fff" : "#555",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              FR
+            </button>
+          </div>
+
+          <Link className="checkout-back" href="/cart" style={{ margin: 0 }}>
+            <ArrowLeft size={17} /> {t("Back to cart")}
+          </Link>
+        </div>
       </header>
 
       <div className="checkout-breadcrumb">
-        <Link href="/">Home</Link>
+        <Link href="/">{t("Home")}</Link>
         <ChevronRight size={14} />
-        <Link href="/cart">Cart</Link>
+        <Link href="/cart">{t("Cart")}</Link>
         <ChevronRight size={14} />
-        <span>Checkout</span>
+        <span>{t("Checkout")}</span>
       </div>
 
       <section className="checkout-hero">
-        <p>Checkout</p>
-        <h1>Complete your order</h1>
+        <p>{t("Checkout")}</p>
+        <h1>{t("Complete your order")}</h1>
       </section>
 
       <div className="checkout-steps" style={{ "--step-progress": step }}>
@@ -299,7 +346,7 @@ export default function CheckoutPage() {
             <span className="step-num">
               {step > s.id ? <Check size={16} /> : s.id}
             </span>
-            <span className="step-label">{s.label}</span>
+            <span className="step-label">{t(s.label)}</span>
           </button>
         ))}
       </div>
@@ -316,48 +363,48 @@ export default function CheckoutPage() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2 }}
               >
-                <h2><MapPin size={20} /> Shipping information</h2>
+                <h2><MapPin size={20} /> {t("Shipping information")}</h2>
                 <div className="form-grid">
                   <div className="form-field">
-                    <label>First name</label>
+                    <label>{t("First name")}</label>
                     <input value={form.firstName} onChange={(e) => update("firstName", e.target.value)} placeholder="Ahmed" />
-                    {errors.firstName && <span className="form-error">{errors.firstName}</span>}
+                    {errors.firstName && <span className="form-error">{t(errors.firstName)}</span>}
                   </div>
                   <div className="form-field">
-                    <label>Last name</label>
+                    <label>{t("Last name")}</label>
                     <input value={form.lastName} onChange={(e) => update("lastName", e.target.value)} placeholder="El Amrani" />
-                    {errors.lastName && <span className="form-error">{errors.lastName}</span>}
+                    {errors.lastName && <span className="form-error">{t(errors.lastName)}</span>}
                   </div>
                   <div className="form-field form-full">
-                    <label>Email</label>
+                    <label>{t("Email Address")}</label>
                     <input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="ahmed@example.com" />
-                    {errors.email && <span className="form-error">{errors.email}</span>}
+                    {errors.email && <span className="form-error">{t(errors.email)}</span>}
                   </div>
                   <div className="form-field form-full">
-                    <label>Phone number</label>
+                    <label>{t("Phone Number")}</label>
                     <input type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value.replace(/\D/g, ""))} placeholder="06 12 34 56 78" />
-                    {errors.phone && <span className="form-error">{errors.phone}</span>}
+                    {errors.phone && <span className="form-error">{t(errors.phone)}</span>}
                   </div>
                   <div className="form-field form-full">
-                    <label>Address</label>
+                    <label>{t("Address")}</label>
                     <input value={form.address} onChange={(e) => update("address", e.target.value)} placeholder="123 Rue Mohammed V" />
-                    {errors.address && <span className="form-error">{errors.address}</span>}
+                    {errors.address && <span className="form-error">{t(errors.address)}</span>}
                   </div>
                   <div className="form-field">
-                    <label>City</label>
+                    <label>{t("City")}</label>
                     <select value={form.city} onChange={(e) => update("city", e.target.value)}>
-                      {moroccanCities.map((c) => <option key={c} value={c}>{c}</option>)}
+                      {moroccanCities.map((c) => <option key={c} value={c}>{t(c)}</option>)}
                     </select>
-                    {errors.city && <span className="form-error">{errors.city}</span>}
+                    {errors.city && <span className="form-error">{t(errors.city)}</span>}
                   </div>
                   <div className="form-field">
-                    <label>Postal code</label>
+                    <label>{t("Postal code")}</label>
                     <input value={form.zip} onChange={(e) => update("zip", e.target.value)} placeholder="20000" />
-                    {errors.zip && <span className="form-error">{errors.zip}</span>}
+                    {errors.zip && <span className="form-error">{t(errors.zip)}</span>}
                   </div>
                 </div>
                 <button className="checkout-next" onClick={nextStep}>
-                  Review order <ChevronRight size={18} />
+                  {t("Review order")} <ChevronRight size={18} />
                 </button>
               </motion.div>
             )}
@@ -371,21 +418,21 @@ export default function CheckoutPage() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2 }}
               >
-                <h2><Package size={20} /> Review your order</h2>
+                <h2><Package size={20} /> {t("Review your order")}</h2>
                 <div className="review-section">
-                  <h3>Shipping to</h3>
+                  <h3>{t("Shipping to")}</h3>
                   <p>{form.firstName} {form.lastName}</p>
-                  <p>{form.address}, {form.city} {form.zip}</p>
+                  <p>{form.address}, {t(form.city)} {form.zip}</p>
                   <p>{form.email} · {form.phone}</p>
                 </div>
                 <div className="review-section">
-                  <h3>Items ({count})</h3>
+                  <h3>{t("Items")} ({count})</h3>
                   {items.map((item) => (
                     <div key={item.id} className="review-item">
                       <img src={item.image} alt={item.name} />
                       <div>
                         <strong>{item.name}</strong>
-                        <span>Qty: {item.qty}</span>
+                        <span>{t("Qty:")} {item.qty}</span>
                       </div>
                       <strong>{(item.price * item.qty).toLocaleString("en-US")} MAD</strong>
                     </div>
@@ -393,10 +440,10 @@ export default function CheckoutPage() {
                 </div>
                 <div className="checkout-form-actions">
                   <button className="checkout-prev" onClick={() => setStep(1)}>
-                    <ArrowLeft size={17} /> Back
+                    <ArrowLeft size={17} /> {t("Back")}
                   </button>
                   <button className="checkout-place" onClick={placeOrder}>
-                    <Lock size={16} /> Place order · {(total).toLocaleString("en-US")} MAD
+                    <Lock size={16} /> {t("Place order")} · {(total).toLocaleString("en-US")} MAD
                   </button>
                 </div>
               </motion.div>
@@ -405,7 +452,7 @@ export default function CheckoutPage() {
         </div>
 
         <aside className="checkout-summary">
-          <h2>Order summary</h2>
+          <h2>{t("Order summary")}</h2>
           <div className="checkout-summary-items">
             {items.map((item) => (
               <div key={item.id} className="checkout-summary-item">
@@ -415,7 +462,7 @@ export default function CheckoutPage() {
                 </div>
                 <div>
                   <strong>{item.name}</strong>
-                  <span>{item.category}</span>
+                  <span>{t(item.category)}</span>
                 </div>
                 <strong>{(item.price * item.qty).toLocaleString("en-US")} MAD</strong>
               </div>
@@ -423,22 +470,22 @@ export default function CheckoutPage() {
           </div>
           <div className="checkout-summary-divider" />
           <div className="checkout-summary-row">
-            <span>Subtotal</span>
+            <span>{t("Subtotal")}</span>
             <strong>{subtotal.toLocaleString("en-US")} MAD</strong>
           </div>
           <div className="checkout-summary-row">
-            <span>Shipping</span>
-            <strong>{shipping === 0 ? "Free" : `${shipping.toLocaleString("en-US")} MAD`}</strong>
+            <span>{t("Shipping")}</span>
+            <strong>{shipping === 0 ? t("Free") : `${shipping.toLocaleString("en-US")} MAD`}</strong>
           </div>
           <div className="checkout-summary-divider" />
           <div className="checkout-summary-row checkout-summary-total">
-            <span>Total</span>
+            <span>{t("Total")}</span>
             <strong>{total.toLocaleString("en-US")} MAD</strong>
           </div>
           <div className="checkout-summary-perks">
-            <div><Truck size={15} /><span>Free delivery over 5,000 MAD</span></div>
-            <div><Shield size={15} /><span>2-year official warranty</span></div>
-            <div><Lock size={15} /><span>Secure checkout</span></div>
+            <div><Truck size={15} /><span>{t("Free delivery over 5,000 MAD")}</span></div>
+            <div><Shield size={15} /><span>{t("2-year official warranty")}</span></div>
+            <div><Lock size={15} /><span>{t("Secure checkout")}</span></div>
           </div>
         </aside>
       </div>
