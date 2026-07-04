@@ -281,7 +281,7 @@ const businessProducts = [
 
 function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
   const [expandedCat, setExpandedCat] = useState(null);
-  const { language, changeLanguage, t } = useSite();
+  const { settings, language, changeLanguage, t } = useSite();
 
   const toggleCat = (item) => {
     setExpandedCat(prev => prev === item ? null : item);
