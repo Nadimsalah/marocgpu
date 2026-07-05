@@ -730,10 +730,10 @@ function FloatingIconsSection({ title, subtitle, ctaText, ctaHref, icons, custom
 }
 
 export default function Page() {
-  const [ready, setReady] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
   const [visibleProducts, setVisibleProducts] = useState(4);
+  const [productsLoading, setProductsLoading] = useState(true);
   const [showThanks, setShowThanks] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { count, setDrawerOpen, addToCart, items, hydrated } = useCart();
@@ -763,7 +763,7 @@ export default function Page() {
       } catch (e) {
         console.error("Storefront Page live products load error:", e);
       } finally {
-        setReady(true);
+        setProductsLoading(false);
       }
     }
     loadLiveProducts();
@@ -791,7 +791,7 @@ export default function Page() {
     ? mappedProducts.slice(0, 4) 
     : displayBusiness;
 
-  if (!ready) return <LoadingSkeleton />;
+
 
   return (
     <motion.main
@@ -981,64 +981,79 @@ export default function Page() {
         </div>
 
         <div className="must-haves-grid">
-          {displayProducts.slice(0, visibleProducts).map((product, index) => {
-            const inCart = hydrated && items.some((i) => i.id === product.catalogId);
-            return (
-              <motion.article
-                className="business-product-card"
-                key={product.id}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.15 }}
-                transition={{ duration: 0.45, delay: (index % 4) * 0.06 }}
-                style={{ cursor: "pointer" }}
-                onClick={() => router.push(`/products/${product.catalogId}`)}
-              >
-                <div className="business-product-image">
-                  <img src={product.image} alt={product.name} loading="lazy" />
-                  <span>{t("In stock")}</span>
+          {productsLoading ? (
+            [1, 2, 3, 4].map((i) => (
+              <div key={i} className="business-product-card" style={{ pointerEvents: "none" }}>
+                <div className="shimmer" style={{ width: "100%", aspectRatio: "1.2", borderRadius: 20, marginBottom: 18 }} />
+                <div className="shimmer" style={{ width: 80, height: 13, borderRadius: 6, marginBottom: 10 }} />
+                <div className="shimmer" style={{ width: "80%", height: 22, borderRadius: 8, marginBottom: 10 }} />
+                <div className="shimmer" style={{ width: "60%", height: 16, borderRadius: 6, marginBottom: 18 }} />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div className="shimmer" style={{ width: 100, height: 22, borderRadius: 8 }} />
+                  <div className="shimmer" style={{ width: 110, height: 42, borderRadius: 10 }} />
                 </div>
-                <div className="business-product-info">
-                  <p>{t(product.category)}</p>
-                  <h3>{product.name}</h3>
-                  <span>{t(product.note)}</span>
-                  <div className="business-product-buy" onClick={(e) => e.stopPropagation()}>
-                    <strong>{product.price}</strong>
-                    {product.inquiry_only ? (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setInquiryProduct(product);
-                        }}
-                        style={{
-                          backgroundColor: "#0a4bd9",
-                          color: "#fff",
-                          borderColor: "#0a4bd9",
-                          fontWeight: "700"
-                        }}
-                      >
-                        {t("Inquire")}
-                      </button>
-                    ) : (
-                      <button
-                        className={inCart ? "added" : ""}
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCart(product.catalogId);
-                          setDrawerOpen(true);
-                        }}
-                      >
-                        <ShoppingCart size={17} />
-                        {inCart ? t("In cart") : t("Add to cart")}
-                      </button>
-                    )}
+              </div>
+            ))
+          ) : (
+            displayProducts.slice(0, visibleProducts).map((product, index) => {
+              const inCart = hydrated && items.some((i) => i.id === product.catalogId);
+              return (
+                <motion.article
+                  className="business-product-card"
+                  key={product.id}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={{ duration: 0.45, delay: (index % 4) * 0.06 }}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => router.push(`/products/${product.catalogId}`)}
+                >
+                  <div className="business-product-image">
+                    <img src={product.image} alt={product.name} loading="lazy" />
+                    <span>{t("In stock")}</span>
                   </div>
-                </div>
-              </motion.article>
-            );
-          })}
+                  <div className="business-product-info">
+                    <p>{t(product.category)}</p>
+                    <h3>{product.name}</h3>
+                    <span>{t(product.note)}</span>
+                    <div className="business-product-buy" onClick={(e) => e.stopPropagation()}>
+                      <strong>{product.price}</strong>
+                      {product.inquiry_only ? (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setInquiryProduct(product);
+                          }}
+                          style={{
+                            backgroundColor: "#0a4bd9",
+                            color: "#fff",
+                            borderColor: "#0a4bd9",
+                            fontWeight: "700"
+                          }}
+                        >
+                          {t("Inquire")}
+                        </button>
+                      ) : (
+                        <button
+                          className={inCart ? "added" : ""}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addToCart(product.catalogId);
+                            setDrawerOpen(true);
+                          }}
+                        >
+                          <ShoppingCart size={17} />
+                          {inCart ? t("In cart") : t("Add to cart")}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </motion.article>
+              );
+            })
+          )}
         </div>
 
         {visibleProducts < displayProducts.length ? (
@@ -1185,64 +1200,81 @@ export default function Page() {
         </div>
 
         <div className="business-products-grid">
-          {finalBusiness.map((product, index) => {
-            const isAdded = hydrated && items.some((i) => i.id === product.catalogId);
-            return (
-              <motion.article
-                className="business-product-card"
-                key={product.id}
-                initial={{ opacity: 0, y: 26 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.15 }}
-                transition={{ duration: 0.45, delay: index * 0.06 }}
-                style={{ cursor: "pointer" }}
-                onClick={() => router.push(`/products/${product.catalogId}`)}
-              >
-                <div className="business-product-image">
-                  <img src={product.image} alt={product.name} loading="lazy" />
-                  <span>In stock</span>
-                </div>
-                <div className="business-product-info">
-                  <p>{product.category}</p>
-                  <h3>{product.name}</h3>
-                  <span>{product.note}</span>
-                  <div className="business-product-buy" onClick={(e) => e.stopPropagation()}>
-                    <strong>{product.price}</strong>
-                    {product.inquiry_only ? (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setInquiryProduct(product);
-                        }}
-                        style={{
-                          backgroundColor: "#0a4bd9",
-                          color: "#fff",
-                          borderColor: "#0a4bd9",
-                          fontWeight: "700"
-                        }}
-                      >
-                        Inquire
-                      </button>
-                    ) : (
-                      <button
-                        className={isAdded ? "added" : ""}
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCart(product.catalogId);
-                          setDrawerOpen(true);
-                        }}
-                      >
-                        <ShoppingCart size={17} />
-                        {isAdded ? "In cart" : "Add to cart"}
-                      </button>
-                    )}
+          {productsLoading ? (
+            [1, 2, 3, 4].map((i) => (
+              <div key={i} className="business-product-card" style={{ pointerEvents: "none" }}>
+                <div className="shimmer" style={{ width: "100%", height: 280, borderRadius: "20px 20px 0 0" }} />
+                <div style={{ padding: 22 }}>
+                  <div className="shimmer" style={{ width: 100, height: 13, borderRadius: 6, marginBottom: 10 }} />
+                  <div className="shimmer" style={{ width: "85%", height: 22, borderRadius: 8, marginBottom: 10 }} />
+                  <div className="shimmer" style={{ width: "65%", height: 16, borderRadius: 6, marginBottom: 22 }} />
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 18, borderTop: "1px solid #eceef1" }}>
+                    <div className="shimmer" style={{ width: 100, height: 22, borderRadius: 8 }} />
+                    <div className="shimmer" style={{ width: 110, height: 42, borderRadius: 9 }} />
                   </div>
                 </div>
-              </motion.article>
-            );
-          })}
+              </div>
+            ))
+          ) : (
+            finalBusiness.map((product, index) => {
+              const isAdded = hydrated && items.some((i) => i.id === product.catalogId);
+              return (
+                <motion.article
+                  className="business-product-card"
+                  key={product.id}
+                  initial={{ opacity: 0, y: 26 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={{ duration: 0.45, delay: index * 0.06 }}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => router.push(`/products/${product.catalogId}`)}
+                >
+                  <div className="business-product-image">
+                    <img src={product.image} alt={product.name} loading="lazy" />
+                    <span>In stock</span>
+                  </div>
+                  <div className="business-product-info">
+                    <p>{product.category}</p>
+                    <h3>{product.name}</h3>
+                    <span>{product.note}</span>
+                    <div className="business-product-buy" onClick={(e) => e.stopPropagation()}>
+                      <strong>{product.price}</strong>
+                      {product.inquiry_only ? (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setInquiryProduct(product);
+                          }}
+                          style={{
+                            backgroundColor: "#0a4bd9",
+                            color: "#fff",
+                            borderColor: "#0a4bd9",
+                            fontWeight: "700"
+                          }}
+                        >
+                          Inquire
+                        </button>
+                      ) : (
+                        <button
+                          className={isAdded ? "added" : ""}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addToCart(product.catalogId);
+                            setDrawerOpen(true);
+                          }}
+                        >
+                          <ShoppingCart size={17} />
+                          {isAdded ? "In cart" : "Add to cart"}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </motion.article>
+              );
+            })
+          )}
         </div>
       </section>
 
