@@ -12,26 +12,17 @@ import { useCart } from "../context/CartContext";
 import { useSite } from "../context/SiteContext";
 
 const searchProducts = [
-  { id: 1, name: "ProWork X1 Mobile Studio", category: "Consumer", price: "12,990 MAD", badge: "Best seller", image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=1100&q=88" },
-  { id: 2, name: "EliteBook Pro 14", category: "Consumer", price: "10,990 MAD", badge: "Business ready", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1100&q=88" },
-  { id: 3, name: "CreatorBook OLED 16", category: "Consumer", price: "15,490 MAD", badge: "New", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1100&q=88" },
-  { id: 4, name: "Creator Tower RTX", category: "Professional", price: "18,490 MAD", badge: "Creator pick", image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=1100&q=88" },
-  { id: 5, name: "Apex Gaming G7", category: "Professional", price: "21,990 MAD", badge: "High performance", image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1100&q=88" },
-  { id: 6, name: "Compact Studio Mini", category: "Professional", price: "8,490 MAD", badge: "Small footprint", image: "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&w=1100&q=88" },
-  { id: 7, name: "GeForce RTX 4070 Super", category: "Graphics", price: "7,490 MAD", badge: "In stock", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88" },
-  { id: 8, name: "StudioView 27 4K", category: "Displays", price: "4,799 MAD", badge: "Color accurate", image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=1100&q=88" },
-  { id: 9, name: "UltraWide Flow 34", category: "Displays", price: "6,190 MAD", badge: "Immersive", image: "https://images.unsplash.com/photo-1546538915-a9e2c8d0a0b2?auto=format&fit=crop&w=1100&q=88" },
-  { id: 10, name: "Forge 75 Keyboard", category: "Accessories", price: "1,090 MAD", badge: "Hot swappable", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=1100&q=88" },
-  { id: 11, name: "Vector Pro Mouse", category: "Accessories", price: "690 MAD", badge: "Ultra light", image: "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=1100&q=88" },
-  { id: 12, name: "Creator Mic S1", category: "Accessories", price: "1,490 MAD", badge: "Studio audio", image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1100&q=88" },
-  { id: 13, name: "Laser Pro M400", category: "Printers", price: "3,290 MAD", badge: "Office ready", image: "https://images.unsplash.com/photo-1612810806695-30f7d5e2a7b5?auto=format&fit=crop&w=1100&q=88" },
-  { id: 14, name: "SmartTank Studio", category: "Printers", price: "2,790 MAD", badge: "Low cost printing", image: "https://images.unsplash.com/photo-1562408590-e32931084e23?auto=format&fit=crop&w=1100&q=88" },
-  { id: 15, name: "Performance Laptops", category: "Consumer", price: "From 8,990 MAD", badge: "Popular", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1100&q=88" },
-  { id: 16, name: "Custom Gaming PCs", category: "Professional", price: "From 14,990 MAD", badge: "Custom build", image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1100&q=88" },
-  { id: 17, name: "Mechanical Keyboards", category: "Accessories", price: "From 890 MAD", badge: "Accessories", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=1100&q=88" },
-  { id: 18, name: "Pro Gaming Mice", category: "Accessories", price: "From 490 MAD", badge: "Accessories", image: "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=1100&q=88" },
-  { id: 19, name: "Streaming Essentials", category: "Accessories", price: "From 790 MAD", badge: "Creator gear", image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1100&q=88" },
-  { id: 20, name: "NVIDIA Graphics Cards", category: "Graphics", price: "From 4,990 MAD", badge: "Graphics", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88" },
+  { id: 10, name: "PNY GeForce RTX 4090 24GB XLR8 Gaming Verto RGB", category: "Consumer", price: "22,490 MAD", badge: "Flagship GPU", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88" },
+  { id: 11, name: "PNY GeForce RTX 4080 Super 16GB XLR8 Gaming Verto", category: "Consumer", price: "13,990 MAD", badge: "High Performance", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88" },
+  { id: 12, name: "PNY GeForce RTX 4070 Ti Super 16GB Verto Overclocked", category: "Consumer", price: "10,490 MAD", badge: "Best Value Gaming", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88" },
+  { id: 13, name: "NVIDIA RTX 6000 Ada Generation 48GB", category: "Professional", price: "94,990 MAD", badge: "AI & Rendering", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88" },
+  { id: 14, name: "NVIDIA RTX 4000 Ada Generation 20GB", category: "Professional", price: "18,990 MAD", badge: "Workstation GPU", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88" },
+  { id: 15, name: "PNY NVIDIA RTX A6000 48GB GDDR6", category: "Professional", price: "62,490 MAD", badge: "Quadro Legacy", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88" },
+  { id: 16, name: "NVIDIA H100 Tensor Core GPU 80GB HBM3", category: "Data Center Solutions", price: "420,000 MAD", badge: "LLM & GenAI", image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1100&q=88" },
+  { id: 17, name: "NVIDIA A100 Tensor Core GPU 80GB CoWoS", category: "Data Center Solutions", price: "195,000 MAD", badge: "Data Center GPU", image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1100&q=88" },
+  { id: 18, name: "NVIDIA L40S Tensor Core GPU 48GB", category: "Data Center Solutions", price: "165,000 MAD", badge: "AI & Graphics", image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1100&q=88" },
+  { id: 19, name: "PNY XLR8 Gaming DDR5 6000MHz 64GB Kit (2x32GB)", category: "Accessories", price: "3,190 MAD", badge: "DDR5 Memory", image: "https://images.unsplash.com/photo-1562976540-1502c2145186?auto=format&fit=crop&w=1100&q=88" },
+  { id: 20, name: "PNY CS3140 2TB PCIe Gen4 x4 M.2 NVMe SSD", category: "Accessories", price: "2,490 MAD", badge: "High-Speed SSD", image: "https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=1100&q=88" }
 ];
 
 export default function SearchModal({ open, onClose }) {

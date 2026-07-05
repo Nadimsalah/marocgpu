@@ -27,20 +27,138 @@ import { useSite } from "../../context/SiteContext";
 import InquiryModal from "../../components/InquiryModal";
 
 const catalogProducts = [
-  { id: 1, name: "ProWork X1 Mobile Studio", category: "Consumer", price: 12990, badge: "Best seller", spec: "Core Ultra 7 · RTX 4060 · 32GB · 1TB", image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=1100&q=88", description: "A mobile powerhouse designed for professionals who need desktop-class performance on the go. The ProWork X1 combines the latest Intel Core Ultra 7 processor with NVIDIA RTX 4060 graphics, delivering exceptional performance for 3D rendering, video editing, and AI workloads.", specs: { processor: "Intel Core Ultra 7 155H", graphics: "NVIDIA RTX 4060 8GB", memory: "32GB DDR5", storage: "1TB NVMe SSD", display: '16" 2.5K IPS 165Hz', battery: "90Wh · Up to 8 hours" }, features: ["Thunderbolt 4", "Wi-Fi 7", "Backlit Keyboard", "Fingerprint Reader", "Dolby Atmos"] },
-  { id: 2, name: "EliteBook Pro 14", category: "Consumer", price: 10990, badge: "Business ready", spec: "Core Ultra 7 · 32GB · 1TB SSD", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1100&q=88", description: "The EliteBook Pro 14 is engineered for business professionals who demand reliability, security, and performance. With its sleek aluminum chassis and all-day battery life, it's the perfect companion for the modern workplace.", specs: { processor: "Intel Core Ultra 7 155U", graphics: "Intel Arc Graphics", memory: "32GB LPDDR5", storage: "1TB NVMe SSD", display: '14" 2.8K OLED Touch', battery: "72Wh · Up to 12 hours" }, features: ["Thunderbolt 4", "Wi-Fi 6E", "IR Camera", "Smart Card Reader", "MIL-STD-810H"] },
-  { id: 3, name: "CreatorBook OLED 16", category: "Consumer", price: 15490, badge: "New", spec: "Ryzen 9 · RTX 4070 · OLED 3.2K", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1100&q=88", description: "Built for creators who refuse to compromise. The CreatorBook OLED 16 features a stunning 3.2K OLED display with 100% DCI-P3 color accuracy, powered by AMD Ryzen 9 and NVIDIA RTX 4070 for uncompromising creative performance.", specs: { processor: "AMD Ryzen 9 7945HX", graphics: "NVIDIA RTX 4070 8GB", memory: "32GB DDR5", storage: "2TB NVMe SSD", display: '16" 3.2K OLED 120Hz', battery: "99.9Wh · Up to 7 hours" }, features: ["SD Card Reader", "HDMI 2.1", "Wi-Fi 7", "Per-Key RGB", "Pantone Validated"] },
-  { id: 4, name: "Creator Tower RTX", category: "Professional", price: 18490, badge: "Creator pick", spec: "Ryzen 9 · RTX 4070 · 64GB · 2TB", image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=1100&q=88", description: "The Creator Tower RTX is a professional workstation designed for demanding creative workflows. From 3D modeling to 8K video editing, this tower delivers uncompromising performance with room to grow.", specs: { processor: "AMD Ryzen 9 7950X", graphics: "NVIDIA RTX 4070 12GB", memory: "64GB DDR5", storage: "2TB NVMe SSD", cooling: "360mm AIO Liquid Cooling", power: "850W 80+ Gold" }, features: ["USB-C Front Panel", "Wi-Fi 6E", "Tool-less Design", "RGB Lighting", "5-Year Warranty"] },
-  { id: 5, name: "Apex Gaming G7", category: "Professional", price: 21990, badge: "High performance", spec: "Core i9 · RTX 4080 Super · 32GB", image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1100&q=88", description: "The Apex Gaming G7 is built for gamers who demand the absolute best. With an Intel Core i9 and RTX 4080 Super, it delivers maximum frame rates at the highest settings for an unparalleled gaming experience.", specs: { processor: "Intel Core i9-14900K", graphics: "NVIDIA RTX 4080 Super 16GB", memory: "32GB DDR5-6000", storage: "2TB NVMe Gen4 SSD", cooling: "Custom 360mm AIO", power: "1000W 80+ Platinum" }, features: ["Tempered Glass", "RGB Ecosystem", "Wi-Fi 7", "USB 4.0", "Overclocking Support"] },
-  { id: 6, name: "Compact Studio Mini", category: "Professional", price: 8490, badge: "Small footprint", spec: "Ryzen 7 · 32GB · 1TB NVMe", image: "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&w=1100&q=88", description: "Big performance in a tiny package. The Compact Studio Mini is perfect for professionals who need powerful computing in a space-saving form factor. Ideal for creative work, development, and everyday productivity.", specs: { processor: "AMD Ryzen 7 7840HS", graphics: "AMD Radeon 780M", memory: "32GB DDR5", storage: "1TB NVMe SSD", size: "1L Volume", power: "65W USB-C" }, features: ["Dual 4K Display", "USB-C Power", "Wi-Fi 6E", "VESA Mount", "Silent Operation"] },
-  { id: 7, name: "GeForce RTX 4070 Super", category: "Graphics", price: 7490, badge: "In stock", spec: "12GB GDDR6X · DLSS 3.5", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88", description: "Experience next-gen gaming and creative performance with the GeForce RTX 4070 Super. Featuring 12GB of GDDR6X memory and DLSS 3.5 with Ray Reconstruction for stunning visuals at high frame rates.", specs: { gpu: "NVIDIA Ada Lovelace", memory: "12GB GDDR6X", cudaCores: "8448 CUDA Cores", boostClock: "2475 MHz", tdp: "220W", interface: "PCIe 4.0 x16" }, features: ["DLSS 3.5", "Ray Tracing", "AV1 Encode", "DisplayPort 2.1", "HDMI 2.1a"] },
-  { id: 8, name: "StudioView 27 4K", category: "Displays", price: 4799, badge: "Color accurate", spec: "4K IPS · 98% DCI-P3 · USB-C", image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=1100&q=88", description: "The StudioView 27 delivers professional-grade color accuracy in a stunning 4K IPS panel. With 98% DCI-P3 coverage and USB-C connectivity, it's the perfect display for creative professionals.", specs: { panel: '27" IPS 4K UHD', colorGamut: "98% DCI-P3 · 100% sRGB", brightness: "400 nits", contrast: "1000:1", refreshRate: "60Hz", connectivity: "USB-C 90W · HDMI 2.1 · DP 1.4" }, features: ["Factory Calibrated", "USB-C Hub", "Height Adjustable", "Pivot/Tilt/Swivel", "HDR400"] },
-  { id: 9, name: "UltraWide Flow 34", category: "Displays", price: 6190, badge: "Immersive", spec: "WQHD · 165Hz · 1ms · HDR", image: "https://images.unsplash.com/photo-1546538915-a9e2c8d0a0b2?auto=format&fit=crop&w=1100&q=88", description: "Immerse yourself in the UltraWide Flow 34. This curved ultrawide monitor delivers a panoramic viewing experience with fast 165Hz refresh rate and 1ms response time for gaming and productivity.", specs: { panel: '34" Curved VA WQHD', resolution: "3440 x 1440", refreshRate: "165Hz", responseTime: "1ms GtG", curvature: "1500R", hdr: "HDR400" }, features: ["FreeSync Premium", "USB Hub", "KVM Switch", "Picture-by-Picture", "Low Blue Light"] },
-  { id: 10, name: "Forge 75 Keyboard", category: "Accessories", price: 1090, badge: "Hot swappable", spec: "Mechanical · Wireless · RGB", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=1100&q=88", description: "The Forge 75 is a premium 75% mechanical keyboard with hot-swappable switches, wireless connectivity, and per-key RGB lighting. Built for enthusiasts who demand the best typing experience.", specs: { layout: "75% · 84 Keys", switches: "Hot-swappable · 3-pin/5-pin", connectivity: "2.4GHz · Bluetooth 5.0 · USB-C", battery: "4000mAh · Up to 200 hours", keycaps: "Double-shot PBT", case: "CNC Aluminum" }, features: ["Gasket Mount", "Per-Key RGB", "Programmable", "N-Key Rollover", "Detachable Cable"] },
-  { id: 11, name: "Vector Pro Mouse", category: "Accessories", price: 690, badge: "Ultra light", spec: "49g · 26K sensor · Wireless", image: "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=1100&q=88", description: "The Vector Pro is an ultra-lightweight wireless gaming mouse weighing just 49g. Featuring a 26,000 DPI sensor and 70-hour battery life, it's designed for competitive gamers who demand precision and speed.", specs: { sensor: "26,000 DPI Optical", weight: "49g", buttons: "6 Programmable", battery: "70 hours", connectivity: "2.4GHz · Bluetooth · USB-C", switches: "Optical · 100M clicks" }, features: ["PTFE Feet", "Paracord Cable", "Onboard Memory", "RGB Lighting", "DPI Clutch"] },
-  { id: 12, name: "Creator Mic S1", category: "Accessories", price: 1490, badge: "Studio audio", spec: "USB-C · Cardioid · Low noise", image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1100&q=88", description: "The Creator Mic S1 delivers studio-quality audio for content creators, streamers, and podcasters. With a cardioid pickup pattern and ultra-low noise floor, your voice has never sounded better.", specs: { type: "Condenser · Cardioid", frequency: "20Hz - 20kHz", sampleRate: "96kHz / 24-bit", connectivity: "USB-C", polarPattern: "Cardioid", snr: "120dB" }, features: ["Zero-latency Monitoring", "Mute Button", "Gain Control", "Shock Mount", "Pop Filter Included"] },
-  { id: 13, name: "Laser Pro M400", category: "Printers", price: 3290, badge: "Office ready", spec: "Duplex · Wi-Fi · 38 ppm", image: "https://images.unsplash.com/photo-1612810806695-30f7d5e2a7b5?auto=format&fit=crop&w=1100&q=88", description: "The Laser Pro M400 is a high-performance monochrome laser printer designed for busy offices. With fast 38 ppm printing, automatic duplexing, and wireless connectivity, it keeps your workflow moving.", specs: { type: "Monochrome Laser", speed: "38 ppm", resolution: "1200 x 1200 dpi", duplex: "Automatic", connectivity: "Wi-Fi · Ethernet · USB", capacity: "550-sheet tray" }, features: ["Mobile Printing", "Secure Print", "Toner Save Mode", "100-sheet MPT", "50,000 page/month"] },
-  { id: 14, name: "SmartTank Studio", category: "Printers", price: 2790, badge: "Low cost printing", spec: "Color · Wireless · High capacity", image: "https://images.unsplash.com/photo-1562408590-e32931084e23?auto=format&fit=crop&w=1100&q=88", description: "The SmartTank Studio delivers ultra-low cost color printing with its refillable ink tank system. Perfect for high-volume printing needs, it produces vibrant colors at a fraction of the cost per page.", specs: { type: "Ink Tank · Color", speed: "15 ppm color · 22 ppm mono", resolution: "4800 x 1200 dpi", connectivity: "Wi-Fi · USB", capacity: "Up to 6000 pages black", ink: "Refillable tanks" }, features: ["Borderless Printing", "Auto Duplex", "Mobile App", "LCD Display", "6000-page yield"] },
+  { 
+    id: 10, 
+    name: "PNY GeForce RTX 4090 24GB XLR8 Gaming Verto RGB", 
+    category: "Consumer", 
+    price: 22490, 
+    badge: "Flagship GPU", 
+    spec: "Ada Lovelace · 24GB GDDR6X · XLR8 RGB", 
+    image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88",
+    description: "The PNY GeForce RTX 4090 Verto is the ultimate GeForce GPU. It brings an enormous leap in performance, efficiency, and AI-powered graphics. Experience ultra-high performance gaming, incredibly detailed virtual worlds, unprecedented productivity, and new ways to create. Powered by the NVIDIA Ada Lovelace architecture and comes with 24 GB of G6X memory.",
+    specs: { architecture: "Ada Lovelace", memory: "24GB GDDR6X", cudaCores: "16384 Cores", memoryBandwidth: "1008 GB/s", interface: "PCIe 4.0 x16", tdp: "450W" },
+    features: ["NVIDIA DLSS 3", "Ray Tracing Cores (3rd Gen)", "Tensor Cores (4th Gen)", "AV1 Encoding", "NVIDIA Broadcast"]
+  },
+  { 
+    id: 11, 
+    name: "PNY GeForce RTX 4080 Super 16GB XLR8 Gaming Verto", 
+    category: "Consumer", 
+    price: 13990, 
+    badge: "High Performance", 
+    spec: "Ada Lovelace · 16GB GDDR6X · Triple Fan", 
+    image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88",
+    description: "Supercharged gaming and creating with the NVIDIA GeForce RTX 4080 Super. Built with the ultra-efficient Ada Lovelace architecture, it brings fast ray tracing, AI-accelerated performance with DLSS 3, and new ways to create.",
+    specs: { architecture: "Ada Lovelace", memory: "16GB GDDR6X", cudaCores: "10240 Cores", memoryBandwidth: "736 GB/s", interface: "PCIe 4.0 x16", tdp: "320W" },
+    features: ["NVIDIA DLSS 3.5", "Ray Tracing", "Tensor Cores", "Triple Fan Cooling", "G-SYNC Compatible"]
+  },
+  { 
+    id: 12, 
+    name: "PNY GeForce RTX 4070 Ti Super 16GB Verto Overclocked", 
+    category: "Consumer", 
+    price: 10490, 
+    badge: "Best Value Gaming", 
+    spec: "Ada Lovelace · 16GB GDDR6X · Dual Fan", 
+    image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88",
+    description: "Equip yourself for stellar gaming and creating with the NVIDIA GeForce RTX 4070 Ti Super. It is built with the ultra-efficient Ada Lovelace architecture and 16GB of super-fast GDDR6X memory.",
+    specs: { architecture: "Ada Lovelace", memory: "16GB GDDR6X", cudaCores: "8448 Cores", memoryBandwidth: "672 GB/s", interface: "PCIe 4.0 x16", tdp: "285W" },
+    features: ["DLSS 3.5 Support", "Real-Time Ray Tracing", "Dual Fan XLR8 Design", "OC Edition", "NVIDIA Reflex"]
+  },
+  { 
+    id: 13, 
+    name: "NVIDIA RTX 6000 Ada Generation 48GB", 
+    category: "Professional", 
+    price: 94990, 
+    badge: "AI & Rendering", 
+    spec: "Ada Lovelace · 48GB GDDR6 · Dual-Slot Blower", 
+    image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88",
+    description: "The NVIDIA RTX 6000 Ada Generation is the ultimate professional GPU for desktop workstations. It delivers the features, hardware capabilities, and capacity needed to meet the challenges of modern AI, graphics, and compute workloads.",
+    specs: { architecture: "Ada Lovelace", memory: "48GB GDDR6 with ECC", cudaCores: "18176 Cores", tensorCores: "568 Cores", memoryBandwidth: "960 GB/s", tdp: "300W" },
+    features: ["AI Model Training", "Large Language Model (LLM) Inference", "High-End 3D Rendering", "vGPU Support", "Quadro Legacy Sync"]
+  },
+  { 
+    id: 14, 
+    name: "NVIDIA RTX 4000 Ada Generation 20GB", 
+    category: "Professional", 
+    price: 18990, 
+    badge: "Workstation GPU", 
+    spec: "Ada Lovelace · 20GB GDDR6 · Single-Slot", 
+    image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88",
+    description: "The NVIDIA RTX 4000 Ada Generation is the most powerful single-slot GPU for professionals, providing real-time ray tracing, AI-accelerated compute, and high-performance graphics on desktop workstations.",
+    specs: { architecture: "Ada Lovelace", memory: "20GB GDDR6 with ECC", cudaCores: "6144 Cores", memoryBandwidth: "360 GB/s", interface: "PCIe 4.0 x16", tdp: "130W" },
+    features: ["Single-Slot Compact Design", "ECC Memory Protection", "CAD & BIM Optimization", "Real-Time Ray Tracing", "Quiet Active Blower"]
+  },
+  { 
+    id: 15, 
+    name: "PNY NVIDIA RTX A6000 48GB GDDR6", 
+    category: "Professional", 
+    price: 62490, 
+    badge: "Quadro Legacy", 
+    spec: "Ampere Architecture · 48GB GDDR6 · ECC Memory", 
+    image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=1100&q=88",
+    description: "Unlock the next generation of revolutionary designs, scientific breakthroughs, and immersive entertainment with the NVIDIA RTX A6000, the world's most powerful visual computing GPU for desktop workstations.",
+    specs: { architecture: "Ampere", memory: "48GB GDDR6 with ECC", cudaCores: "10752 Cores", memoryBandwidth: "768 GB/s", interface: "PCIe 4.0 x16", tdp: "300W" },
+    features: ["NVLink Support", "ECC Error Correction", "Hardware Ray Tracing", "Enterprise Driver Validation", "Four DisplayPort 1.4a Output"]
+  },
+  { 
+    id: 16, 
+    name: "NVIDIA H100 Tensor Core GPU 80GB HBM3", 
+    category: "Data Center Solutions", 
+    price: 420000, 
+    badge: "LLM & GenAI", 
+    spec: "Hopper Architecture · 80GB HBM3 · SXM5 / PCIe", 
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1100&q=88",
+    description: "The NVIDIA H100 Tensor Core GPU delivers unprecedented performance, scalability, and security for every data center. It accelerates LLMs, deep learning, and HPC workloads by up to 30x compared to the previous generation.",
+    specs: { architecture: "Hopper", memory: "80GB HBM3", tensorCores: "528 Tensor Cores", memoryBandwidth: "3000 GB/s (3 TB/s)", interface: "PCIe 5.0 x16 / SXM5", tdp: "350W - 700W" },
+    features: ["Transformer Engine", "Multi-Instance GPU (MIG)", "DPX Instructions", "HPC Acceleration", "AI Training & Inference Scale"]
+  },
+  { 
+    id: 17, 
+    name: "NVIDIA A100 Tensor Core GPU 80GB CoWoS", 
+    category: "Data Center Solutions", 
+    price: 195000, 
+    badge: "Data Center GPU", 
+    spec: "Ampere Architecture · 80GB HBM2e · MIG Support", 
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1100&q=88",
+    description: "The NVIDIA A100 Tensor Core GPU accelerates AI, data analytics, and HPC. A100 can efficiently scale to thousands of GPUs or be partitioned into seven isolated GPU instances using Multi-Instance GPU (MIG).",
+    specs: { architecture: "Ampere", memory: "80GB HBM2e", tensorCores: "432 Tensor Cores", memoryBandwidth: "2039 GB/s (2 TB/s)", interface: "PCIe 4.0 / SXM4", tdp: "250W - 400W" },
+    features: ["Multi-Instance GPU (MIG)", "Third-Gen Tensor Cores", "Structural Sparsity", "HPC Acceleration", "AI Inference Scale"]
+  },
+  { 
+    id: 18, 
+    name: "NVIDIA L40S Tensor Core GPU 48GB", 
+    category: "Data Center Solutions", 
+    price: 165000, 
+    badge: "AI & Graphics", 
+    spec: "Ada Lovelace · 48GB GDDR6 · Universal Accelerator", 
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1100&q=88",
+    description: "The NVIDIA L40S Tensor Core GPU is the most powerful universal GPU for the enterprise data center, delivering end-to-end acceleration for next-generation generative AI, graphics, and video workloads.",
+    specs: { architecture: "Ada Lovelace", memory: "48GB GDDR6 with ECC", cudaCores: "18176 Cores", tensorCores: "568 Cores", memoryBandwidth: "864 GB/s", tdp: "350W" },
+    features: ["Generative AI Optimization", "NVIDIA Omniverse Acceleration", "Universal Data Center GPU", "Ray Tracing Support", "PCIe Form Factor"]
+  },
+  { 
+    id: 19, 
+    name: "PNY XLR8 Gaming DDR5 6000MHz 64GB Kit (2x32GB)", 
+    category: "Accessories", 
+    price: 3190, 
+    badge: "DDR5 Memory", 
+    spec: "64GB Dual Channel · 6000MHz CL38 · RGB Heat Spreader", 
+    image: "https://images.unsplash.com/photo-1562976540-1502c2145186?auto=format&fit=crop&w=1100&q=88",
+    description: "PNY's premium XLR8 Gaming DDR5 memory features high-speed performance, low latency, and XLR8 RGB design. Engineered to handle extreme overclocking and high-performance gaming rig requirements.",
+    specs: { type: "DDR5 Desktop Memory", capacity: "64GB Kit (2 x 32GB)", speed: "6000 MHz", latency: "CL38-38-38-78", voltage: "1.35V", profile: "Intel XMP 3.0 & AMD EXPO" },
+    features: ["RGB Sync Compatible", "Aluminum Heat Spreader", "High-Frequency Gaming", "Stability & Reliability", "Lifetime Warranty"]
+  },
+  { 
+    id: 20, 
+    name: "PNY CS3140 2TB PCIe Gen4 x4 M.2 NVMe SSD", 
+    category: "Accessories", 
+    price: 2490, 
+    badge: "High-Speed SSD", 
+    spec: "2TB NVMe SSD · Up to 7500MB/s Read · XLR8 Heatsink", 
+    image: "https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=1100&q=88",
+    description: "The CS3140 M.2 NVMe Gen4 x4 Solid State Drive is designed to be the highest performance SSD on the market. It delivers extreme performance of up to 7,500 MB/s sequential read speed.",
+    specs: { formFactor: "M.2 2280", interface: "PCIe Gen4 x4, NVMe 1.4", capacity: "2TB", readSpeed: "Up to 7500 MB/s", writeSpeed: "Up to 6850 MB/s", tbw: "1400 TBW" },
+    features: ["Extruded Aluminum Heatsink", "Ultra-High IOPS", "PlayStation 5 Compatible", "LDAC Error Correction", "5-Year Warranty"]
+  }
 ];
 
 function getRelatedProducts(productId, category) {
