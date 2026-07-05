@@ -128,7 +128,7 @@ export default function ProductsPage() {
       <main className="catalog-page">
         <header className="catalog-header">
           <Link className="catalog-logo" href="/" aria-label="MarocGPU home">
-            <img src="/marocgpu-logo.svg" alt="MarocGPU" /><span className="brand-name">MarocGPU</span>
+            <img src="/marocgpu-logo-transparent.webp" alt="MarocGPU" />
           </Link>
           <Link className="catalog-home-link" href="/"><ArrowLeft size={17} /> Back to home</Link>
           <button className="catalog-cart" type="button" aria-label="Loading...">
@@ -190,7 +190,7 @@ export default function ProductsPage() {
     <main className="catalog-page">
       <header className="catalog-header" style={{ gap: 12 }}>
         <Link className="catalog-logo" href="/" aria-label="MarocGPU home">
-          <img src="/marocgpu-logo.svg" alt="MarocGPU" /><span className="brand-name">MarocGPU</span>
+          <img src="/marocgpu-logo-transparent.webp" alt="MarocGPU" />
         </Link>
         <Link className="catalog-home-link" href="/"><ArrowLeft size={17} /> {t("Back to home")}</Link>
         

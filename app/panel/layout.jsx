@@ -44,7 +44,7 @@ export default function PanelLayout({ children }) {
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
         <Link href="/panel/" className="panel-mobile-logo" onClick={() => setMobileOpen(false)}>
-          <img src="/marocgpu-logo.svg" alt="MarocGPU" /><span className="brand-name">MarocGPU</span>
+          <img src="/marocgpu-logo-transparent.webp" alt="MarocGPU" />
         </Link>
         <div style={{ width: 24 }} /> {/* Spacer to balance flex layout */}
       </header>
@@ -59,7 +59,7 @@ export default function PanelLayout({ children }) {
         <div className="panel-sidebar-header">
           {!collapsed && (
             <Link href="/panel/" className="panel-logo">
-              <img src="/marocgpu-logo.svg" alt="MarocGPU" style={{ height: 36, width: 36 }} /><span className="brand-name">MarocGPU</span>
+              <img src="/marocgpu-logo-transparent.webp" alt="MarocGPU" style={{ height: 36, width: "auto" }} />
             </Link>
           )}
           <button

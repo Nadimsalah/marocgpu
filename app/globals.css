@@ -95,9 +95,8 @@ img {
 }
 
 .brand-mark img {
-  width: 38px;
-  height: 38px;
-  aspect-ratio: 1;
+  width: auto;
+  height: 48px;
   object-fit: contain;
   flex: 0 0 auto;
 }
@@ -1456,10 +1455,10 @@ img {
 }
 
 .footer-logo img {
-  width: 42px;
+  width: auto;
   height: 42px;
-  aspect-ratio: 1;
   object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .footer-brand-column > p {
@@ -1652,9 +1651,10 @@ img {
 }
 
 .mobile-drawer-top .brand-mark img {
-  height: 36px;
-  width: 36px;
-  aspect-ratio: 1;
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .mobile-nav {
@@ -4088,9 +4088,9 @@ img {
 
 .pd-footer-logo img {
   height: 32px;
-  width: 32px;
-  aspect-ratio: 1;
+  width: auto;
   object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 /* Responsive */
@@ -5972,9 +5972,8 @@ img {
 }
 
 .support-header img {
-  width: 44px;
+  width: auto;
   height: 44px;
-  aspect-ratio: 1;
   object-fit: contain;
 }
 
@@ -6585,10 +6584,10 @@ img {
 }
 
 .support-footer img {
-  width: 38px;
+  width: auto;
   height: 38px;
-  aspect-ratio: 1;
   object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .support-footer p {
@@ -6757,9 +6756,8 @@ img {
 }
 
 .micro-logo img {
-  width: 44px;
+  width: auto;
   height: 44px;
-  aspect-ratio: 1;
   object-fit: contain;
 }
 
@@ -8017,8 +8015,7 @@ img {
 
   .panel-mobile-logo img {
     height: 28px;
-    width: 28px;
-    aspect-ratio: 1;
+    width: auto;
     object-fit: contain;
   }
 
@@ -8724,72 +8721,4 @@ body:has(.panel-root) .floating-whatsapp {
   }
 }
 
-/* ── Brand Logo Text Styling ── */
-.brand-mark {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-}
 
-.brand-mark .brand-name {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #0b0f19; /* dark/black on light header */
-  letter-spacing: -0.02em;
-  font-family: var(--font-inter), sans-serif;
-  user-select: none;
-  transition: color 0.2s ease;
-}
-
-/* White text for dark footers / mobile menu drawers */
-.footer-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-}
-
-.footer-logo .brand-name {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #ffffff; /* white on dark footer */
-  letter-spacing: -0.02em;
-  font-family: var(--font-inter), sans-serif;
-  user-select: none;
-}
-
-.mobile-drawer-top .brand-mark .brand-name {
-  color: #ffffff; /* white on dark mobile menu drawer */
-}
-
-/* Admin panel sidebar branding */
-.panel-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-}
-
-.panel-logo .brand-name {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #171719; /* dark on admin light sidebar */
-  letter-spacing: -0.02em;
-  font-family: var(--font-inter), sans-serif;
-  user-select: none;
-}
-
-.panel-mobile-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-}
-
-.panel-mobile-logo .brand-name {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #171719;
-  letter-spacing: -0.02em;
-}

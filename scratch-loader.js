@@ -11,7 +11,8 @@ const filesToUpdate = [
   'app/components/SearchModal.jsx',
   'app/data-center-solutions/DataCenterContent.jsx',
   'app/support/SupportContent.jsx',
-  'app/panel/layout.jsx'
+  'app/panel/layout.jsx',
+  'app/context/SiteContext.jsx'
 ];
 
 filesToUpdate.forEach(filePath => {
@@ -19,21 +20,17 @@ filesToUpdate.forEach(filePath => {
   if (fs.existsSync(absolutePath)) {
     let content = fs.readFileSync(absolutePath, 'utf-8');
     
-    // Inject brand-name span next to the marocgpu-logo.svg img tags
-    // Let's replace only where the image is inside an anchor or Link that acts as the brand container
-    content = content.replace(
-      /<img src="\/marocgpu-logo\.svg" alt="MarocGPU" \/>/g,
-      '<img src="/marocgpu-logo.svg" alt="MarocGPU" /><span className="brand-name">MarocGPU</span>'
-    );
+    // Replace SVG logo with WebP logo
+    content = content.split('/marocgpu-logo.svg').join('/marocgpu-logo-transparent.webp');
     
-    // Handle specific layout styling in panel layout sidebar logo
-    content = content.replace(
-      /<img src="\/marocgpu-logo\.svg" alt="MarocGPU" style=\{\{\s*height:\s*36,\s*width:\s*36\s*\}\}\s*\/>/g,
-      '<img src="/marocgpu-logo.svg" alt="MarocGPU" style={{ height: 36, width: 36 }} /><span className="brand-name">MarocGPU</span>'
-    );
+    // Remove the injected brand-name span
+    content = content.split('<span className="brand-name">MarocGPU</span>').join('');
+    
+    // Restore layout.jsx styling for wide logo
+    content = content.replace('style={{ height: 36, width: 36 }}', 'style={{ height: 36, width: "auto" }}');
     
     fs.writeFileSync(absolutePath, content, 'utf-8');
-    console.log(`Injected brand text in: ${filePath}`);
+    console.log(`Updated logo image in: ${filePath}`);
   } else {
     console.warn(`File not found: ${filePath}`);
   }

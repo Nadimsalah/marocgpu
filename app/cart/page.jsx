@@ -26,7 +26,7 @@ export default function CartPage() {
       <main className="cart-page">
         <header className="cart-header">
           <Link className="cart-logo" href="/" aria-label="MarocGPU home">
-            <img src="/marocgpu-logo.svg" alt="MarocGPU" /><span className="brand-name">MarocGPU</span>
+            <img src="/marocgpu-logo-transparent.webp" alt="MarocGPU" />
           </Link>
           <Link className="cart-back" href="/products/"><ArrowLeft size={17} /> {t("Continue shopping")}</Link>
         </header>
@@ -45,7 +45,7 @@ export default function CartPage() {
       <main className="cart-page">
         <header className="cart-header">
           <Link className="cart-logo" href="/" aria-label="MarocGPU home">
-            <img src="/marocgpu-logo.svg" alt="MarocGPU" /><span className="brand-name">MarocGPU</span>
+            <img src="/marocgpu-logo-transparent.webp" alt="MarocGPU" />
           </Link>
           <Link className="cart-back" href="/products/"><ArrowLeft size={17} /> {t("Continue shopping")}</Link>
         </header>
@@ -67,7 +67,7 @@ export default function CartPage() {
     <main className="cart-page">
       <header className="cart-header">
         <Link className="cart-logo" href="/" aria-label="MarocGPU home">
-          <img src="/marocgpu-logo.svg" alt="MarocGPU" /><span className="brand-name">MarocGPU</span>
+          <img src="/marocgpu-logo-transparent.webp" alt="MarocGPU" />
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "end" }}>
           {/* Modern Language Switcher */}

@@ -268,7 +268,7 @@ const frTranslations = {
 };
 
 const defaults = {
-  logo: "/marocgpu-logo.svg",
+  logo: "/marocgpu-logo-transparent.webp",
   siteName: "MarocGPU",
   tagline: "High-performance computing and data center infrastructure, engineered in partnership with NVIDIA by MicroIntégral in Morocco.",
   heroTitle: "Morocco's AI & Data Center Revolution",
