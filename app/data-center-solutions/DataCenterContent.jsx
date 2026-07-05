@@ -156,7 +156,7 @@ export default function DataCenterContent() {
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
       <header className="dc-header">
-        <a href="/" aria-label="MarocGPU home"><img src="/marocgpu-logo-transparent.png" alt="MarocGPU" /></a>
+        <a href="/" aria-label="MarocGPU home"><img src="/marocgpu-logo.svg" alt="MarocGPU" /></a>
         <nav aria-label="Data center navigation">
           <a href="#equipment">{t("AI & Compute")}</a>
           <a href="#delivery">{t("Methodology")}</a>
@@ -302,7 +302,7 @@ export default function DataCenterContent() {
       </section>
 
       <footer className="dc-footer">
-        <a href="/"><img src="/marocgpu-logo-transparent.png" alt="MarocGPU" /></a>
+        <a href="/"><img src="/marocgpu-logo.svg" alt="MarocGPU" /></a>
         <p>{t("High-performance computing and data center infrastructure, engineered in partnership with NVIDIA by MicroIntégral in Morocco.")}</p>
         <span>&copy; 2026 MarocGPU | {t("All rights reserved.")}</span>
       </footer>

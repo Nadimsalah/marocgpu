@@ -95,8 +95,9 @@ img {
 }
 
 .brand-mark img {
-  width: auto;
-  height: 48px;
+  width: 38px;
+  height: 38px;
+  aspect-ratio: 1;
   object-fit: contain;
   flex: 0 0 auto;
 }
@@ -1455,8 +1456,9 @@ img {
 }
 
 .footer-logo img {
-  width: auto;
+  width: 42px;
   height: 42px;
+  aspect-ratio: 1;
   object-fit: contain;
 }
 
@@ -1650,7 +1652,9 @@ img {
 }
 
 .mobile-drawer-top .brand-mark img {
-  height: 38px;
+  height: 36px;
+  width: 36px;
+  aspect-ratio: 1;
 }
 
 .mobile-nav {
@@ -4084,7 +4088,8 @@ img {
 
 .pd-footer-logo img {
   height: 32px;
-  width: auto;
+  width: 32px;
+  aspect-ratio: 1;
   object-fit: contain;
 }
 
@@ -6749,8 +6754,9 @@ img {
 }
 
 .micro-logo img {
-  width: auto;
+  width: 44px;
   height: 44px;
+  aspect-ratio: 1;
   object-fit: contain;
 }
 
@@ -8008,7 +8014,8 @@ img {
 
   .panel-mobile-logo img {
     height: 28px;
-    width: auto;
+    width: 28px;
+    aspect-ratio: 1;
     object-fit: contain;
   }
 

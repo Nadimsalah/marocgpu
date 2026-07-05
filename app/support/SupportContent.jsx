@@ -217,7 +217,7 @@ export default function SupportContent() {
     >
       <header className="support-header">
         <a href="/" aria-label="MarocGPU home">
-          <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
+          <img src="/marocgpu-logo.svg" alt="MarocGPU" />
         </a>
         <nav aria-label="Support navigation">
           <a href="#help">{t("Help topics")}</a>
@@ -450,7 +450,7 @@ export default function SupportContent() {
 
       <footer className="support-footer">
         <a href="/">
-          <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
+          <img src="/marocgpu-logo.svg" alt="MarocGPU" />
         </a>
         <p>{t("High-performance computing and data center infrastructure, engineered in partnership with NVIDIA by MicroIntégral in Morocco.")}</p>
         <span>&copy; 2026 MarocGPU | {t("All rights reserved.")}</span>

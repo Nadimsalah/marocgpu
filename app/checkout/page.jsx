@@ -199,7 +199,7 @@ export default function CheckoutPage() {
       <main className="checkout-page">
         <header className="checkout-header">
           <Link className="checkout-logo" href="/" aria-label="MarocGPU home">
-            <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
+            <img src="/marocgpu-logo.svg" alt="MarocGPU" />
           </Link>
         </header>
         <section className="checkout-empty">
@@ -217,7 +217,7 @@ export default function CheckoutPage() {
       <main className="checkout-page">
         <header className="checkout-header">
           <Link className="checkout-logo" href="/" aria-label="MarocGPU home">
-            <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
+            <img src="/marocgpu-logo.svg" alt="MarocGPU" />
           </Link>
         </header>
         <section className="checkout-empty">
@@ -237,7 +237,7 @@ export default function CheckoutPage() {
       <main className="checkout-page">
         <header className="checkout-header">
           <Link className="checkout-logo" href="/" aria-label="MarocGPU home">
-            <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
+            <img src="/marocgpu-logo.svg" alt="MarocGPU" />
           </Link>
         </header>
         <section className="checkout-success">
@@ -276,7 +276,7 @@ export default function CheckoutPage() {
     >
       <header className="checkout-header">
         <Link className="checkout-logo" href="/" aria-label="MarocGPU home">
-          <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
+          <img src="/marocgpu-logo.svg" alt="MarocGPU" />
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "end" }}>
           {/* Modern Language Switcher */}

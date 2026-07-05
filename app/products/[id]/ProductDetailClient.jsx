@@ -391,7 +391,7 @@ export default function ProductDetailPage({ params }) {
     >
       <header className="pd-header">
         <Link className="pd-logo" href="/" aria-label="MarocGPU home">
-          <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
+          <img src="/marocgpu-logo.svg" alt="MarocGPU" />
         </Link>
         <nav className="pd-nav">
           <Link href="/">{t("Home")}</Link>
@@ -577,7 +577,7 @@ export default function ProductDetailPage({ params }) {
 
       <footer className="pd-footer">
         <div className="pd-footer-inner">
-          <Link href="/" className="pd-footer-logo"><img src="/marocgpu-logo-transparent.png" alt="MarocGPU" /></Link>
+          <Link href="/" className="pd-footer-logo"><img src="/marocgpu-logo.svg" alt="MarocGPU" /></Link>
           <span>{t("Casablanca, Morocco")}</span>
           <span>{"\u00A9"} 2026 MarocGPU. {t("All rights reserved.")}</span>
         </div>

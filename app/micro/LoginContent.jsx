@@ -88,7 +88,7 @@ export default function LoginContent() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 350, damping: 25 }}
         >
-          <a href="/" className="micro-logo"><img src="/marocgpu-logo-transparent.png" alt="MarocGPU" /></a>
+          <a href="/" className="micro-logo"><img src="/marocgpu-logo.svg" alt="MarocGPU" /></a>
           <motion.div
             className="micro-success-icon"
             initial={{ scale: 0 }}
@@ -115,7 +115,7 @@ export default function LoginContent() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       >
-        <a href="/" className="micro-logo"><img src="/marocgpu-logo-transparent.png" alt="MarocGPU" /></a>
+        <a href="/" className="micro-logo"><img src="/marocgpu-logo.svg" alt="MarocGPU" /></a>
         <div className="micro-lock">
           <Lock size={24} />
         </div>
