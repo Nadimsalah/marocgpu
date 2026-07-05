@@ -197,47 +197,49 @@ export default function ProductsPage() {
         </Link>
         <Link className="catalog-home-link" href="/"><ArrowLeft size={17} /> {t("Back to home")}</Link>
         
-        {/* Modern Language Switcher */}
-        <div className="lang-switcher" style={{ display: "inline-flex", background: "#f1f3f5", borderRadius: 20, padding: 3, gap: 2, marginRight: 8, height: 32, alignItems: "center", marginLeft: "auto" }}>
-          <button
-            type="button"
-            onClick={() => changeLanguage("en")}
-            style={{
-              padding: "4px 8px",
-              borderRadius: 16,
-              fontSize: "0.72rem",
-              fontWeight: 800,
-              border: "none",
-              background: language === "en" ? "#0a4bd9" : "transparent",
-              color: language === "en" ? "#fff" : "#555",
-              cursor: "pointer",
-              transition: "all 0.2s ease"
-            }}
-          >
-            EN
-          </button>
-          <button
-            type="button"
-            onClick={() => changeLanguage("fr")}
-            style={{
-              padding: "4px 8px",
-              borderRadius: 16,
-              fontSize: "0.72rem",
-              fontWeight: 800,
-              border: "none",
-              background: language === "fr" ? "#0a4bd9" : "transparent",
-              color: language === "fr" ? "#fff" : "#555",
-              cursor: "pointer",
-              transition: "all 0.2s ease"
-            }}
-          >
-            FR
+        <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "end" }}>
+          {/* Modern Language Switcher */}
+          <div className="lang-switcher" style={{ display: "inline-flex", background: "#f1f3f5", borderRadius: 20, padding: 3, gap: 2, height: 32, alignItems: "center" }}>
+            <button
+              type="button"
+              onClick={() => changeLanguage("en")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: 16,
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                border: "none",
+                background: language === "en" ? "#0a4bd9" : "transparent",
+                color: language === "en" ? "#fff" : "#555",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              onClick={() => changeLanguage("fr")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: 16,
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                border: "none",
+                background: language === "fr" ? "#0a4bd9" : "transparent",
+                color: language === "fr" ? "#fff" : "#555",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              FR
+            </button>
+          </div>
+
+          <button className="catalog-cart" type="button" aria-label={`${hydrated ? items.length : 0} products in cart`} onClick={() => setDrawerOpen(true)} style={{ margin: 0 }}>
+            <ShoppingCart size={19} />{hydrated && <span>{items.length}</span>}
           </button>
         </div>
-
-        <button className="catalog-cart" type="button" aria-label={`${hydrated ? items.length : 0} products in cart`} onClick={() => setDrawerOpen(true)}>
-          <ShoppingCart size={19} />{hydrated && <span>{items.length}</span>}
-        </button>
       </header>
 
       <section className="catalog-hero">
