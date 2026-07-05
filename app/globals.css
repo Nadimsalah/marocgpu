@@ -8676,6 +8676,7 @@ img {
   background-color: #25d366;
   color: #fff;
   border-radius: 50%;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8694,6 +8695,13 @@ img {
 
 .floating-whatsapp:active {
   transform: scale(0.96) translateY(0);
+}
+
+.floating-whatsapp img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .floating-whatsapp svg {
