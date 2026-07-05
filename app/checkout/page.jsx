@@ -226,7 +226,7 @@ export default function CheckoutPage() {
           </div>
           <h2>{t("Your cart is empty")}</h2>
           <p>{t("Add some products before checking out.")}</p>
-          <Link className="checkout-empty-cta" href="/products">{t("Browse products")}</Link>
+          <Link className="checkout-empty-cta" href="/products/">{t("Browse products")}</Link>
         </section>
       </main>
     );

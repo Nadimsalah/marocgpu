@@ -347,14 +347,14 @@ function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
 
                 if (!hasSub) {
                   return (
-                    <a
+                    <Link
                       key={item}
-                      href={item === "Data Center Solutions" ? "/data-center-solutions" : "/support"}
+                      href={item === "Data Center Solutions" ? "/data-center-solutions/" : "/support/"}
                       onClick={onClose}
                       className="mobile-nav-item"
                     >
                       {t(item)}
-                    </a>
+                    </Link>
                   );
                 }
 
@@ -386,9 +386,9 @@ function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
                         >
                           <div className="mobile-sub-grid">
                             {menuData.cards.map((card) => (
-                              <a
+                              <Link
                                 key={card.title}
-                                href={`/products?category=${encodeURIComponent(item)}`}
+                                href={`/products/?category=${encodeURIComponent(item)}`}
                                 onClick={onClose}
                                 className="mobile-sub-card"
                               >
@@ -402,7 +402,7 @@ function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
                                   )}
                                 </div>
                                 <span>{t(card.title)}</span>
-                              </a>
+                              </Link>
                             ))}
                           </div>
                         </motion.div>
@@ -671,7 +671,7 @@ function MarocGpuFooter({ onSubscribe, siteSettings }) {
               <ul>
                 {column.links.map((link) => (
                   <li key={link}>
-                    <a href="/products">{link}</a>
+                    <a href="/products/">{link}</a>
                   </li>
                 ))}
               </ul>
@@ -823,9 +823,9 @@ export default function Page() {
           <nav className="site-nav" aria-label="Primary">
             {settings.navItems.map((item) =>
               item === "Data Center Solutions" ? (
-                <Link className="nav-link" href="/data-center-solutions" key={item} onClick={() => setActiveMenu(null)}>{t(item)}</Link>
+                <Link className="nav-link" href="/data-center-solutions/" key={item} onClick={() => setActiveMenu(null)}>{t(item)}</Link>
               ) : item === "Support" ? (
-                <Link className="nav-link" href="/support" key={item} onClick={() => setActiveMenu(null)}>{t(item)}</Link>
+                <Link className="nav-link" href="/support/" key={item} onClick={() => setActiveMenu(null)}>{t(item)}</Link>
               ) : (
                 <button
                   className={activeMenu === item ? "nav-link active" : "nav-link"}
@@ -918,16 +918,16 @@ export default function Page() {
                   <div className="mega-menu-label"><Tag size={19} /> {megaMenu.label}</div>
                   <div className="mega-menu-links">
                     {megaMenu.links.map((link, index) => (
-                      <a className={index === 0 ? "featured" : ""} href={`/products?category=${encodeURIComponent(activeMenu)}`} key={link}>
+                      <Link className={index === 0 ? "featured" : ""} href={`/products/?category=${encodeURIComponent(activeMenu)}`} key={link} onClick={() => setActiveMenu(null)}>
                         {link}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </aside>
 
                 <div className="mega-menu-grid">
                   {megaMenu.cards.map((card) => (
-                    <a className="mega-menu-card" href={`/products?category=${encodeURIComponent(activeMenu)}`} key={card.title}>
+                    <Link className="mega-menu-card" href={`/products/?category=${encodeURIComponent(activeMenu)}`} key={card.title} onClick={() => setActiveMenu(null)}>
                       <div>
                         {card.image ? (
                           <img src={card.image} alt="" />
@@ -938,7 +938,7 @@ export default function Page() {
                         )}
                       </div>
                       <span>{t(card.title)}</span>
-                    </a>
+                    </Link>
                   ))}
                 </div>
               </div>
@@ -1196,7 +1196,7 @@ export default function Page() {
             <p>Ready to deploy</p>
             <h2 id="business-products-title">Performance built for business.</h2>
           </div>
-          <a href="/products">View all products <ArrowRight size={18} /></a>
+          <a href="/products/">View all products <ArrowRight size={18} /></a>
         </div>
 
         <div className="business-products-grid">

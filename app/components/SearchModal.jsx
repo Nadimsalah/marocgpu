@@ -143,7 +143,7 @@ export default function SearchModal({ open, onClose }) {
                     </div>
                   </div>
                 ))}
-                <a className="search-modal-view-all" href="/products" onClick={onClose}>
+                <a className="search-modal-view-all" href="/products/" onClick={onClose}>
                   {t("View all products")} <ArrowRight size={16} />
                 </a>
               </div>

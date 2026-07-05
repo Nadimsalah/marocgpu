@@ -43,7 +43,7 @@ const sections = [
   { id: "footer", label: "Footer", icon: Text },
 ];
 
-const presetLinks = ["#collections", "/products", "/data-center-solutions", "/support"];
+const presetLinks = ["#collections", "/products/", "/data-center-solutions", "/support"];
 
 function compressImage(file, callback) {
   const reader = new FileReader();
@@ -575,7 +575,7 @@ export default function StorePage() {
                     style={{ width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #dcdde1", marginBottom: (isCustomLink(settings.featureCtaLink) || settings.featureCtaLink === "") ? 8 : 0 }}
                   >
                     <option value="#collections">Homepage Must Haves Section (#collections)</option>
-                    <option value="/products">All Products Catalog (/products)</option>
+                    <option value="/products/">All Products Catalog (/products)</option>
                     <option value="/data-center-solutions">Data Center Solutions (/data-center-solutions)</option>
                     <option value="/support">Support Page (/support)</option>
                     <option value="custom">Custom URL...</option>
@@ -671,7 +671,7 @@ export default function StorePage() {
                     style={{ width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #dcdde1", marginBottom: (isCustomLink(settings.solutionsCtaPrimaryLink) || settings.solutionsCtaPrimaryLink === "") ? 8 : 0 }}
                   >
                     <option value="#collections">Homepage Must Haves Section (#collections)</option>
-                    <option value="/products">All Products Catalog (/products)</option>
+                    <option value="/products/">All Products Catalog (/products)</option>
                     <option value="/data-center-solutions">Data Center Solutions (/data-center-solutions)</option>
                     <option value="/support">Support Page (/support)</option>
                     <option value="custom">Custom URL...</option>
@@ -697,7 +697,7 @@ export default function StorePage() {
                     style={{ width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #dcdde1", marginBottom: (isCustomLink(settings.solutionsCtaSecondaryLink) || settings.solutionsCtaSecondaryLink === "") ? 8 : 0 }}
                   >
                     <option value="#collections">Homepage Must Haves Section (#collections)</option>
-                    <option value="/products">All Products Catalog (/products)</option>
+                    <option value="/products/">All Products Catalog (/products)</option>
                     <option value="/data-center-solutions">Data Center Solutions (/data-center-solutions)</option>
                     <option value="/support">Support Page (/support)</option>
                     <option value="custom">Custom URL...</option>

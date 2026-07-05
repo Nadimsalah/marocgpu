@@ -79,7 +79,7 @@ export default function ProductsPage() {
         const category = normalizeCategory(params.get("category"), categories);
         setActiveCategory(category);
         if (params.get("category") && params.get("category") !== category) {
-          window.history.replaceState({}, "", `/products?category=${encodeURIComponent(category)}`);
+          window.history.replaceState({}, "", `/products/?category=${encodeURIComponent(category)}`);
         }
       } catch (e) {
         console.error(e);
@@ -119,7 +119,7 @@ export default function ProductsPage() {
 
   const chooseCategory = (category) => {
     setActiveCategory(category);
-    const url = category === "All" ? "/products" : `/products?category=${encodeURIComponent(category)}`;
+    const url = category === "All" ? "/products/" : `/products/?category=${encodeURIComponent(category)}`;
     window.history.replaceState({}, "", url);
   };
 

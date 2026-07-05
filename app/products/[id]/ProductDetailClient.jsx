@@ -395,7 +395,7 @@ export default function ProductDetailPage({ params }) {
         </Link>
         <nav className="pd-nav">
           <Link href="/">{t("Home")}</Link>
-          <Link href="/products">{t("Products")}</Link>
+          <Link href="/products/">{t("Products")}</Link>
           <span className="active">{t(product.category)}</span>
         </nav>
         <div className="pd-header-actions" style={{ gap: 12 }}>
@@ -441,7 +441,7 @@ export default function ProductDetailPage({ params }) {
             <ShoppingCart size={19} />
             {hydrated && count > 0 && <span className="pd-cart-badge">{count}</span>}
           </button>
-          <Link className="pd-back" href="/products">
+          <Link className="pd-back" href="/products/">
             <ArrowLeft size={17} /> {t("All products")}
           </Link>
         </div>
@@ -450,9 +450,9 @@ export default function ProductDetailPage({ params }) {
       <div className="pd-breadcrumb">
         <Link href="/">{t("Home")}</Link>
         <ChevronRight size={14} />
-        <Link href="/products">{t("Products")}</Link>
+        <Link href="/products/">{t("Products")}</Link>
         <ChevronRight size={14} />
-        <Link href={`/products?category=${encodeURIComponent(product.category)}`}>{t(product.category)}</Link>
+        <Link href={`/products/?category=${encodeURIComponent(product.category)}`}>{t(product.category)}</Link>
         <ChevronRight size={14} />
         <span>{product.name}</span>
       </div>

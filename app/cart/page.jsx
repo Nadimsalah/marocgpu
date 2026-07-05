@@ -28,7 +28,7 @@ export default function CartPage() {
           <Link className="cart-logo" href="/" aria-label="MarocGPU home">
             <img src="/marocgpu-logo.svg" alt="MarocGPU" />
           </Link>
-          <Link className="cart-back" href="/products"><ArrowLeft size={17} /> {t("Continue shopping")}</Link>
+          <Link className="cart-back" href="/products/"><ArrowLeft size={17} /> {t("Continue shopping")}</Link>
         </header>
         <section className="cart-empty">
           <div className="cart-empty-icon">
@@ -47,7 +47,7 @@ export default function CartPage() {
           <Link className="cart-logo" href="/" aria-label="MarocGPU home">
             <img src="/marocgpu-logo.svg" alt="MarocGPU" />
           </Link>
-          <Link className="cart-back" href="/products"><ArrowLeft size={17} /> {t("Continue shopping")}</Link>
+          <Link className="cart-back" href="/products/"><ArrowLeft size={17} /> {t("Continue shopping")}</Link>
         </header>
         <section className="cart-empty">
           <div className="cart-empty-icon">
@@ -55,7 +55,7 @@ export default function CartPage() {
           </div>
           <h2>{t("Your cart is empty")}</h2>
           <p>{t("Looks like you haven't added anything yet. Browse our catalog and find your next machine.")}</p>
-          <Link className="cart-empty-cta" href="/products">
+          <Link className="cart-empty-cta" href="/products/">
             {t("Browse products")} <ArrowRight size={18} />
           </Link>
         </section>
@@ -108,7 +108,7 @@ export default function CartPage() {
             </button>
           </div>
 
-          <Link className="cart-back" href="/products" style={{ margin: 0 }}>
+          <Link className="cart-back" href="/products/" style={{ margin: 0 }}>
             <ArrowLeft size={17} /> {t("Continue shopping")}
           </Link>
         </div>
@@ -117,7 +117,7 @@ export default function CartPage() {
       <div className="cart-breadcrumb">
         <Link href="/">{t("Home")}</Link>
         <span>·</span>
-        <Link href="/products">{t("Products")}</Link>
+        <Link href="/products/">{t("Products")}</Link>
         <span>·</span>
         <span>{t("Cart")}</span>
       </div>
