@@ -11,7 +11,7 @@ const filesToUpdate = [
   'app/components/SearchModal.jsx',
   'app/data-center-solutions/DataCenterContent.jsx',
   'app/support/SupportContent.jsx',
-  'app/panel/store/page.jsx'
+  'app/panel/layout.jsx'
 ];
 
 filesToUpdate.forEach(filePath => {
@@ -19,29 +19,21 @@ filesToUpdate.forEach(filePath => {
   if (fs.existsSync(absolutePath)) {
     let content = fs.readFileSync(absolutePath, 'utf-8');
     
-    // Replace URL paths with trailing slashes before queries and quotes
-    content = content.split('href="/products"').join('href="/products/"');
-    content = content.split('href="/products?').join('href="/products/?');
-    content = content.split('href={`/products?').join('href={`/products/?');
-    content = content.split('`/products?category=').join('`/products/?category=');
-    content = content.split('"/products"').join('"/products/"');
+    // Inject brand-name span next to the marocgpu-logo.svg img tags
+    // Let's replace only where the image is inside an anchor or Link that acts as the brand container
+    content = content.replace(
+      /<img src="\/marocgpu-logo\.svg" alt="MarocGPU" \/>/g,
+      '<img src="/marocgpu-logo.svg" alt="MarocGPU" /><span className="brand-name">MarocGPU</span>'
+    );
     
-    // In page.jsx, convert the mega menu and mobile menu <a> tags to <Link> components
-    if (filePath === 'app/page.jsx') {
-      // 1. Mobile menu sub-cards
-      content = content.replace(
-        /href=\{\`\/products\/\?category=\$\{encodeURIComponent\(item\)\}\`\}\s+onClick=\{onClose\}\s+className="mobile-sub-card"/g,
-        'Link href={`/products/?category=${encodeURIComponent(item)}`} onClick={onClose} className="mobile-sub-card"'
-      );
-      content = content.replace(/<\/a>/g, (match, offset) => {
-        // Let's replace the closing tag of mobile-sub-card with </Link>
-        // We'll do a simple string replace for the specific sections or do it generally
-        return match;
-      });
-    }
-
+    // Handle specific layout styling in panel layout sidebar logo
+    content = content.replace(
+      /<img src="\/marocgpu-logo\.svg" alt="MarocGPU" style=\{\{\s*height:\s*36,\s*width:\s*36\s*\}\}\s*\/>/g,
+      '<img src="/marocgpu-logo.svg" alt="MarocGPU" style={{ height: 36, width: 36 }} /><span className="brand-name">MarocGPU</span>'
+    );
+    
     fs.writeFileSync(absolutePath, content, 'utf-8');
-    console.log(`Updated products links in: ${filePath}`);
+    console.log(`Injected brand text in: ${filePath}`);
   } else {
     console.warn(`File not found: ${filePath}`);
   }

@@ -8723,3 +8723,73 @@ body:has(.panel-root) .floating-whatsapp {
     height: 50px;
   }
 }
+
+/* ── Brand Logo Text Styling ── */
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.brand-mark .brand-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0b0f19; /* dark/black on light header */
+  letter-spacing: -0.02em;
+  font-family: var(--font-inter), sans-serif;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+/* White text for dark footers / mobile menu drawers */
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.footer-logo .brand-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff; /* white on dark footer */
+  letter-spacing: -0.02em;
+  font-family: var(--font-inter), sans-serif;
+  user-select: none;
+}
+
+.mobile-drawer-top .brand-mark .brand-name {
+  color: #ffffff; /* white on dark mobile menu drawer */
+}
+
+/* Admin panel sidebar branding */
+.panel-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.panel-logo .brand-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #171719; /* dark on admin light sidebar */
+  letter-spacing: -0.02em;
+  font-family: var(--font-inter), sans-serif;
+  user-select: none;
+}
+
+.panel-mobile-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.panel-mobile-logo .brand-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #171719;
+  letter-spacing: -0.02em;
+}

@@ -297,7 +297,7 @@ function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
           >
             <div className="mobile-drawer-top">
               <a href="/" className="brand-mark" aria-label="MarocGPU home" onClick={onClose}>
-                <img src="/marocgpu-logo.svg" alt="MarocGPU" />
+                <img src="/marocgpu-logo.svg" alt="MarocGPU" /><span className="brand-name">MarocGPU</span>
               </a>
               <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                 <div style={{ display: "inline-flex", background: "#f1f3f5", borderRadius: 20, padding: 3, gap: 2 }}>
@@ -654,7 +654,7 @@ function MarocGpuFooter({ onSubscribe, siteSettings }) {
       <div className="footer-main">
         <div className="footer-brand-column">
           <a className="footer-logo" href="/" aria-label="MarocGPU home">
-            <img src="/marocgpu-logo.svg" alt="MarocGPU" />
+            <img src="/marocgpu-logo.svg" alt="MarocGPU" /><span className="brand-name">MarocGPU</span>
           </a>
           <p>{siteSettings ? siteSettings.tagline : "Powerful hardware, expert-built systems, and dependable local support across Morocco."}</p>
           <div className="footer-socials">
@@ -820,7 +820,7 @@ export default function Page() {
         <div className="site-bar">
           <div className="site-brand">
             <a href="/" className="brand-mark" aria-label="MarocGPU home">
-              <img src="/marocgpu-logo.svg" alt="MarocGPU" />
+              <img src="/marocgpu-logo.svg" alt="MarocGPU" /><span className="brand-name">MarocGPU</span>
             </a>
           </div>
 
