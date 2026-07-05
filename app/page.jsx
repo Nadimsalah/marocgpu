@@ -734,6 +734,7 @@ export default function Page() {
   const [activeMenu, setActiveMenu] = useState(null);
   const [visibleProducts, setVisibleProducts] = useState(4);
   const [productsLoading, setProductsLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const [showThanks, setShowThanks] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { count, setDrawerOpen, addToCart, items, hydrated } = useCart();
@@ -745,12 +746,15 @@ export default function Page() {
   const [liveProducts, setLiveProducts] = useState([]);
 
   React.useEffect(() => {
+    setMounted(true);
     const closeOnEscape = (event) => {
       if (event.key === "Escape") setActiveMenu(null);
     };
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, []);
+
+  const showShimmers = !mounted || productsLoading;
 
   React.useEffect(() => {
     async function loadLiveProducts() {
@@ -981,7 +985,7 @@ export default function Page() {
         </div>
 
         <div className="must-haves-grid">
-          {productsLoading ? (
+          {showShimmers ? (
             [1, 2, 3, 4].map((i) => (
               <div key={i} className="business-product-card" style={{ pointerEvents: "none" }}>
                 <div className="shimmer" style={{ width: "100%", aspectRatio: "1.2", borderRadius: 20, marginBottom: 18 }} />
@@ -1200,7 +1204,7 @@ export default function Page() {
         </div>
 
         <div className="business-products-grid">
-          {productsLoading ? (
+          {showShimmers ? (
             [1, 2, 3, 4].map((i) => (
               <div key={i} className="business-product-card" style={{ pointerEvents: "none" }}>
                 <div className="shimmer" style={{ width: "100%", height: 280, borderRadius: "20px 20px 0 0" }} />
