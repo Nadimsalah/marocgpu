@@ -292,7 +292,7 @@ export default function ProductsPage() {
                   onClick={() => router.push(`/products/${product.id}`)}
                 >
                   <div className="catalog-card-image">
-                    <img src={product.image} alt={product.name} />
+                    <img src={product.image} alt={product.name} loading="lazy" />
                     {product.badge && <span>{t(product.badge)}</span>}
                   </div>
                   <div className="catalog-card-body">

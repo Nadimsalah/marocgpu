@@ -561,7 +561,7 @@ export default function ProductDetailPage({ params }) {
                 transition={{ duration: 0.35 }}
               >
                 <div className="pd-related-image">
-                  <img src={rp.image} alt={rp.name} />
+                  <img src={rp.image} alt={rp.name} loading="lazy" />
                   {rp.badge && <span>{t(rp.badge)}</span>}
                 </div>
                 <div className="pd-related-info">

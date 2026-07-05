@@ -8,6 +8,37 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publish
 
 const clientSupabase = createClient(supabaseUrl, supabaseAnonKey);
 
+function fetchAndCacheProducts() {
+  if (typeof window === "undefined") return;
+  clientSupabase
+    .from('products')
+    .select('*')
+    .order('id', { ascending: false })
+    .then(({ data, error }) => {
+      if (!error && data) {
+        try {
+          sessionStorage.setItem('cache_api_products', JSON.stringify(data));
+        } catch (e) {}
+      }
+    });
+}
+
+function fetchAndCacheSettings() {
+  if (typeof window === "undefined") return;
+  clientSupabase
+    .from('settings')
+    .select('value')
+    .eq('key', 'site_settings')
+    .single()
+    .then(({ data, error }) => {
+      if (!error && data?.value) {
+        try {
+          sessionStorage.setItem('cache_api_settings', JSON.stringify(data.value));
+        } catch (e) {}
+      }
+    });
+}
+
 export default function InterceptorLoader() {
   useEffect(() => {
     if (typeof window !== "undefined" && !window.fetch.__intercepted) {
@@ -28,13 +59,28 @@ export default function InterceptorLoader() {
           try {
             const method = init?.method || 'GET';
             if (method === 'GET') {
+              try {
+                const cached = sessionStorage.getItem('cache_api_products');
+                if (cached) {
+                  const parsed = JSON.parse(cached);
+                  fetchAndCacheProducts();
+                  return new Response(JSON.stringify(parsed), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                }
+              } catch (e) {}
+
               const { data, error } = await clientSupabase
                 .from('products')
                 .select('*')
                 .order('id', { ascending: false });
               if (error) throw error;
+              try {
+                sessionStorage.setItem('cache_api_products', JSON.stringify(data));
+              } catch (e) {}
               return new Response(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
             } else if (method === 'POST') {
+              try {
+                sessionStorage.removeItem('cache_api_products');
+              } catch (e) {}
               const body = JSON.parse(init.body);
               const { id, ...payload } = body;
               let result = await clientSupabase
@@ -64,6 +110,9 @@ export default function InterceptorLoader() {
               if (result.error) throw result.error;
               return new Response(JSON.stringify(result.data[0]), { status: 200, headers: { 'Content-Type': 'application/json' } });
             } else if (method === 'PUT') {
+              try {
+                sessionStorage.removeItem('cache_api_products');
+              } catch (e) {}
               const body = JSON.parse(init.body);
               const { id, ...updates } = body;
               let result = await clientSupabase
@@ -233,6 +282,15 @@ export default function InterceptorLoader() {
           try {
             const method = init?.method || 'GET';
             if (method === 'GET') {
+              try {
+                const cached = sessionStorage.getItem('cache_api_settings');
+                if (cached) {
+                  const parsed = JSON.parse(cached);
+                  fetchAndCacheSettings();
+                  return new Response(JSON.stringify(parsed), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                }
+              } catch (e) {}
+
               const { data, error } = await clientSupabase
                 .from('settings')
                 .select('value')
@@ -244,8 +302,15 @@ export default function InterceptorLoader() {
                 }
                 throw error;
               }
-              return new Response(JSON.stringify(data?.value || {}), { status: 200, headers: { 'Content-Type': 'application/json' } });
+              const settingsVal = data?.value || {};
+              try {
+                sessionStorage.setItem('cache_api_settings', JSON.stringify(settingsVal));
+              } catch (e) {}
+              return new Response(JSON.stringify(settingsVal), { status: 200, headers: { 'Content-Type': 'application/json' } });
             } else if (method === 'POST') {
+              try {
+                sessionStorage.removeItem('cache_api_settings');
+              } catch (e) {}
               const body = JSON.parse(init.body);
               const { data, error } = await clientSupabase
                 .from('settings')
