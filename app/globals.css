@@ -7996,14 +7996,14 @@ img {
     justify-content: space-between;
     height: 60px;
     padding: 0 16px;
-    background: #0a0b0d;
-    color: #fff;
+    background: #ffffff;
+    color: #171719;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 99;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid #eef0f2;
   }
 
   .panel-mobile-logo img {
@@ -8015,7 +8015,7 @@ img {
   .panel-mobile-toggle {
     background: transparent;
     border: none;
-    color: #fff;
+    color: #171719;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -8058,7 +8058,8 @@ img {
     transform: translateX(-100%);
     transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
-    background: #171719;
+    background: #ffffff;
+    border-right: 1px solid #eef0f2;
   }
 
   .panel-sidebar.mobile-open {
