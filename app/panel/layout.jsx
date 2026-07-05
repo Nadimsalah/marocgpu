@@ -12,6 +12,8 @@ import {
   Settings,
   ShoppingCart,
   Users,
+  Menu,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -27,10 +29,33 @@ const navItems = [
 
 export default function PanelLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <div className="panel-root">
-      <aside className={`panel-sidebar ${collapsed ? "collapsed" : ""}`}>
+      {/* Mobile top bar */}
+      <header className="panel-mobile-bar">
+        <button
+          className="panel-mobile-toggle"
+          type="button"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+        >
+          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+        <Link href="/panel/" className="panel-mobile-logo" onClick={() => setMobileOpen(false)}>
+          <img src="/marocgpu-logo-transparent.png" alt="MarocGPU" />
+        </Link>
+        <div style={{ width: 24 }} /> {/* Spacer to balance flex layout */}
+      </header>
+
+      {/* Mobile menu backdrop overlay */}
+      <div
+        className={`panel-mobile-overlay ${mobileOpen ? "active" : ""}`}
+        onClick={() => setMobileOpen(false)}
+      />
+
+      <aside className={`panel-sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""}`}>
         <div className="panel-sidebar-header">
           {!collapsed && (
             <Link href="/panel/" className="panel-logo">
@@ -53,6 +78,7 @@ export default function PanelLayout({ children }) {
               key={label}
               href={href}
               className="panel-nav-link"
+              onClick={() => setMobileOpen(false)}
             >
               <Icon size={20} />
               {!collapsed && <span>{label}</span>}
@@ -61,7 +87,7 @@ export default function PanelLayout({ children }) {
         </nav>
 
         <div className="panel-sidebar-footer">
-          <Link href="/" className="panel-nav-link">
+          <Link href="/" className="panel-nav-link" onClick={() => setMobileOpen(false)}>
             <LogOut size={20} />
             {!collapsed && <span>Back to site</span>}
           </Link>

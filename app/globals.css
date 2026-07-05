@@ -7981,26 +7981,101 @@ img {
   }
 }
 
+/* Admin panel mobile bar & overlay declarations */
+.panel-mobile-bar {
+  display: none;
+}
+.panel-mobile-overlay {
+  display: none;
+}
+
 @media (max-width: 768px) {
-  .panel-sidebar {
-    width: 64px;
+  .panel-mobile-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 0 16px;
+    background: #0a0b0d;
+    color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .panel-sidebar .panel-logo img {
-    height: 32px;
+  .panel-mobile-logo img {
+    height: 28px;
+    width: auto;
+    object-fit: contain;
   }
 
-  .panel-sidebar .panel-nav-link span {
-    display: none;
-  }
-
-  .panel-sidebar .panel-nav-link {
+  .panel-mobile-toggle {
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    padding: 0;
+    padding: 6px;
+  }
+
+  .panel-mobile-overlay {
+    display: block;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 97;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.24s ease;
+  }
+
+  .panel-mobile-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .panel-root {
+    display: block;
+    padding-top: 60px;
+  }
+
+  .panel-sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    z-index: 98;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+    background: #171719;
+  }
+
+  .panel-sidebar.mobile-open {
+    transform: translateX(0);
   }
 
   .panel-sidebar-header {
-    justify-content: center;
+    display: none;
+  }
+
+  .panel-sidebar .panel-nav-link span {
+    display: inline !important;
+  }
+
+  .panel-sidebar .panel-nav-link {
+    justify-content: flex-start;
+    padding: 12px 20px;
   }
 
   .panel-collapse-btn {
@@ -8008,8 +8083,8 @@ img {
   }
 
   .panel-main {
-    margin-left: 64px;
-    padding: 24px 18px 40px;
+    margin-left: 0;
+    padding: 24px 16px 40px;
   }
 
   .panel-stats-grid {
@@ -8018,12 +8093,19 @@ img {
 
   .panel-header {
     flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .panel-table th,
   .panel-table td {
     padding: 10px 14px;
     font-size: 0.82rem;
+  }
+
+  .products-edit-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }
 
