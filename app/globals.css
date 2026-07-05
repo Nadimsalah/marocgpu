@@ -5972,8 +5972,9 @@ img {
 }
 
 .support-header img {
-  width: auto;
+  width: 44px;
   height: 44px;
+  aspect-ratio: 1;
   object-fit: contain;
 }
 
@@ -6584,8 +6585,10 @@ img {
 }
 
 .support-footer img {
-  width: auto;
+  width: 38px;
   height: 38px;
+  aspect-ratio: 1;
+  object-fit: contain;
 }
 
 .support-footer p {

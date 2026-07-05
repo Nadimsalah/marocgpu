@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import {
   ArrowRight,
   ChevronDown,
@@ -216,9 +217,9 @@ export default function SupportContent() {
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
       <header className="support-header">
-        <a href="/" aria-label="MarocGPU home">
+        <Link href="/" aria-label="MarocGPU home">
           <img src="/marocgpu-logo.svg" alt="MarocGPU" />
-        </a>
+        </Link>
         <nav aria-label="Support navigation">
           <a href="#help">{t("Help topics")}</a>
           <a href="#faqs">{t("FAQs")}</a>
@@ -449,9 +450,9 @@ export default function SupportContent() {
       </section>
 
       <footer className="support-footer">
-        <a href="/">
+        <Link href="/">
           <img src="/marocgpu-logo.svg" alt="MarocGPU" />
-        </a>
+        </Link>
         <p>{t("High-performance computing and data center infrastructure, engineered in partnership with NVIDIA by MicroIntégral in Morocco.")}</p>
         <span>&copy; 2026 MarocGPU | {t("All rights reserved.")}</span>
       </footer>
