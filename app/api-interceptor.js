@@ -307,17 +307,11 @@ export default function InterceptorLoader() {
                 sessionStorage.setItem('cache_api_settings', JSON.stringify(settingsVal));
               } catch (e) {}
               return new Response(JSON.stringify(settingsVal), { status: 200, headers: { 'Content-Type': 'application/json' } });
-            } else if (method === 'POST') {
+            } else {
               try {
                 sessionStorage.removeItem('cache_api_settings');
               } catch (e) {}
-              const body = JSON.parse(init.body);
-              const { data, error } = await clientSupabase
-                .from('settings')
-                .upsert({ key: 'site_settings', value: body }, { onConflict: 'key' })
-                .select();
-              if (error) throw error;
-              return new Response(JSON.stringify({ success: true, data }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+              return originalFetch.apply(this, arguments);
             }
           } catch (err) {
             return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });

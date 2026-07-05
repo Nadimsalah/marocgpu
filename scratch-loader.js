@@ -21,40 +21,23 @@ const supabase = createClient(
 );
 
 async function run() {
-  console.log("Connecting to Supabase database...");
+  console.log("Inspecting settings table schema...");
   try {
-    const { data, error } = await supabase
-      .from('settings')
-      .select('value')
-      .eq('key', 'site_settings')
-      .single();
-      
-    if (error) {
-      console.log("No site_settings found or error:", error.message);
-      return;
-    }
+    const { data, error } = await supabase.rpc('inspect_settings_table');
     
-    if (data?.value) {
-      const siteSettings = data.value;
-      console.log("Current DB logo:", siteSettings.logo);
+    // If RPC doesn't exist, we can run a direct query on settings table to test
+    console.log("RLS/schema query result:", { data, error });
+    
+    // Let's check what is in site_settings key in settings table right now
+    const { data: row, error: rowError } = await supabase
+      .from('settings')
+      .select('*')
+      .eq('key', 'site_settings')
+      .maybeSingle();
       
-      if (siteSettings.logo === "/marocgpu-logo-transparent.png" || !siteSettings.logo) {
-        siteSettings.logo = "/marocgpu-logo.svg";
-        
-        const { error: updateError } = await supabase
-          .from('settings')
-          .upsert({ key: 'site_settings', value: siteSettings });
-          
-        if (updateError) {
-          throw updateError;
-        }
-        console.log("Successfully updated live database settings logo to /marocgpu-logo.svg!");
-      } else {
-        console.log("Database logo is already custom or already updated:", siteSettings.logo);
-      }
-    }
+    console.log("Current site_settings row:", { row, rowError });
   } catch (err) {
-    console.error("Error updating database settings logo:", err);
+    console.error(err);
   }
 }
 
