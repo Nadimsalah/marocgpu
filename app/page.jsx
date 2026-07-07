@@ -388,7 +388,7 @@ function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
                             {menuData.cards.map((card) => (
                               <Link
                                 key={card.title}
-                                href={`/products/?category=${encodeURIComponent(item)}`}
+                                href={`/products/?category=${encodeURIComponent(item)}&q=${encodeURIComponent(card.title.trim())}`}
                                 onClick={onClose}
                                 className="mobile-sub-card"
                               >
@@ -401,7 +401,7 @@ function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
                                     </div>
                                   )}
                                 </div>
-                                <span>{t(card.title)}</span>
+                                <span>{t(card.title.trim())}</span>
                               </Link>
                             ))}
                           </div>
@@ -586,6 +586,7 @@ function MarocGpuFooter({ onSubscribe, siteSettings }) {
   const [phone, setPhone] = useState("");
   const [countryCode, setCountryCode] = useState("+212");
   const [subscribed, setSubscribed] = useState(false);
+  const { t } = useSite();
 
   const handleSubscribe = (event) => {
     event.preventDefault();
@@ -598,9 +599,9 @@ function MarocGpuFooter({ onSubscribe, siteSettings }) {
     <footer className="site-footer">
       <div className="footer-newsletter">
         <div className="footer-newsletter-copy">
-          <p>MarocGPU Reseller</p>
-          <h2>Are you a reseller?</h2>
-          <span>Join our WhatsApp channel and receive exclusive offers, bulk pricing, and priority stock alerts.</span>
+          <p>{t("MarocGPU Reseller")}</p>
+          <h2>{t("Are you a reseller?")}</h2>
+          <span>{t("Join our WhatsApp channel and receive exclusive offers, bulk pricing, and priority stock alerts.")}</span>
           <form onSubmit={handleSubscribe}>
             <div className="phone-input-row">
               <select
@@ -614,7 +615,7 @@ function MarocGpuFooter({ onSubscribe, siteSettings }) {
                   </option>
                 ))}
               </select>
-              <label className="sr-only" htmlFor="footer-phone">WhatsApp number</label>
+              <label className="sr-only" htmlFor="footer-phone">{t("WhatsApp number")}</label>
               <input
                 id="footer-phone"
                 type="tel"
@@ -633,7 +634,7 @@ function MarocGpuFooter({ onSubscribe, siteSettings }) {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
               </svg>
-              {subscribed ? "Offer sent" : "Join via WhatsApp"}
+              {subscribed ? t("Offer sent") : t("Join via WhatsApp")}
             </button>
           </form>
         </div>
@@ -656,7 +657,7 @@ function MarocGpuFooter({ onSubscribe, siteSettings }) {
           <a className="footer-logo" href="/" aria-label="MarocGPU home">
             <img src="/marocgpu-logo-transparent.webp" alt="MarocGPU" />
           </a>
-          <p>{siteSettings ? siteSettings.tagline : "Powerful hardware, expert-built systems, and dependable local support across Morocco."}</p>
+          <p>{t(siteSettings ? siteSettings.tagline : "Powerful hardware, expert-built systems, and dependable local support across Morocco.")}</p>
           <div className="footer-socials">
             {footerSocials.slice(0, 4).map(({ label, mark }) => (
               <a href="#" aria-label={label} key={label}><span>{mark}</span></a>
@@ -667,11 +668,11 @@ function MarocGpuFooter({ onSubscribe, siteSettings }) {
         <div className="footer-links-area">
           {(siteSettings ? siteSettings.footerColumns : footerColumns).map((column) => (
             <div className="footer-column" key={column.title}>
-              <h3>{column.title}</h3>
+              <h3>{t(column.title)}</h3>
               <ul>
                 {column.links.map((link) => (
                   <li key={link}>
-                    <a href="/products/">{link}</a>
+                    <a href="/products/">{t(link)}</a>
                   </li>
                 ))}
               </ul>
@@ -681,13 +682,13 @@ function MarocGpuFooter({ onSubscribe, siteSettings }) {
       </div>
 
       <div className="footer-bottom">
-        <p>{siteSettings ? siteSettings.footerBottom : "© 2026 MarocGPU. All rights reserved."}</p>
+        <p>{t(siteSettings ? siteSettings.footerBottom : "© 2026 MarocGPU. All rights reserved.")}</p>
         <div>
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-          <a href="#">Cookies</a>
+          <a href="#">{t("Privacy")}</a>
+          <a href="#">{t("Terms")}</a>
+          <a href="#">{t("Cookies")}</a>
         </div>
-        <span>Casablanca, Morocco</span>
+        <span>{t("Casablanca, Morocco")}</span>
       </div>
     </footer>
   );
@@ -921,17 +922,33 @@ export default function Page() {
                 <aside className="mega-menu-aside">
                   <div className="mega-menu-label"><Tag size={19} /> {megaMenu.label}</div>
                   <div className="mega-menu-links">
-                    {megaMenu.links.map((link, index) => (
-                      <Link className={index === 0 ? "featured" : ""} href={`/products/?category=${encodeURIComponent(activeMenu)}`} key={link} onClick={() => setActiveMenu(null)}>
-                        {link}
-                      </Link>
-                    ))}
+                    {["Featured", ...(megaMenu.cards || []).map(card => card.title)].map((link, index) => {
+                      const isFeatured = index === 0;
+                      const href = isFeatured
+                        ? `/products/?category=${encodeURIComponent(activeMenu)}`
+                        : `/products/?category=${encodeURIComponent(activeMenu)}&q=${encodeURIComponent(link.trim())}`;
+                      return (
+                        <Link
+                          className={isFeatured ? "featured" : ""}
+                          href={href}
+                          key={link}
+                          onClick={() => setActiveMenu(null)}
+                        >
+                          {t(link.trim())}
+                        </Link>
+                      );
+                    })}
                   </div>
                 </aside>
 
                 <div className="mega-menu-grid">
                   {megaMenu.cards.map((card) => (
-                    <Link className="mega-menu-card" href={`/products/?category=${encodeURIComponent(activeMenu)}`} key={card.title} onClick={() => setActiveMenu(null)}>
+                    <Link
+                      className="mega-menu-card"
+                      href={`/products/?category=${encodeURIComponent(activeMenu)}&q=${encodeURIComponent(card.title.trim())}`}
+                      key={card.title}
+                      onClick={() => setActiveMenu(null)}
+                    >
                       <div>
                         {card.image ? (
                           <img src={card.image} alt="" />
@@ -941,7 +958,7 @@ export default function Page() {
                           </div>
                         )}
                       </div>
-                      <span>{t(card.title)}</span>
+                      <span>{t(card.title.trim())}</span>
                     </Link>
                   ))}
                 </div>
@@ -1066,7 +1083,7 @@ export default function Page() {
             type="button"
             onClick={() => setVisibleProducts(displayProducts.length)}
           >
-            Load more products
+            {t("Load more products")}
             <span aria-hidden="true">+</span>
           </button>
         ) : null}

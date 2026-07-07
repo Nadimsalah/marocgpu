@@ -78,8 +78,15 @@ export default function ProductsPage() {
         const params = new URLSearchParams(window.location.search);
         const category = normalizeCategory(params.get("category"), categories);
         setActiveCategory(category);
+        const searchQuery = params.get("q") || "";
+        if (searchQuery) {
+          setQuery(searchQuery);
+        }
         if (params.get("category") && params.get("category") !== category) {
-          window.history.replaceState({}, "", `/products/?category=${encodeURIComponent(category)}`);
+          const nextParams = new URLSearchParams();
+          nextParams.set("category", category);
+          if (searchQuery) nextParams.set("q", searchQuery);
+          window.history.replaceState({}, "", `/products/?${nextParams.toString()}`);
         }
       } catch (e) {
         console.error(e);

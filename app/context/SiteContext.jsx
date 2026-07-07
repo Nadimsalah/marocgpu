@@ -264,7 +264,20 @@ const frTranslations = {
   "Support center": "Centre de support",
   "Warranty": "Garantie",
   "Delivery & returns": "Livraison & retours",
-  "All rights reserved.": "Tous droits réservés."
+  "All rights reserved.": "Tous droits réservés.",
+
+  // Footer Additional Translations
+  "WhatsApp number": "Numéro WhatsApp",
+  "MarocGPU Reseller": "Revendeur MarocGPU",
+  "Are you a reseller?": "Êtes-vous revendeur ?",
+  "Join our WhatsApp channel and receive exclusive offers, bulk pricing, and priority stock alerts.": "Rejoignez notre canal WhatsApp et recevez des offres exclusives, des tarifs de gros et des alertes de stock prioritaires.",
+  "Offer sent": "Offre envoyée",
+  "Join via WhatsApp": "Rejoindre sur WhatsApp",
+  "Privacy": "Confidentialité",
+  "Terms": "Conditions",
+  "Cookies": "Cookies",
+  "© 2026 MarocGPU. All rights reserved.": "© 2026 MarocGPU. Tous droits réservés.",
+  "Powerful hardware, expert-built systems, and dependable local support across Morocco.": "Matériel puissant, systèmes assemblés par des experts et assistance locale fiable partout au Maroc."
 };
 
 const defaults = {
@@ -288,10 +301,10 @@ const defaults = {
       label: "Consumer PCs",
       links: ["Featured", "AI PCs", "Top Rated Laptops", "Gaming Laptops"],
       cards: [
-        { title: "Laptops for Home", image: "" },
-        { title: "Laptops for Work", image: "" },
-        { title: "Mobile Workstations", image: "" },
-        { title: "Laptops for Gaming", image: "" },
+        { title: "Featured", image: "" },
+        { title: "AI PCs", image: "" },
+        { title: "Top Rated Laptops", image: "" },
+        { title: "Gaming Laptops", image: "" },
       ],
     },
     Professional: {
@@ -363,6 +376,7 @@ export function SiteProvider({ children }) {
             nextLocal.solutionsCtaSecondary = defaults.solutionsCtaSecondary;
             localStorage.setItem("marocgpu_settings", JSON.stringify(nextLocal));
           }
+
           setSettings(nextLocal);
         }
       } catch (e) {
@@ -428,6 +442,8 @@ export function SiteProvider({ children }) {
               next.solutionsCtaSecondary = defaults.solutionsCtaSecondary;
               updated = true;
             }
+
+
 
             if (updated) {
               fetch("/api/settings", {
