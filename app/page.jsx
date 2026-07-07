@@ -341,9 +341,9 @@ function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
             </div>
             <nav className="mobile-nav">
               {(menuNavItems || navItems).map((item) => {
-                const hasSub = item === "Consumer" || item === "Professional";
+                const menuData = settings?.megaMenus?.[item] || (item === "Consumer" || item === "Professional" ? getMegaMenu(item) : null);
+                const hasSub = !!menuData;
                 const isExpanded = expandedCat === item;
-                const menuData = hasSub ? (settings?.megaMenus?.[item] || getMegaMenu(item)) : null;
 
                 if (!hasSub) {
                   return (
