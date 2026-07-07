@@ -1662,7 +1662,8 @@ img {
   gap: 8px;
 }
 
-.mobile-nav-item {
+.mobile-nav-item,
+.mobile-nav-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1677,13 +1678,17 @@ img {
   font-family: inherit;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
+  width: 100%;
+  text-align: left;
 }
 
-.mobile-nav-item:active {
+.mobile-nav-item:active,
+.mobile-nav-header:active {
   background: #ecedf0;
 }
 
-.mobile-nav-item.expanded {
+.mobile-nav-item.expanded,
+.mobile-nav-header.expanded {
   background: #ecedf0;
   color: #0a4bd9;
 }

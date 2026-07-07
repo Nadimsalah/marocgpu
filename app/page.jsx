@@ -157,6 +157,33 @@ function getMegaMenu(item) {
   };
 }
 
+function getMenuDataByItem(item, settings) {
+  if (!settings) return null;
+  
+  // 1. Direct lookup
+  if (settings.megaMenus?.[item]) {
+    return settings.megaMenus[item];
+  }
+  
+  // 2. Index-based fallback
+  const navItemsList = settings.navItems || [];
+  const itemIndex = navItemsList.indexOf(item);
+  
+  if (itemIndex === 0) {
+    return settings.megaMenus?.["Consumer"] || 
+           settings.megaMenus?.["Produits"] || 
+           (settings.megaMenus ? Object.values(settings.megaMenus)[0] : null);
+  }
+  
+  if (itemIndex === 1) {
+    return settings.megaMenus?.["Professional"] || 
+           settings.megaMenus?.["Solutions"] || 
+           (settings.megaMenus ? Object.values(settings.megaMenus)[1] : null);
+  }
+  
+  return null;
+}
+
 const products = [
   {
     id: "rtx-4090",
@@ -341,7 +368,7 @@ function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
             </div>
             <nav className="mobile-nav">
               {(menuNavItems || navItems).map((item) => {
-                const menuData = settings?.megaMenus?.[item] || (item === "Consumer" || item === "Professional" ? getMegaMenu(item) : null);
+                const menuData = getMenuDataByItem(item, settings) || (item === "Consumer" || item === "Professional" || item === "Produits" || item === "Solutions" ? getMegaMenu(item) : null);
                 const hasSub = !!menuData;
                 const isExpanded = expandedCat === item;
 
@@ -363,7 +390,7 @@ function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
                     <button
                       type="button"
                       onClick={() => toggleCat(item)}
-                      className="mobile-nav-header"
+                      className={isExpanded ? "mobile-nav-header expanded" : "mobile-nav-header"}
                       aria-expanded={isExpanded}
                     >
                       {t(item)}
@@ -742,7 +769,7 @@ export default function Page() {
   const { settings, t, language, changeLanguage } = useSite();
   const router = useRouter();
   const [inquiryProduct, setInquiryProduct] = useState(null);
-  const megaMenu = activeMenu ? (settings?.megaMenus?.[activeMenu] || getMegaMenu(activeMenu)) : null;
+  const megaMenu = activeMenu ? (getMenuDataByItem(activeMenu, settings) || getMegaMenu(activeMenu)) : null;
 
   const [liveProducts, setLiveProducts] = useState([]);
 
