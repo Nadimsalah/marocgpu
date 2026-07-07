@@ -355,29 +355,42 @@ export function SiteProvider({ children }) {
         if (stored) {
           localData = JSON.parse(stored);
           const nextLocal = { ...defaults, ...localData };
-          if (
-            !nextLocal.tagline ||
-            nextLocal.tagline.includes("Powerful hardware, expert-built") ||
-            nextLocal.tagline.includes("Powerfull hardware") ||
-            (nextLocal.heroTitle && nextLocal.heroTitle.includes("New Era of Performance"))
-          ) {
-            nextLocal.tagline = defaults.tagline;
-            nextLocal.heroTitle = defaults.heroTitle;
-            nextLocal.heroSubtitle = defaults.heroSubtitle;
-            nextLocal.heroCta = defaults.heroCta;
-            nextLocal.featureKicker = defaults.featureKicker;
-            nextLocal.featureTitle = defaults.featureTitle;
-            nextLocal.featureDescription = defaults.featureDescription;
-            nextLocal.featureCta = defaults.featureCta;
-            nextLocal.solutionsKicker = defaults.solutionsKicker;
-            nextLocal.solutionsTitle = defaults.solutionsTitle;
-            nextLocal.solutionsDescription = defaults.solutionsDescription;
-            nextLocal.solutionsCtaPrimary = defaults.solutionsCtaPrimary;
-            nextLocal.solutionsCtaSecondary = defaults.solutionsCtaSecondary;
-            localStorage.setItem("marocgpu_settings", JSON.stringify(nextLocal));
-          }
 
-          setSettings(nextLocal);
+          // Invalidate cache if megaMenus keys don't align with navItems
+          // (happens when admin renames nav items in the panel)
+          const navKeys = (nextLocal.navItems || []).filter(
+            n => !["Data Center Solutions", "Solutions Data Center", "Support"].includes(n)
+          );
+          const menuKeys = Object.keys(nextLocal.megaMenus || {});
+          const keysMatch = navKeys.length === menuKeys.length && navKeys.every(k => menuKeys.includes(k));
+          if (!keysMatch) {
+            // Cache is stale — skip it and wait for fresh DB data
+            localStorage.removeItem("marocgpu_settings");
+            localData = null;
+          } else {
+            if (
+              !nextLocal.tagline ||
+              nextLocal.tagline.includes("Powerful hardware, expert-built") ||
+              nextLocal.tagline.includes("Powerfull hardware") ||
+              (nextLocal.heroTitle && nextLocal.heroTitle.includes("New Era of Performance"))
+            ) {
+              nextLocal.tagline = defaults.tagline;
+              nextLocal.heroTitle = defaults.heroTitle;
+              nextLocal.heroSubtitle = defaults.heroSubtitle;
+              nextLocal.heroCta = defaults.heroCta;
+              nextLocal.featureKicker = defaults.featureKicker;
+              nextLocal.featureTitle = defaults.featureTitle;
+              nextLocal.featureDescription = defaults.featureDescription;
+              nextLocal.featureCta = defaults.featureCta;
+              nextLocal.solutionsKicker = defaults.solutionsKicker;
+              nextLocal.solutionsTitle = defaults.solutionsTitle;
+              nextLocal.solutionsDescription = defaults.solutionsDescription;
+              nextLocal.solutionsCtaPrimary = defaults.solutionsCtaPrimary;
+              nextLocal.solutionsCtaSecondary = defaults.solutionsCtaSecondary;
+              localStorage.setItem("marocgpu_settings", JSON.stringify(nextLocal));
+            }
+            setSettings(nextLocal);
+          }
         }
       } catch (e) {
         console.error("Local storage read error:", e);

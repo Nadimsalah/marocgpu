@@ -158,29 +158,27 @@ function getMegaMenu(item) {
 }
 
 function getMenuDataByItem(item, settings) {
-  if (!settings) return null;
-  
-  // 1. Direct lookup
-  if (settings.megaMenus?.[item]) {
-    return settings.megaMenus[item];
-  }
-  
-  // 2. Index-based fallback
+  if (!settings || !settings.megaMenus) return null;
+
+  // 1. Direct key match
+  if (settings.megaMenus[item]) return settings.megaMenus[item];
+
+  // 2. Position-based fallback: find which dropdown-slot this item occupies
+  //    among navItems that ARE NOT plain links (Data Center Solutions, Support)
+  const plainLinks = ["Data Center Solutions", "Solutions Data Center", "Support"];
   const navItemsList = settings.navItems || [];
-  const itemIndex = navItemsList.indexOf(item);
-  
-  if (itemIndex === 0) {
-    return settings.megaMenus?.["Consumer"] || 
-           settings.megaMenus?.["Produits"] || 
-           (settings.megaMenus ? Object.values(settings.megaMenus)[0] : null);
+  const megaMenuValues = Object.values(settings.megaMenus);
+
+  let dropdownIndex = 0;
+  for (let i = 0; i < navItemsList.length; i++) {
+    const navItem = navItemsList[i];
+    if (plainLinks.includes(navItem)) continue; // skip plain links
+    if (navItem === item) {
+      return megaMenuValues[dropdownIndex] || null;
+    }
+    dropdownIndex++;
   }
-  
-  if (itemIndex === 1) {
-    return settings.megaMenus?.["Professional"] || 
-           settings.megaMenus?.["Solutions"] || 
-           (settings.megaMenus ? Object.values(settings.megaMenus)[1] : null);
-  }
-  
+
   return null;
 }
 
