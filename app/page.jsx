@@ -366,15 +366,20 @@ function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
             </div>
             <nav className="mobile-nav">
               {(menuNavItems || navItems).map((item) => {
-                const menuData = getMenuDataByItem(item, settings) || (item === "Consumer" || item === "Professional" || item === "Produits" || item === "Solutions" ? getMegaMenu(item) : null);
-                const hasSub = !!menuData;
+                const plainLinks = ["Data Center Solutions", "Solutions Data Center", "Support"];
+                const isPlainLink = plainLinks.includes(item);
+                const menuData = !isPlainLink ? (settings?.megaMenus?.[item] || getMenuDataByItem(item, settings) || getMegaMenu(item)) : null;
+                const hasSub = !isPlainLink;
                 const isExpanded = expandedCat === item;
 
                 if (!hasSub) {
+                  const linkHref = (item === "Data Center Solutions" || item === "Solutions Data Center") 
+                    ? "/data-center-solutions/" 
+                    : item === "Support" ? "/support/" : "/products/";
                   return (
                     <Link
                       key={item}
-                      href={item === "Data Center Solutions" ? "/data-center-solutions/" : "/support/"}
+                      href={linkHref}
                       onClick={onClose}
                       className="mobile-nav-item"
                     >
