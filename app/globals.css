@@ -1745,6 +1745,27 @@ img {
   text-overflow: ellipsis;
 }
 
+.mobile-see-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  margin: 4px 4px 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0a4bd9, #1a6aff);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.15s, opacity 0.15s;
+}
+
+.mobile-see-all:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
 .mobile-footer-actions {
   margin-top: auto;
   display: grid;

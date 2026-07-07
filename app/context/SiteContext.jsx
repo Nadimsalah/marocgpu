@@ -277,7 +277,9 @@ const frTranslations = {
   "Terms": "Conditions",
   "Cookies": "Cookies",
   "© 2026 MarocGPU. All rights reserved.": "© 2026 MarocGPU. Tous droits réservés.",
-  "Powerful hardware, expert-built systems, and dependable local support across Morocco.": "Matériel puissant, systèmes assemblés par des experts et assistance locale fiable partout au Maroc."
+  "Powerful hardware, expert-built systems, and dependable local support across Morocco.": "Matériel puissant, systèmes assemblés par des experts et assistance locale fiable partout au Maroc.",
+  "See all": "Voir tout",
+  "Casablanca, Morocco": "Casablanca, Maroc"
 };
 
 const defaults = {

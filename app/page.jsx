@@ -435,6 +435,13 @@ function MobileMenu({ open, onClose, onSearch, onCartOpen, menuNavItems }) {
                               </Link>
                             ))}
                           </div>
+                          <Link
+                            href={`/products/?category=${encodeURIComponent(item)}`}
+                            onClick={onClose}
+                            className="mobile-see-all"
+                          >
+                            {t("See all")} {t(item)} <ArrowRight size={16} />
+                          </Link>
                         </motion.div>
                       )}
                     </AnimatePresence>
